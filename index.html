@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Максим — делаю и переделываю сайты</title>
+<meta name="description" content="Лендинги, корпоративные сайты и редизайн старых сайтов. Быстро, адаптивно, с заявками. Реальный кейс — было/стало.">
+
+<!-- ============================================================
+     БРЕНД — меняется в одном месте.
+     Имя/название студии: текст в .logo / footer (сейчас «Максим», марка «М»).
+     Telegram: ник задан в JS-константе TG внизу файла + ссылки t.me/YTKON0S.
+     ============================================================ -->
+
+<meta name="theme-color" content="#0a0b0e">
+<meta property="og:title" content="Максим — делаю и переделываю сайты">
+<meta property="og:description" content="Лендинги, корпоративные сайты, редизайн старья. Кейс было/стало.">
+<meta property="og:type" content="website">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c6ff3a'/%3E%3Ctext x='32' y='46' font-family='Arial,sans-serif' font-size='40' font-weight='700' text-anchor='middle' fill='%230a0b0e'%3E%D0%9C%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0a0b0e;
+  --bg-2:#101218;
+  --surface:#13151c;
+  --surface-2:#181b24;
+  --line:rgba(255,255,255,.08);
+  --line-strong:rgba(255,255,255,.14);
+  --text:#eef0f4;
+  --muted:#9aa1b1;
+  --muted-2:#6b7280;
+  --accent:#c6ff3a;
+  --accent-dim:#a6e016;
+  --accent-glow:rgba(198,255,58,.16);
+  --radius:18px;
+  --maxw:1180px;
+  --font-display:'Space Grotesk',system-ui,sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:17px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+::selection{background:var(--accent);color:#0a0b0e}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+/* ---- background texture ---- */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(900px 600px at 80% -5%, rgba(198,255,58,.07), transparent 60%),
+    radial-gradient(800px 600px at 5% 15%, rgba(80,120,255,.06), transparent 55%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;opacity:.5;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size:64px 64px;
+  -webkit-mask-image:radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 80%);
+          mask-image:radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 80%);
+}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.mono{font-family:var(--font-mono);font-size:13px;letter-spacing:.04em;color:var(--accent);text-transform:uppercase}
+section{position:relative}
+
+/* ---- buttons ---- */
+.btn{
+  display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--font-display);font-weight:600;font-size:15px;
+  padding:14px 24px;border-radius:12px;cursor:pointer;border:1px solid transparent;
+  transition:transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.btn-primary{background:var(--accent);color:#0a0b0e;box-shadow:0 0 0 0 var(--accent-glow)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 36px -10px var(--accent-glow)}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--line-strong)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+
+/* ---- header ---- */
+header{
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  background:rgba(10,11,14,.55);
+  border-bottom:1px solid transparent;
+  transition:background .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);box-shadow:0 10px 30px -20px rgba(0,0,0,.9)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:70px}
+.logo{display:flex;align-items:center;gap:11px;font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:-.01em}
+.logo-mark{
+  width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+  background:var(--accent);color:#0a0b0e;font-weight:700;font-size:19px;
+  box-shadow:0 8px 24px -8px var(--accent-glow);
+}
+.logo small{color:var(--muted);font-weight:400;font-size:12px;font-family:var(--font-mono);letter-spacing:.02em}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-links a{position:relative;color:var(--muted);font-size:15px;font-weight:500;transition:color .15s}
+.nav-links a:hover{color:var(--text)}
+.nav-links a.active{color:var(--text)}
+.nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:-7px;height:2px;border-radius:2px;background:var(--accent)}
+.nav-cta{display:flex;align-items:center;gap:14px}
+.burger{display:none;background:none;border:1px solid var(--line-strong);border-radius:10px;width:42px;height:42px;cursor:pointer;color:var(--text)}
+.burger svg{width:20px;height:20px}
+
+/* ---- hero ---- */
+.hero{padding:96px 0 80px}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
+.hero h1{
+  font-family:var(--font-display);font-weight:700;
+  font-size:clamp(38px,5.4vw,68px);line-height:1.02;letter-spacing:-.025em;
+  margin:22px 0 22px;
+}
+.hero h1 .hl{color:var(--accent)}
+.hero p.lead{font-size:19px;color:var(--muted);max-width:30em;margin-bottom:34px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap}
+.hero-note{margin-top:22px;font-family:var(--font-mono);font-size:12.5px;color:var(--muted-2)}
+.hero-note b{color:var(--accent);font-weight:500}
+
+/* hero visual: terminal card */
+.term{
+  background:linear-gradient(180deg,var(--surface),var(--bg-2));
+  border:1px solid var(--line-strong);border-radius:var(--radius);
+  overflow:hidden;box-shadow:0 40px 80px -40px rgba(0,0,0,.8);
+}
+.term-bar{display:flex;align-items:center;gap:7px;padding:13px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.dot{width:11px;height:11px;border-radius:50%}
+.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+.term-bar span{margin-left:10px;font-family:var(--font-mono);font-size:12px;color:var(--muted-2)}
+.term-body{padding:22px;font-family:var(--font-mono);font-size:13.5px;line-height:1.9}
+.term-body .ln{color:var(--muted)}
+.term-body .k{color:var(--accent)}
+.term-body .s{color:#7fb2ff}
+.term-body .c{color:var(--muted-2)}
+.cursor{display:inline-block;width:8px;height:16px;background:var(--accent);vertical-align:-2px;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---- section heading ---- */
+.sec{padding:84px 0}
+.sec-head{max-width:680px;margin-bottom:48px}
+.sec-head h2{font-family:var(--font-display);font-weight:700;font-size:clamp(28px,3.6vw,44px);letter-spacing:-.02em;line-height:1.08;margin:14px 0 14px}
+.sec-head p{color:var(--muted);font-size:18px}
+
+/* ---- before/after case ---- */
+.case{background:linear-gradient(180deg,transparent, rgba(255,255,255,.015));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.case-grid{display:grid;grid-template-columns:1fr .82fr;gap:48px;align-items:center}
+.ba{
+  position:relative;width:100%;aspect-ratio:1280/860;border-radius:14px;overflow:hidden;
+  border:1px solid var(--line-strong);user-select:none;touch-action:pan-y;
+  box-shadow:0 40px 90px -45px rgba(0,0,0,.9);
+  background:#000;cursor:ew-resize;
+}
+.ba:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.ba img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.ba .after-wrap{position:absolute;inset:0;overflow:hidden;width:50%}
+.ba-after-inner{position:absolute;inset:0;height:100%}
+.ba.smooth .after-wrap,.ba.smooth .ba-handle{transition:width .55s cubic-bezier(.4,0,.2,1), left .55s cubic-bezier(.4,0,.2,1)}
+.ba-tag{position:absolute;top:14px;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;padding:5px 11px;border-radius:999px;backdrop-filter:blur(6px);text-transform:uppercase}
+.ba-tag.before{left:14px;background:rgba(0,0,0,.55);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.ba-tag.after{right:14px;background:var(--accent);color:#0a0b0e}
+.ba-handle{position:absolute;top:0;bottom:0;width:2px;background:var(--accent);transform:translateX(-1px);box-shadow:0 0 18px var(--accent-glow)}
+.ba-knob{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:46px;height:46px;border-radius:50%;background:var(--accent);color:#0a0b0e;
+  display:grid;place-items:center;box-shadow:0 8px 24px -6px var(--accent-glow);font-size:18px;font-weight:700;
+}
+.case-text h3{font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.case-text h4{font-family:var(--font-display);font-size:28px;font-weight:700;letter-spacing:-.01em;margin-bottom:18px}
+.case-list{list-style:none;margin:0 0 26px;display:grid;gap:13px}
+.case-list li{display:flex;gap:12px;align-items:flex-start;color:var(--muted);font-size:16px}
+.case-list .ic{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:var(--accent-glow);color:var(--accent);display:grid;place-items:center;font-size:13px;margin-top:2px}
+.case-meta{display:flex;gap:26px;margin-bottom:26px;flex-wrap:wrap}
+.case-meta div{font-family:var(--font-display)}
+.case-meta b{display:block;font-size:26px;color:var(--accent);font-weight:700;line-height:1}
+.case-meta span{font-size:13px;color:var(--muted-2)}
+
+/* ---- services ---- */
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:30px;transition:border-color .2s, transform .2s, background .2s;position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);transform:scaleX(0);transform-origin:left;transition:transform .35s ease}
+.card:hover{border-color:var(--line-strong);transform:translateY(-3px);background:var(--surface-2)}
+.card:hover::before{transform:scaleX(1)}
+.card.popular{border-color:rgba(198,255,58,.4);background:linear-gradient(180deg,rgba(198,255,58,.05),var(--surface))}
+.card.popular::before{transform:scaleX(1)}
+.card .badge{position:absolute;top:22px;right:22px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#0a0b0e;background:var(--accent);padding:4px 9px;border-radius:999px}
+.card .num{font-family:var(--font-mono);font-size:12px;color:var(--accent);margin-bottom:18px}
+.card h3{font-family:var(--font-display);font-size:22px;font-weight:600;margin-bottom:10px;letter-spacing:-.01em}
+.card p{color:var(--muted);font-size:15.5px;margin-bottom:20px}
+.card .price{font-family:var(--font-display);font-size:15px;color:var(--text);border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;align-items:center}
+.card .price b{color:var(--accent);font-weight:600}
+.card .price .from{font-size:12px;color:var(--muted-2);font-family:var(--font-mono)}
+
+/* ---- process ---- */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:s}
+.step{position:relative;padding:26px 22px;border-radius:var(--radius);border:1px solid var(--line);background:var(--surface)}
+.step::before{counter-increment:s;content:"0" counter(s);font-family:var(--font-mono);font-size:13px;color:var(--accent);display:block;margin-bottom:16px}
+.step h3{font-family:var(--font-display);font-size:18px;font-weight:600;margin-bottom:8px}
+.step p{color:var(--muted);font-size:14.5px}
+
+/* ---- why ---- */
+.why{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.feat{padding:24px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,var(--surface),transparent)}
+.feat .ic{width:40px;height:40px;border-radius:10px;background:var(--accent-glow);color:var(--accent);display:grid;place-items:center;margin-bottom:16px}
+.feat .ic svg{width:21px;height:21px}
+.feat h3{font-family:var(--font-display);font-size:17px;font-weight:600;margin-bottom:7px}
+.feat p{color:var(--muted);font-size:14.5px}
+
+/* ---- tech strip ---- */
+.tech{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(255,255,255,.012)}
+.tech-row{display:flex;align-items:center;gap:14px 34px;flex-wrap:wrap;justify-content:center;padding:26px 0}
+.tech-row .lbl{font-family:var(--font-mono);font-size:12px;color:var(--muted-2);text-transform:uppercase;letter-spacing:.06em}
+.tech-row .chip{font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--muted);transition:color .2s}
+.tech-row .chip:hover{color:var(--accent)}
+
+/* ---- faq ---- */
+.faq{max-width:760px;margin:0 auto;display:grid;gap:12px}
+.q{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden;transition:border-color .2s}
+.q[open]{border-color:var(--line-strong)}
+.q summary{list-style:none;cursor:pointer;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;font-family:var(--font-display);font-weight:600;font-size:17px}
+.q summary::-webkit-details-marker{display:none}
+.q summary .pl{flex:0 0 auto;width:24px;height:24px;position:relative;transition:transform .3s}
+.q summary .pl::before,.q summary .pl::after{content:"";position:absolute;background:var(--accent);border-radius:2px}
+.q summary .pl::before{top:11px;left:3px;right:3px;height:2px}
+.q summary .pl::after{left:11px;top:3px;bottom:3px;width:2px;transition:transform .3s}
+.q[open] summary .pl::after{transform:scaleY(0)}
+.q .a{padding:0 24px 22px;color:var(--muted);font-size:15.5px;line-height:1.65}
+
+/* ---- to-top ---- */
+.totop{position:fixed;right:22px;bottom:22px;z-index:40;width:46px;height:46px;border-radius:12px;border:1px solid var(--line-strong);background:rgba(19,21,28,.8);backdrop-filter:blur(8px);color:var(--text);display:grid;place-items:center;cursor:pointer;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .25s, transform .25s, border-color .2s, color .2s}
+.totop.show{opacity:1;transform:none;pointer-events:auto}
+.totop:hover{border-color:var(--accent);color:var(--accent)}
+.totop svg{width:20px;height:20px}
+
+/* ---- final cta ---- */
+.cta{text-align:center;padding:96px 0}
+.cta-box{
+  max-width:760px;margin:0 auto;padding:56px 40px;border-radius:26px;
+  border:1px solid var(--line-strong);
+  background:radial-gradient(120% 140% at 50% 0%, rgba(198,255,58,.1), transparent 60%), var(--surface);
+  position:relative;overflow:hidden;
+}
+.cta-box h2{font-family:var(--font-display);font-weight:700;font-size:clamp(28px,4vw,46px);letter-spacing:-.02em;line-height:1.05;margin-bottom:16px}
+.cta-box p{color:var(--muted);font-size:18px;margin-bottom:30px;max-width:34em;margin-left:auto;margin-right:auto}
+.cta-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-tg{background:#2aabee;color:#fff}
+.btn-tg:hover{transform:translateY(-2px);box-shadow:0 14px 36px -12px rgba(42,171,238,.5)}
+
+/* ---- footer ---- */
+footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
+.foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:18px}
+.foot .logo{font-size:17px}
+.foot-links{display:flex;gap:22px;font-size:14px;color:var(--muted)}
+.foot-links a:hover{color:var(--accent)}
+.foot-copy{font-family:var(--font-mono);font-size:12px;color:var(--muted-2)}
+
+/* ---- reveal animation ---- */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease, transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ---- mobile menu ---- */
+.mobile-menu{display:none}
+
+@media (max-width:920px){
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .term{order:2}
+  .case-grid{grid-template-columns:1fr;gap:34px}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .why{grid-template-columns:1fr 1fr}
+}
+@media (max-width:680px){
+  body{font-size:16px}
+  .nav-links{display:none}
+  .nav-cta .btn-ghost{display:none}
+  .burger{display:grid;place-items:center}
+  .cards{grid-template-columns:1fr}
+  .why{grid-template-columns:1fr}
+  .sec{padding:64px 0}
+  .hero{padding:64px 0 56px}
+  .cta-box{padding:40px 22px}
+  .mobile-menu{position:fixed;inset:70px 0 auto 0;z-index:49;background:var(--bg-2);border-bottom:1px solid var(--line);padding:18px 24px 26px;flex-direction:column;gap:4px}
+  .mobile-menu.open{display:flex}
+  .mobile-menu a{padding:13px 4px;color:var(--text);font-size:17px;border-bottom:1px solid var(--line);font-family:var(--font-display)}
+  .mobile-menu a:last-child{border:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  .cursor{animation:none}
+  .ba.smooth .after-wrap,.ba.smooth .ba-handle{transition:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#" class="logo">
+      <span class="logo-mark">М</span>
+      <span>Максим<br><small>web&nbsp;dev&nbsp;/&nbsp;сайты&nbsp;под&nbsp;ключ</small></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#case">Кейс</a>
+      <a href="#services">Услуги</a>
+      <a href="#process">Процесс</a>
+      <a href="#why">Почему я</a>
+      <a href="#faq">Вопросы</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#case" class="btn btn-ghost">Смотреть работы</a>
+      <a href="https://t.me/YTKON0S" target="_blank" rel="noopener" class="btn btn-primary">Написать в Telegram</a>
+      <button class="burger" id="burger" aria-label="Меню">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="#case">Кейс</a>
+    <a href="#services">Услуги</a>
+    <a href="#process">Процесс</a>
+    <a href="#why">Почему я</a>
+    <a href="#faq">Вопросы</a>
+    <a href="https://t.me/YTKON0S" target="_blank" rel="noopener">Написать в Telegram →</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="reveal">
+      <div class="mono">Лендинги · Корпоративные сайты · Редизайн</div>
+      <h1>Делаю сайты,<br>которые <span class="hl">работают</span><br>на вас</h1>
+      <p class="lead">Соберу с нуля или переделаю старый сайт в современный, быстрый и адаптивный — такой, что приносит заявки, а не пылится в поисковой выдаче.</p>
+      <div class="hero-actions">
+        <a href="https://t.me/YTKON0S" target="_blank" rel="noopener" class="btn btn-primary">Обсудить проект →</a>
+        <a href="#case" class="btn btn-ghost">Кейс: было / стало</a>
+      </div>
+      <div class="hero-note">Отвечаю обычно за <b>пару часов</b>. Первая консультация и оценка — бесплатно.</div>
+    </div>
+
+    <div class="reveal term" aria-hidden="true">
+      <div class="term-bar">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span>~/maxim — site</span>
+      </div>
+      <div class="term-body">
+        <div class="ln"><span class="c">// что вы получаете</span></div>
+        <div class="ln"><span class="k">const</span> site = {</div>
+        <div class="ln">&nbsp;&nbsp;адаптив:&nbsp;<span class="s">'телефон + ПК'</span>,</div>
+        <div class="ln">&nbsp;&nbsp;скорость:&nbsp;<span class="s">'&lt; 1.5 сек'</span>,</div>
+        <div class="ln">&nbsp;&nbsp;заявки:&nbsp;&nbsp;&nbsp;<span class="s">'на почту + Telegram'</span>,</div>
+        <div class="ln">&nbsp;&nbsp;дизайн:&nbsp;&nbsp;&nbsp;<span class="s">'под вашу нишу'</span>,</div>
+        <div class="ln">&nbsp;&nbsp;срок:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">'от 3 дней'</span></div>
+        <div class="ln">};</div>
+        <div class="ln"><span class="k">deploy</span>(site)<span class="cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STRIP -->
+<section class="tech">
+  <div class="wrap tech-row">
+    <span class="lbl">Работаю с</span>
+    <span class="chip">HTML / CSS</span>
+    <span class="chip">JavaScript</span>
+    <span class="chip">Адаптив</span>
+    <span class="chip">Редизайн</span>
+    <span class="chip">MODX</span>
+    <span class="chip">SEO-база</span>
+    <span class="chip">Скорость</span>
+  </div>
+</section>
+
+<!-- CASE: BEFORE/AFTER -->
+<section class="case sec" id="case">
+  <div class="wrap case-grid">
+    <div class="reveal ba" id="ba" tabindex="0" role="slider" aria-label="Сравнение: было и стало" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+      <img src="assets/screens/after.png" alt="Новый сайт MBM-Trans">
+      <div class="after-wrap" id="afterWrap">
+        <div class="ba-after-inner" id="afterInner">
+          <img src="assets/screens/before.png" alt="Старый сайт MBM-Trans">
+        </div>
+      </div>
+      <span class="ba-tag before">Было</span>
+      <span class="ba-tag after">Стало</span>
+      <div class="ba-handle" id="baHandle">
+        <div class="ba-knob">⇄</div>
+      </div>
+    </div>
+
+    <div class="case-text reveal">
+      <h3>Реальный кейс</h3>
+      <h4>MBM-Trans — перевозки негабарита</h4>
+      <ul class="case-list">
+        <li><span class="ic">✓</span><span>Старый сайт на MODX тормозил и не открывался нормально на телефоне</span></li>
+        <li><span class="ic">✓</span><span>Пересобрал дизайн: чистая структура, крупная типографика, акценты</span></li>
+        <li><span class="ic">✓</span><span>Сжал изображения и ускорил загрузку в несколько раз</span></li>
+        <li><span class="ic">✓</span><span>Добавил форму заявки, FAQ, карту и адаптив под все экраны</span></li>
+      </ul>
+      <div class="case-meta">
+        <div><b>20 лет</b><span>опыта клиента — на сайте</span></div>
+        <div><b>100%</b><span>адаптив под телефон</span></div>
+        <div><b>×4</b><span>быстрее загрузка</span></div>
+      </div>
+      <a href="https://mbm-trans.ru" target="_blank" rel="noopener" class="btn btn-ghost">Открыть готовый сайт →</a>
+      <p style="margin-top:14px;font-family:var(--font-mono);font-size:12px;color:var(--muted-2)">↔ потяни за ползунок, чтобы сравнить</p>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="sec" id="services">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="mono">Услуги</div>
+      <h2>Что я делаю</h2>
+      <p>Полный цикл — от идеи и текста до запуска на вашем домене. Цены ориентировочные, точную назову после короткого брифа.</p>
+    </div>
+    <div class="cards">
+      <div class="card reveal">
+        <div class="num">01</div>
+        <h3>Лендинг под ключ</h3>
+        <p>Одностраничник, который продаёт: цепляющий первый экран, выгоды, отзывы, форма заявки. Идеально под рекламу и услугу.</p>
+        <div class="price"><span class="from">от</span><b>15 000 ₽</b></div>
+      </div>
+      <div class="card popular reveal">
+        <span class="badge">Чаще всего</span>
+        <div class="num">02</div>
+        <h3>Редизайн старого сайта</h3>
+        <p>Беру ваш устаревший сайт и превращаю в современный и быстрый — как в кейсе MBM-Trans. Контент сохраняю.</p>
+        <div class="price"><span class="from">от</span><b>20 000 ₽</b></div>
+      </div>
+      <div class="card reveal">
+        <div class="num">03</div>
+        <h3>Корпоративный сайт / каталог</h3>
+        <p>Многостраничник с услугами, проектами и каталогом. Удобная структура, SEO-база, понятная админка.</p>
+        <div class="price"><span class="from">от</span><b>35 000 ₽</b></div>
+      </div>
+      <div class="card reveal">
+        <div class="num">04</div>
+        <h3>Доработка и ускорение</h3>
+        <p>Поправить вёрстку, добавить блок, ускорить загрузку, починить мобильную версию или форму. Точечно и быстро.</p>
+        <div class="price"><span class="from">от</span><b>3 000 ₽</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="sec" id="process">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="mono">Процесс</div>
+      <h2>Как идёт работа</h2>
+      <p>Прозрачно и без сюрпризов. Вы видите результат на каждом этапе.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><h3>Бриф</h3><p>Созваниваемся или списываемся, разбираю задачу, цели и нишу. Фиксирую смету и срок.</p></div>
+      <div class="step reveal"><h3>Дизайн</h3><p>Собираю прототип и стиль. Согласуем первый экран и структуру до вёрстки.</p></div>
+      <div class="step reveal"><h3>Вёрстка</h3><p>Делаю адаптивный сайт, наполняю контентом, подключаю формы и аналитику.</p></div>
+      <div class="step reveal"><h3>Запуск</h3><p>Выкладываю на ваш домен, проверяю на всех экранах, передаю доступы. На связи после.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="sec" id="why">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="mono">Почему я</div>
+      <h2>Без воды и долгостроя</h2>
+    </div>
+    <div class="why">
+      <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h7l-1 8 10-12h-7z"/></svg></div>
+        <h3>Быстро</h3><p>Лендинг — от 3 дней. Не растягиваю проект на месяцы.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/></svg></div>
+        <h3>Адаптив всегда</h3><p>Сайт одинаково хорош на телефоне, планшете и ПК. По умолчанию.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12A10 10 0 1 1 12 2"/><path d="m22 4-10 10-3-3"/></svg></div>
+        <h3>Заявки, а не «красиво»</h3><p>Делаю так, чтобы посетитель оставил контакт, а не просто полюбовался.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>На связи</h3><p>Отвечаю быстро в Telegram, объясняю по-человечески, без жаргона.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg></div>
+        <h3>Сам кодю</h3><p>Чистый код, а не сборка из шаблона. Сайт легко дорабатывать дальше.</p>
+      </div>
+      <div class="feat reveal">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h3>Фиксированная цена</h3><p>Сумму называю до старта. Никаких внезапных доплат по ходу.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-left:auto;margin-right:auto;text-align:center">
+      <div class="mono">Вопросы</div>
+      <h2>Коротко о главном</h2>
+    </div>
+    <div class="faq reveal">
+      <details class="q">
+        <summary>Сколько стоит сайт?<span class="pl"></span></summary>
+        <div class="a">Зависит от объёма: лендинг — от 15 000 ₽, редизайн — от 20 000 ₽, многостраничник — от 35 000 ₽. Точную сумму назову после короткого брифа и зафиксирую до старта — без доплат по ходу.</div>
+      </details>
+      <details class="q">
+        <summary>Какие сроки?<span class="pl"></span></summary>
+        <div class="a">Лендинг — от 3 дней, редизайн и корпоративный сайт — обычно 1–2 недели в зависимости от объёма контента и числа страниц.</div>
+      </details>
+      <details class="q">
+        <summary>Как происходит оплата?<span class="pl"></span></summary>
+        <div class="a">Обычно 50% предоплата для старта и 50% после готовности и вашей приёмки. Удобный способ обсудим — на карту или по реквизитам.</div>
+      </details>
+      <details class="q">
+        <summary>А если нужно что-то поправить?<span class="pl"></span></summary>
+        <div class="a">Правки в рамках задачи входят в стоимость — согласовываем макет до вёрстки, поэтому переделывать с нуля не приходится. После запуска тоже остаюсь на связи.</div>
+      </details>
+      <details class="q">
+        <summary>Нужен ли свой домен и хостинг?<span class="pl"></span></summary>
+        <div class="a">Если уже есть — выложу туда. Если нет — помогу подобрать и всё настрою. Сайт передаю полностью вам, с доступами.</div>
+      </details>
+      <details class="q">
+        <summary>Работаете с моим старым сайтом или только с нуля?<span class="pl"></span></summary>
+        <div class="a">И так, и так. Могу переделать существующий сайт, сохранив весь контент (как в кейсе MBM-Trans), или собрать новый с чистого листа.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta" id="contact">
+  <div class="wrap">
+    <div class="cta-box reveal">
+      <div class="mono" style="margin-bottom:14px">Свободен для заказа</div>
+      <h2>Расскажите про задачу —<br>предложу решение</h2>
+      <p>Нужен сайт с нуля или переделать старый? Напишите в Telegram пару слов о проекте, отвечу с оценкой и сроком.</p>
+      <div class="cta-actions">
+        <a href="https://t.me/YTKON0S" target="_blank" rel="noopener" class="btn btn-tg">✈ Написать в Telegram</a>
+        <a href="mailto:mmocaluk@gmail.com" class="btn btn-ghost">Написать на почту</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <a href="#" class="logo"><span class="logo-mark">М</span><span>Максим</span></a>
+    <div class="foot-links">
+      <a href="#case">Кейс</a>
+      <a href="#services">Услуги</a>
+      <a href="#process">Процесс</a>
+      <a href="https://t.me/YTKON0S" target="_blank" rel="noopener">Telegram</a>
+    </div>
+    <div class="foot-copy">© 2026 · делаю сайты под ключ</div>
+  </div>
+</footer>
+
+<button class="totop" id="totop" aria-label="Наверх">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+// ---- Telegram (один источник правды) ----
+const TG='https://t.me/YTKON0S';
+document.querySelectorAll('a[href*="t.me/"]').forEach(a=>a.href=TG);
+
+// ---- mobile menu ----
+const burger=document.getElementById('burger');
+const mobileMenu=document.getElementById('mobileMenu');
+burger.addEventListener('click',()=>mobileMenu.classList.toggle('open'));
+mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>mobileMenu.classList.remove('open')));
+
+// ---- header scroll state + to-top ----
+const header=document.querySelector('header');
+const totop=document.getElementById('totop');
+function onScroll(){
+  const y=window.scrollY;
+  header.classList.toggle('scrolled',y>10);
+  totop.classList.toggle('show',y>700);
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+onScroll();
+totop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+// ---- reveal on scroll ----
+const io=new IntersectionObserver((es)=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// ---- scrollspy: подсветка активного пункта меню ----
+(function(){
+  const links=[...document.querySelectorAll('.nav-links a')];
+  const map=new Map();
+  links.forEach(a=>{const id=a.getAttribute('href').slice(1);const s=document.getElementById(id);if(s)map.set(s,a);});
+  const spy=new IntersectionObserver((es)=>{
+    es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));const a=map.get(e.target);if(a)a.classList.add('active');}});
+  },{rootMargin:'-45% 0px -50% 0px',threshold:0});
+  map.forEach((a,s)=>spy.observe(s));
+})();
+
+// ---- before/after slider ----
+(function(){
+  const ba=document.getElementById('ba');
+  const wrap=document.getElementById('afterWrap');
+  const inner=document.getElementById('afterInner');
+  const handle=document.getElementById('baHandle');
+  if(!ba) return;
+  let pct=50, dragging=false;
+  function apply(){
+    const r=ba.getBoundingClientRect();
+    wrap.style.width=pct+'%';
+    inner.style.width=r.width+'px';
+    handle.style.left=pct+'%';
+    ba.setAttribute('aria-valuenow',Math.round(pct));
+  }
+  function setFromX(clientX){
+    const r=ba.getBoundingClientRect();
+    pct=Math.max(0,Math.min(100,(clientX-r.left)/r.width*100));
+    apply();
+  }
+  window.addEventListener('resize',apply);
+  apply();
+
+  // pointer drag (мышь + тач в одном API)
+  ba.addEventListener('pointerdown',(e)=>{
+    dragging=true;ba.classList.remove('smooth');
+    try{ba.setPointerCapture(e.pointerId);}catch(_){}
+    setFromX(e.clientX);
+  });
+  ba.addEventListener('pointermove',(e)=>{if(dragging)setFromX(e.clientX);});
+  ba.addEventListener('pointerup',()=>{dragging=false;});
+  ba.addEventListener('pointercancel',()=>{dragging=false;});
+
+  // клавиатура (доступность)
+  ba.addEventListener('keydown',(e)=>{
+    if(e.key==='ArrowLeft'){pct=Math.max(0,pct-4);ba.classList.add('smooth');apply();e.preventDefault();}
+    if(e.key==='ArrowRight'){pct=Math.min(100,pct+4);ba.classList.add('smooth');apply();e.preventDefault();}
+  });
+
+  // подсказка-«нудж»: показываем, что ползунок можно тянуть
+  let nudged=false;
+  const hintObs=new IntersectionObserver((es)=>{
+    es.forEach(e=>{
+      if(e.isIntersecting&&!nudged){
+        nudged=true;
+        if(window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+        ba.classList.add('smooth');
+        setTimeout(()=>{pct=34;apply();},400);
+        setTimeout(()=>{pct=66;apply();},950);
+        setTimeout(()=>{pct=50;apply();ba.classList.remove('smooth');},1550);
+      }
+    });
+  },{threshold:.5});
+  hintObs.observe(ba);
+})();
+</script>
+</body>
+</html>
