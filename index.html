@@ -162,7 +162,8 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
 .case-grid{display:grid;grid-template-columns:1fr .82fr;gap:48px;align-items:center}
 .ba{
   position:relative;width:100%;aspect-ratio:1280/860;border-radius:14px;overflow:hidden;
-  border:1px solid var(--line-strong);user-select:none;touch-action:pan-y;
+  border:1px solid var(--line-strong);touch-action:pan-y;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
   box-shadow:0 40px 90px -45px rgba(0,0,0,.9);
   background:#000;cursor:ew-resize;
 }
@@ -191,7 +192,7 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
 .case-meta span{font-size:13px;color:var(--muted-2)}
 
 /* ---- services ---- */
-.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .card{
   background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
   padding:30px;transition:border-color .2s, transform .2s, background .2s;position:relative;overflow:hidden;
@@ -455,12 +456,6 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
         <p>Многостраничник с услугами, проектами и каталогом. Удобная структура, SEO-база, понятная админка.</p>
         <div class="price"><span class="from">от</span><b>35 000 ₽</b></div>
       </div>
-      <div class="card reveal">
-        <div class="num">04</div>
-        <h3>Доработка и ускорение</h3>
-        <p>Поправить вёрстку, добавить блок, ускорить загрузку, починить мобильную версию или форму. Точечно и быстро.</p>
-        <div class="price"><span class="from">от</span><b>3 000 ₽</b></div>
-      </div>
     </div>
   </div>
 </section>
@@ -507,8 +502,8 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
         <h3>На связи</h3><p>Отвечаю быстро в Telegram, объясняю по-человечески, без жаргона.</p>
       </div>
       <div class="feat reveal">
-        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg></div>
-        <h3>Сам кодю</h3><p>Чистый код, а не сборка из шаблона. Сайт легко дорабатывать дальше.</p>
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+        <h3>Видно в поиске</h3><p>Чистая структура и мета-теги — чтобы сайт находили в Яндексе и Google.</p>
       </div>
       <div class="feat reveal">
         <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg></div>
@@ -633,7 +628,7 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   const inner=document.getElementById('afterInner');
   const handle=document.getElementById('baHandle');
   if(!ba) return;
-  let pct=50, dragging=false;
+  let pct=50, dragging=false, rectW=0, rectL=0;
   function apply(){
     const r=ba.getBoundingClientRect();
     wrap.style.width=pct+'%';
@@ -642,22 +637,28 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
     ba.setAttribute('aria-valuenow',Math.round(pct));
   }
   function setFromX(clientX){
-    const r=ba.getBoundingClientRect();
-    pct=Math.max(0,Math.min(100,(clientX-r.left)/r.width*100));
-    apply();
+    pct=Math.max(0,Math.min(100,(clientX-rectL)/rectW*100));
+    wrap.style.width=pct+'%';
+    handle.style.left=pct+'%';
+    ba.setAttribute('aria-valuenow',Math.round(pct));
   }
-  window.addEventListener('resize',apply);
-  apply();
+  function cacheRect(){const r=ba.getBoundingClientRect();rectW=r.width;rectL=r.left;inner.style.width=r.width+'px';}
+  window.addEventListener('resize',()=>{cacheRect();apply();});
+  cacheRect();apply();
 
   // pointer drag (мышь + тач в одном API)
   ba.addEventListener('pointerdown',(e)=>{
+    e.preventDefault();                 // не даём браузеру выделять текст
     dragging=true;ba.classList.remove('smooth');
+    document.body.style.userSelect='none';
     try{ba.setPointerCapture(e.pointerId);}catch(_){}
-    setFromX(e.clientX);
+    cacheRect();setFromX(e.clientX);
   });
   ba.addEventListener('pointermove',(e)=>{if(dragging)setFromX(e.clientX);});
-  ba.addEventListener('pointerup',()=>{dragging=false;});
-  ba.addEventListener('pointercancel',()=>{dragging=false;});
+  function stop(){dragging=false;document.body.style.userSelect='';}
+  ba.addEventListener('pointerup',stop);
+  ba.addEventListener('pointercancel',stop);
+  ba.addEventListener('dragstart',(e)=>e.preventDefault());
 
   // клавиатура (доступность)
   ba.addEventListener('keydown',(e)=>{
