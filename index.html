@@ -14,8 +14,14 @@
 
 <meta name="theme-color" content="#0a0b0e">
 <meta property="og:title" content="Максим — делаю и переделываю сайты">
-<meta property="og:description" content="Лендинги, корпоративные сайты, редизайн старья. Кейс было/стало.">
+<meta property="og:description" content="Лендинги, корпоративные сайты и редизайн старых сайтов. Кейс MBM-Trans: было/стало.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://gysok1337.github.io/maxim-landing/">
+<meta property="og:image" content="https://gysok1337.github.io/maxim-landing/assets/og-preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gysok1337.github.io/maxim-landing/assets/og-preview.png">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c6ff3a'/%3E%3Ctext x='32' y='46' font-family='Arial,sans-serif' font-size='40' font-weight='700' text-anchor='middle' fill='%230a0b0e'%3E%D0%9C%3C/text%3E%3C/svg%3E">
 
@@ -211,6 +217,10 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
 .case-text h4{font-family:var(--font-display);font-size:28px;font-weight:700;letter-spacing:-.01em;margin-bottom:18px}
 .case-note{color:var(--muted);font-size:15.5px;margin:-6px 0 22px;max-width:34em}
 .case-note b{color:var(--text);font-weight:600}
+.case-proof{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 24px}
+.case-proof div{border:1px solid var(--line);background:rgba(255,255,255,.025);border-radius:12px;padding:13px}
+.case-proof b{display:block;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+.case-proof span{display:block;color:var(--muted);font-size:13.5px;line-height:1.45}
 .delta{list-style:none;margin:0 0 26px;display:grid;gap:10px}
 .delta li{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;transition:border-color .2s}
 .delta li:hover{border-color:var(--line-strong)}
@@ -237,6 +247,12 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
 .card .price{font-family:var(--font-display);font-size:15px;color:var(--text);border-top:1px solid var(--line);padding-top:16px;margin-top:auto;display:flex;justify-content:space-between;align-items:center}
 .card .price b{color:var(--accent);font-weight:600}
 .card .price .from{font-size:12px;color:var(--muted-2);font-family:var(--font-mono)}
+.included{margin-top:20px;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,rgba(255,255,255,.026),transparent);padding:24px}
+.included-head{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:18px}
+.included-head h3{font-family:var(--font-display);font-size:22px;font-weight:600;letter-spacing:-.01em;max-width:560px}
+.included-list{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.included-list li{border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:14px;background:rgba(10,11,14,.35)}
+.included-list b{color:var(--text);font-weight:600}
 
 /* ---- process ---- */
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;counter-reset:s}
@@ -319,6 +335,9 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
   .hero-grid{grid-template-columns:1fr;gap:40px}
   .term{order:2}
   .case-grid{grid-template-columns:1fr;gap:34px}
+  .included-head{display:block}
+  .included-head .mono{display:block;margin-bottom:10px}
+  .included-list{grid-template-columns:1fr 1fr}
   .steps{grid-template-columns:repeat(2,1fr)}
   .why{grid-template-columns:1fr 1fr}
 }
@@ -341,6 +360,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
   .cta-box{padding:40px 22px}
   .delta li{grid-template-columns:1fr;gap:3px}
   .delta .arr{display:none}
+  .case-proof,.included-list{grid-template-columns:1fr}
   .about-id{align-items:flex-start}
 }
 /* on phones keep only the logo + burger in the bar (Telegram CTA lives in the menu) */
@@ -463,6 +483,11 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
       <h3>Реальный кейс</h3>
       <h4>MBM-Trans — перевозки негабарита</h4>
       <p class="case-note">Это был не просто «обновить цвета»: я разобрал старый сайт, перенёс контент, собрал адаптив и заявки. Поэтому такой редизайн стоит дороже обычного лендинга.</p>
+      <div class="case-proof">
+        <div><b>Структура</b><span>Разложил услуги и преимущества так, чтобы клиент быстрее понимал, куда нажимать.</span></div>
+        <div><b>Адаптив</b><span>Собрал нормальный вид для телефона, планшета и ПК, без развала блоков.</span></div>
+        <div><b>Заявки</b><span>Добавил форму и отправку в Telegram, чтобы обращения не терялись.</span></div>
+      </div>
       <ul class="delta">
         <li><span class="was">Не открывался на телефоне</span><span class="arr" aria-hidden="true">→</span><span class="now">Идеально на телефоне и ПК</span></li>
         <li><span class="was">Старый дизайн и тяжёлая структура</span><span class="arr" aria-hidden="true">→</span><span class="now">Современный дизайн, лёгкий и быстрый</span></li>
@@ -481,20 +506,20 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
     <div class="sec-head reveal">
       <div class="mono">Услуги</div>
       <h2>Что я делаю</h2>
-      <p>Полный цикл — от идеи и текста до запуска на вашем домене. Лендинг можно собрать быстро, а редизайн считаю отдельно — там больше работы со старым сайтом и переносом контента.</p>
+      <p>Полный цикл — от идеи и текста до запуска на вашем домене. Быстрый лендинг и глубокий редизайн — разные задачи, поэтому я разделяю их по цене и объёму работы.</p>
     </div>
     <div class="cards">
       <div class="card reveal">
         <div class="num">01</div>
         <h3>Лендинг под ключ</h3>
-        <p>Одностраничник, который продаёт: цепляющий первый экран, выгоды, отзывы, форма заявки. Идеально под рекламу и услугу.</p>
+        <p>Одностраничник под услугу или рекламу: первый экран, выгоды, блок доверия, FAQ и форма заявки. Быстро, без лишней сложности.</p>
         <div class="price"><span class="from">от</span><b>20 000 ₽</b></div>
       </div>
       <div class="card popular reveal">
         <span class="badge">Чаще всего</span>
         <div class="num">02</div>
         <h3>Редизайн старого сайта</h3>
-        <p>Беру устаревший сайт и превращаю в современный и быстрый — как в кейсе MBM-Trans. Переношу контент, собираю адаптив, формы и запуск.</p>
+        <p>Не просто меняю цвета. Разбираю старую структуру, переношу контент, переписываю слабые места, собираю адаптив, формы и запуск.</p>
         <div class="price"><span class="from">от</span><b>45 000 ₽</b></div>
       </div>
       <div class="card reveal">
@@ -503,6 +528,20 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
         <p>Многостраничник с услугами, проектами и каталогом. Удобная структура, SEO-база, понятная админка.</p>
         <div class="price"><span class="from">от</span><b>60 000 ₽</b></div>
       </div>
+    </div>
+    <div class="included reveal">
+      <div class="included-head">
+        <div class="mono">Что входит</div>
+        <h3>Довожу сайт не только до красивого макета, а до рабочего запуска</h3>
+      </div>
+      <ul class="included-list">
+        <li><b>Структура:</b> помогаю разложить услуги и блоки в понятном порядке.</li>
+        <li><b>Тексты:</b> убираю воду, усиливаю заголовки и понятность оффера.</li>
+        <li><b>Адаптив:</b> проверяю телефон, планшет и ПК, а не только один экран.</li>
+        <li><b>Формы:</b> заявки на почту или в Telegram, чтобы клиент мог сразу написать.</li>
+        <li><b>SEO-база:</b> title, description, структура заголовков и аккуратная разметка.</li>
+        <li><b>Запуск:</b> домен, хостинг, финальные правки и проверка перед публикацией.</li>
+      </ul>
     </div>
   </div>
 </section>
@@ -598,20 +637,32 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
         <div class="a">Лендинг — от 20 000 ₽, редизайн — от 45 000 ₽, многостраничник — от 60 000 ₽. Точную цену называю после короткого брифа и фиксирую до старта.</div>
       </details>
       <details class="q">
+        <summary>Почему редизайн дороже лендинга?<span class="pl"></span></summary>
+        <div class="a">В редизайне нужно сначала разобраться со старым сайтом: структура, контент, страницы, ошибки, перенос материалов, формы и запуск без потерь. Это больше похоже на аккуратную переделку системы, а не на быстрый одностраничник с нуля.</div>
+      </details>
+      <details class="q">
+        <summary>Что входит в работу?<span class="pl"></span></summary>
+        <div class="a">Структура, тексты, дизайн, адаптив, формы заявок, базовое SEO, подключение домена/хостинга и финальные правки перед запуском. Если задача нестандартная, заранее проговариваю, что входит, а что считается отдельно.</div>
+      </details>
+      <details class="q">
         <summary>Какие сроки?<span class="pl"></span></summary>
         <div class="a">Лендинг — от 3 дней, редизайн и корпоративный сайт — обычно 1–2 недели в зависимости от объёма контента и числа страниц.</div>
       </details>
       <details class="q">
-        <summary>Что нужно от меня для старта?<span class="pl"></span></summary>
-        <div class="a">Достаточно коротко описать задачу, нишу и желаемый результат. Если есть старый сайт, примеры или материалы — пришлите ссылки, я разберу и предложу план.</div>
+        <summary>Что если нет текстов и фото?<span class="pl"></span></summary>
+        <div class="a">Это нормально. Я помогу собрать структуру, привести тексты в нормальный вид и подскажу, какие фото лучше сделать или заменить. Если материалов совсем нет, начнём с короткого брифа.</div>
       </details>
       <details class="q">
         <summary>Как происходит оплата?<span class="pl"></span></summary>
         <div class="a">Обычно 50% предоплата для старта и 50% после готовности и вашей приёмки. Удобный способ обсудим — на карту или по реквизитам.</div>
       </details>
       <details class="q">
+        <summary>Нужен ли домен и хостинг заранее?<span class="pl"></span></summary>
+        <div class="a">Нет, можно подключить в конце. Если домен и хостинг уже есть — использую их. Если нет — помогу выбрать простой вариант без лишних расходов.</div>
+      </details>
+      <details class="q">
         <summary>Что после запуска?<span class="pl"></span></summary>
-        <div class="a">Выкладываю сайт на домен, передаю доступы и остаюсь на связи. Небольшие правки после запуска можно обсудить отдельно.</div>
+        <div class="a">Выкладываю сайт на домен, передаю доступы и остаюсь на связи. Небольшие правки после запуска можно обсудить отдельно, а критичные мелочи по запуску не бросаю на вас.</div>
       </details>
     </div>
   </div>
