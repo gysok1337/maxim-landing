@@ -134,7 +134,8 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
   background:var(--accent);color:#0a0b0e;font-weight:700;font-size:19px;
   box-shadow:0 8px 24px -8px var(--accent-glow);
 }
-.logo small{color:var(--muted);font-weight:400;font-size:12px;font-family:var(--font-mono);letter-spacing:.02em;white-space:nowrap}
+.logo-text{display:flex;flex-direction:column;gap:2px;line-height:1}
+.logo small{color:var(--muted);font-weight:400;font-size:12px;font-family:var(--font-mono);letter-spacing:.02em;line-height:1.08;white-space:nowrap}
 .nav-links{display:flex;gap:30px;align-items:center;flex:0 1 auto}
 .nav-links a{position:relative;color:var(--muted);font-size:15px;font-weight:500;white-space:nowrap;transition:color .15s}
 .nav-links a:hover{color:var(--text)}
@@ -412,7 +413,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
   <div class="wrap nav">
     <a href="#" class="logo">
       <span class="logo-mark">М</span>
-      <span>Максим<br><small>web&nbsp;dev&nbsp;/&nbsp;сайты&nbsp;под&nbsp;ключ</small></span>
+      <span class="logo-text">Максим<small>web&nbsp;dev&nbsp;/&nbsp;сайты&nbsp;под&nbsp;ключ</small></span>
     </a>
     <nav class="nav-links">
       <a href="#case">Кейс</a>
@@ -716,7 +717,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 
 <footer>
   <div class="wrap foot">
-    <a href="#" class="logo"><span class="logo-mark">М</span><span>Максим</span></a>
+    <a href="#" class="logo"><span class="logo-mark">М</span><span class="logo-text">Максим</span></a>
     <div class="foot-links">
       <a href="#case">Кейс</a>
       <a href="#services">Услуги</a>
