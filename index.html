@@ -661,7 +661,7 @@ const header=document.querySelector('header');
 function onScroll(){
   const y=window.scrollY;
   header.classList.toggle('scrolled',y>10);
-  if(typeof clearNavActiveAboveFirstSection==='function') clearNavActiveAboveFirstSection();
+  if(typeof updateNavActive==='function') updateNavActive();
 }
 window.addEventListener('scroll',onScroll,{passive:true});
 onScroll();
@@ -675,17 +675,24 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 // ---- scrollspy: подсветка активного пункта меню ----
 (function(){
   const links=[...document.querySelectorAll('.nav-links a')];
-  const map=new Map();
-  links.forEach(a=>{const id=a.getAttribute('href').slice(1);const s=document.getElementById(id);if(s)map.set(s,a);});
-  window.clearNavActiveAboveFirstSection=function(){
-    const first=[...map.keys()][0];
-    if(first && scrollY < first.offsetTop - 180) links.forEach(l=>l.classList.remove('active'));
+  const items=links.map(a=>{
+    const id=a.getAttribute('href').slice(1);
+    return {link:a, section:document.getElementById(id)};
+  }).filter(item=>item.section);
+
+  window.updateNavActive=function(){
+    if(!items.length) return;
+    const y=scrollY + 160;
+    let current=null;
+    for(const item of items){
+      if(item.section.offsetTop <= y) current=item;
+      else break;
+    }
+    if(scrollY < items[0].section.offsetTop - 160) current=null;
+    links.forEach(link=>link.classList.toggle('active', current?.link===link));
   };
-  const spy=new IntersectionObserver((es)=>{
-    es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('active'));const a=map.get(e.target);if(a)a.classList.add('active');}});
-  },{rootMargin:'-45% 0px -50% 0px',threshold:0});
-  map.forEach((a,s)=>spy.observe(s));
-  clearNavActiveAboveFirstSection();
+  addEventListener('resize',updateNavActive,{passive:true});
+  updateNavActive();
 })();
 
 // ---- before/after slider ----
