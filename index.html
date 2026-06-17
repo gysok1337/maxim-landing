@@ -145,9 +145,26 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
 .burger svg{width:20px;height:20px}
 
 /* ---- hero ---- */
-.hero{padding:96px 0 80px;position:relative}
-.fx-grid{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.9}
-.hero .wrap{position:relative;z-index:1}
+.hero{padding:96px 0 80px;position:relative;overflow:hidden;isolation:isolate}
+.hero::before{
+  content:"";position:absolute;inset:-22% -12%;z-index:0;pointer-events:none;opacity:.55;
+  background:
+    linear-gradient(112deg,transparent 0 34%,rgba(198,255,58,.045) 46%,rgba(127,178,255,.032) 53%,transparent 66%),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.018) 0 1px,transparent 1px 82px);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);
+  animation:heroDrift 22s ease-in-out infinite alternate;
+}
+.hero::after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.45;
+  background:linear-gradient(180deg,transparent 0%,rgba(198,255,58,.018) 48%,transparent 100%);
+  transform:translateY(-45%);
+  animation:heroScan 13s linear infinite;
+}
+.fx-grid{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;opacity:.72;mix-blend-mode:screen}
+.hero .wrap{position:relative;z-index:2}
+@keyframes heroDrift{to{transform:translateX(8%) skewX(-2deg)}}
+@keyframes heroScan{to{transform:translateY(85%)}}
 .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
 .hero h1{
   font-family:var(--font-display);font-weight:700;
@@ -227,6 +244,9 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
 .delta .was{color:var(--muted-2);font-size:14px;text-decoration:line-through;text-decoration-color:rgba(255,99,99,.55)}
 .delta .arr{color:var(--accent);font-weight:700;font-family:var(--font-mono)}
 .delta .now{color:var(--text);font-size:14.5px;font-weight:600}
+.case-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.case-hint{margin-top:14px;font-family:var(--font-mono);font-size:12px;color:var(--muted-2);line-height:1.55}
+.case-slider-hint{margin-top:8px;font-family:var(--font-mono);font-size:12px;color:var(--muted-2)}
 
 /* ---- services ---- */
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
@@ -373,9 +393,13 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
   .reveal{opacity:1;transform:none;transition:none}
   .cursor{animation:none}
   .fx-blob{animation:none}
+  .hero::before,.hero::after{animation:none}
   .ba.smooth .after-wrap,.ba.smooth .ba-handle{transition:none}
   .hero h1 .hl::after,.btn-primary::after{transition:none}
   html{scroll-behavior:auto}
+}
+@media (max-width:420px){
+  .case-actions .btn{width:100%;justify-content:center}
 }
 </style>
 </head>
@@ -496,8 +520,12 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
         <li><span class="was">Заявки только по телефону</span><span class="arr" aria-hidden="true">→</span><span class="now">Форма + заявки прямо в Telegram</span></li>
         <li><span class="was">Терялся в поиске</span><span class="arr" aria-hidden="true">→</span><span class="now">Чистая структура и мета под SEO</span></li>
       </ul>
-      <a href="https://mbm-trans.ru" target="_blank" rel="noopener" class="btn btn-ghost">Открыть готовый сайт →</a>
-      <p style="margin-top:14px;font-family:var(--font-mono);font-size:12px;color:var(--muted-2)">↔ потяни за ползунок, чтобы сравнить</p>
+      <div class="case-actions">
+        <a href="https://mbm-trans.ru" target="_blank" rel="noopener" class="btn btn-primary">Новый сайт →</a>
+        <a href="https://mbm-trans.ru/old-site-backup-2026-06-14/index.html" target="_blank" rel="noopener" class="btn btn-ghost">Старая версия ↗</a>
+      </div>
+      <p class="case-hint">Обе версии живые: можно открыть и потыкать, а не только смотреть скриншоты.</p>
+      <p class="case-slider-hint">↔ потяни за ползунок, чтобы сравнить</p>
     </div>
   </div>
 </section>
@@ -842,30 +870,59 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(prefe
   })();
 })();
 
-// ---- интерактивная точечная сетка в hero (реагирует на курсор) ----
+// ---- тихий живой фон в hero: точки + редкие кодовые символы ----
 (function(){
   const cv=document.getElementById('fxGrid'); if(!cv) return;
   const ctx=cv.getContext('2d'), hero=cv.parentElement;
   const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   const fine=matchMedia('(pointer:fine)').matches;
-  const dpr=Math.min(devicePixelRatio||1,2), GAP=34, R=160;
-  let w=0,h=0,mx=-999,my=-999,raf=0;
-  function resize(){const r=hero.getBoundingClientRect();w=r.width;h=r.height;cv.width=w*dpr;cv.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
-  function draw(){
-    ctx.clearRect(0,0,w,h);
+  const dpr=Math.min(devicePixelRatio||1,2), GAP=36, R=170;
+  const glyphs=['#','<>','/','{}','</>'];
+  let w=0,h=0,mx=-999,my=-999,raf=0,nodes=[];
+  function buildNodes(){
+    nodes=[];
+    let i=0;
     for(let y=GAP/2;y<h;y+=GAP){
       for(let x=GAP/2;x<w;x+=GAP){
-        const d=Math.hypot(x-mx,y-my), near=Math.max(0,1-d/R);
-        ctx.beginPath();
-        ctx.arc(x,y,1+near*2.1,0,6.2832);
-        ctx.fillStyle=near>0.03?'rgba(198,255,58,'+(0.06+near*0.4)+')':'rgba(255,255,255,0.03)';
-        ctx.fill();
+        const glyph=(i%13===0||i%17===0)?glyphs[i%glyphs.length]:'';
+        nodes.push({x,y,glyph,phase:(i*0.71)%6.2832});
+        i++;
+      }
+    }
+  }
+  function resize(){
+    const r=hero.getBoundingClientRect();
+    w=r.width;h=r.height;cv.width=w*dpr;cv.height=h*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    buildNodes();
+  }
+  function draw(){
+    const t=performance.now()/1000;
+    ctx.clearRect(0,0,w,h);
+    ctx.font='12px JetBrains Mono, ui-monospace, monospace';
+    ctx.textBaseline='middle';
+    for(const n of nodes){
+      const dx=reduce?0:Math.sin(t*0.28+n.phase)*4.5;
+      const dy=reduce?0:Math.cos(t*0.22+n.phase)*3.5;
+      const x=n.x+dx,y=n.y+dy;
+      const d=Math.hypot(x-mx,y-my), near=Math.max(0,1-d/R);
+      const baseAlpha=n.glyph?0.055:0.028;
+      ctx.beginPath();
+      ctx.arc(x,y,1+near*1.8,0,6.2832);
+      ctx.fillStyle=near>0.03?'rgba(198,255,58,'+(0.08+near*0.34)+')':'rgba(255,255,255,'+baseAlpha+')';
+      ctx.fill();
+      if(n.glyph){
+        ctx.fillStyle=near>0.03?'rgba(198,255,58,'+(0.08+near*0.3)+')':'rgba(154,161,177,0.08)';
+        ctx.fillText(n.glyph,x+8,y-8);
       }
     }
   }
   resize(); addEventListener('resize',resize,{passive:true});
-  if(reduce||!fine){draw();return;}            // статичные точки на тач/при reduced-motion
-  hero.addEventListener('pointermove',(e)=>{const r=hero.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;},{passive:true});
+  if(!fine||reduce){draw();return;}            // статичный фон на тач/при reduced-motion
+  hero.addEventListener('pointermove',(e)=>{
+    const r=hero.getBoundingClientRect();
+    mx=e.clientX-r.left;my=e.clientY-r.top;
+  },{passive:true});
   hero.addEventListener('pointerleave',()=>{mx=-999;my=-999;});
   function loop(){draw();raf=requestAnimationFrame(loop);}
   new IntersectionObserver((es)=>es.forEach(e=>{
