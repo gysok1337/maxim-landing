@@ -208,14 +208,12 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
 .ba:hover .ba-knob{box-shadow:0 0 0 6px var(--accent-glow),0 8px 24px -6px var(--accent-glow)}
 .case-text h3{font-family:var(--font-display);font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 .case-text h4{font-family:var(--font-display);font-size:28px;font-weight:700;letter-spacing:-.01em;margin-bottom:18px}
-.case-list{list-style:none;margin:0 0 26px;display:grid;gap:13px}
-.case-list li{display:flex;gap:12px;align-items:flex-start;color:var(--muted);font-size:16px}
-.case-list .ic{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:var(--accent-glow);color:var(--accent);display:grid;place-items:center;margin-top:2px}
-.case-list .ic svg{width:13px;height:13px}
-.case-meta{display:flex;gap:26px;margin-bottom:26px;flex-wrap:wrap}
-.case-meta div{font-family:var(--font-display)}
-.case-meta b{display:block;font-size:26px;color:var(--accent);font-weight:700;line-height:1}
-.case-meta span{font-size:13px;color:var(--muted-2)}
+.delta{list-style:none;margin:0 0 26px;display:grid;gap:10px}
+.delta li{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;transition:border-color .2s}
+.delta li:hover{border-color:var(--line-strong)}
+.delta .was{color:var(--muted-2);font-size:14px;text-decoration:line-through;text-decoration-color:rgba(255,99,99,.55)}
+.delta .arr{color:var(--accent);font-weight:700;font-family:var(--font-mono)}
+.delta .now{color:var(--text);font-size:14.5px;font-weight:600}
 
 /* ---- services ---- */
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
@@ -250,6 +248,19 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
 .feat .ic svg{width:21px;height:21px}
 .feat h3{font-family:var(--font-display);font-size:17px;font-weight:600;margin-bottom:7px}
 .feat p{color:var(--muted);font-size:14.5px}
+
+/* ---- about (личный блок) ---- */
+.about-grid{display:grid;grid-template-columns:.78fr 1fr;gap:48px;align-items:center}
+.about-photo{aspect-ratio:4/5;border-radius:20px;overflow:hidden;border:1px solid var(--line-strong);position:relative;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 30%, rgba(198,255,58,.14), transparent 60%), linear-gradient(180deg,var(--surface-2),var(--bg-2));
+  box-shadow:0 40px 90px -50px rgba(0,0,0,.9)}
+.about-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.about-photo .avatar{font-family:var(--font-display);font-weight:700;font-size:clamp(80px,13vw,150px);color:var(--accent);line-height:1}
+.about-photo .cap{position:absolute;bottom:16px;font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;color:var(--muted-2);text-transform:uppercase}
+.about-text h2{font-family:var(--font-display);font-weight:700;font-size:clamp(26px,3.4vw,40px);letter-spacing:-.02em;line-height:1.08;margin:14px 0 18px}
+.about-text p{color:var(--muted);font-size:16.5px;margin-bottom:14px}
+.about-text p b{color:var(--text);font-weight:600}
+.about-actions{margin-top:24px;display:flex;gap:14px;flex-wrap:wrap}
 
 /* ---- tech strip ---- */
 .tech{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:rgba(255,255,255,.012)}
@@ -330,6 +341,10 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
   .sec{padding:64px 0}
   .hero{padding:64px 0 56px}
   .cta-box{padding:40px 22px}
+  .delta li{grid-template-columns:1fr;gap:3px}
+  .delta .arr{display:none}
+  .about-grid{grid-template-columns:1fr;gap:30px}
+  .about-photo{max-width:300px}
 }
 /* on phones keep only the logo + burger in the bar (Telegram CTA lives in the menu) */
 @media (max-width:600px){
@@ -450,17 +465,12 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
     <div class="case-text reveal">
       <h3>Реальный кейс</h3>
       <h4>MBM-Trans — перевозки негабарита</h4>
-      <ul class="case-list">
-        <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Старый сайт на MODX тормозил и не открывался нормально на телефоне</span></li>
-        <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Пересобрал дизайн: чистая структура, крупная типографика, акценты</span></li>
-        <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Сжал изображения и ускорил загрузку в несколько раз</span></li>
-        <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span>Добавил форму заявки, FAQ, карту и адаптив под все экраны</span></li>
+      <ul class="delta">
+        <li><span class="was">Не открывался на телефоне</span><span class="arr" aria-hidden="true">→</span><span class="now">Идеально на телефоне и ПК</span></li>
+        <li><span class="was">Устаревший вид, тяжёлый MODX</span><span class="arr" aria-hidden="true">→</span><span class="now">Современный дизайн, лёгкий и быстрый</span></li>
+        <li><span class="was">Заявки только по телефону</span><span class="arr" aria-hidden="true">→</span><span class="now">Форма + заявки прямо в Telegram</span></li>
+        <li><span class="was">Терялся в поиске</span><span class="arr" aria-hidden="true">→</span><span class="now">Чистая структура и мета под SEO</span></li>
       </ul>
-      <div class="case-meta">
-        <div><b data-count="20" data-suffix=" лет">0</b><span>опыта клиента — на сайте</span></div>
-        <div><b data-count="100" data-suffix="%">0</b><span>адаптив под телефон</span></div>
-        <div><b data-count="4" data-prefix="×">0</b><span>быстрее загрузка</span></div>
-      </div>
       <a href="https://mbm-trans.ru" target="_blank" rel="noopener" class="btn btn-ghost">Открыть готовый сайт →</a>
       <p style="margin-top:14px;font-family:var(--font-mono);font-size:12px;color:var(--muted-2)">↔ потяни за ползунок, чтобы сравнить</p>
     </div>
@@ -480,20 +490,20 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
         <div class="num">01</div>
         <h3>Лендинг под ключ</h3>
         <p>Одностраничник, который продаёт: цепляющий первый экран, выгоды, отзывы, форма заявки. Идеально под рекламу и услугу.</p>
-        <div class="price"><span class="from">от</span><b>15 000 ₽</b></div>
+        <div class="price"><span class="from">от</span><b>20 000 ₽</b></div>
       </div>
       <div class="card popular reveal">
         <span class="badge">Чаще всего</span>
         <div class="num">02</div>
         <h3>Редизайн старого сайта</h3>
         <p>Беру ваш устаревший сайт и превращаю в современный и быстрый — как в кейсе MBM-Trans. Контент сохраняю.</p>
-        <div class="price"><span class="from">от</span><b>20 000 ₽</b></div>
+        <div class="price"><span class="from">от</span><b>25 000 ₽</b></div>
       </div>
       <div class="card reveal">
         <div class="num">03</div>
         <h3>Корпоративный сайт / каталог</h3>
         <p>Многостраничник с услугами, проектами и каталогом. Удобная структура, SEO-база, понятная админка.</p>
-        <div class="price"><span class="from">от</span><b>35 000 ₽</b></div>
+        <div class="price"><span class="from">от</span><b>40 000 ₽</b></div>
       </div>
     </div>
   </div>
@@ -552,6 +562,28 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
   </div>
 </section>
 
+<!-- ABOUT -->
+<section class="sec" id="about">
+  <div class="wrap about-grid">
+    <div class="about-photo reveal">
+      <!-- ФОТО: замените <span class="avatar">М</span> на <img src="assets/maxim.jpg" alt="Максим"> -->
+      <span class="avatar">М</span>
+      <span class="cap">Максим · web-разработчик</span>
+    </div>
+    <div class="about-text reveal">
+      <div class="mono">Обо мне</div>
+      <h2>Привет, я Максим</h2>
+      <p>Частный веб-разработчик. Делаю сайты с нуля и переделываю старые — от первого экрана до запуска на вашем домене.</p>
+      <p>Вы работаете <b>со мной напрямую</b>: без менеджеров, студий и испорченного телефона. Поэтому быстро, прозрачно по цене и с заботой о результате, а не «лишь бы сдать».</p>
+      <p>Отвечаю обычно за пару часов, объясняю по-человечески и не растягиваю проект на месяцы.</p>
+      <div class="about-actions">
+        <a href="https://t.me/YTKON0S" target="_blank" rel="noopener" class="btn btn-primary">Написать в Telegram →</a>
+        <a href="#case" class="btn btn-ghost">Смотреть кейс</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FAQ -->
 <section class="sec" id="faq">
   <div class="wrap">
@@ -562,7 +594,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
     <div class="faq reveal">
       <details class="q">
         <summary>Сколько стоит сайт?<span class="pl"></span></summary>
-        <div class="a">Зависит от объёма: лендинг — от 15 000 ₽, редизайн — от 20 000 ₽, многостраничник — от 35 000 ₽. Точную сумму назову после короткого брифа и зафиксирую до старта — без доплат по ходу.</div>
+        <div class="a">Зависит от объёма: лендинг — от 20 000 ₽, редизайн — от 25 000 ₽, многостраничник — от 40 000 ₽. Точную сумму назову после короткого брифа и зафиксирую до старта — без доплат по ходу.</div>
       </details>
       <details class="q">
         <summary>Какие сроки?<span class="pl"></span></summary>
@@ -735,24 +767,6 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(prefe
     btn.addEventListener('pointerleave',()=>{btn.style.transform='';});
   });
 }
-
-// ---- count-up статистики в кейсе ----
-(function(){
-  const meta=document.querySelector('.case-meta'); if(!meta) return;
-  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  function run(b){
-    const target=+b.dataset.count, pre=b.dataset.prefix||'', suf=b.dataset.suffix||'';
-    if(reduce){b.textContent=pre+target+suf;return;}
-    const dur=1200, t0=performance.now();
-    (function tick(now){
-      const p=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-p,3);
-      b.textContent=pre+Math.round(target*e)+suf;
-      if(p<1)requestAnimationFrame(tick);
-    })(performance.now());
-  }
-  const obs=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){meta.querySelectorAll('b[data-count]').forEach(run);obs.disconnect();}});},{threshold:.4});
-  obs.observe(meta);
-})();
 
 // ---- лаймовый свет следует за курсором (+ лёгкий дрейф) ----
 (function(){
