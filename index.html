@@ -76,13 +76,13 @@ body::after{
   -webkit-mask-image:radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 80%);
           mask-image:radial-gradient(120% 90% at 50% 0%, #000 30%, transparent 80%);
 }
-/* breathing lime light */
+/* lime light that follows the cursor (JS-driven) */
 .fx-blob{
-  position:fixed;z-index:-2;width:48vw;height:48vw;left:58%;top:-12%;border-radius:50%;
-  background:radial-gradient(circle at 50% 50%, rgba(198,255,58,.14), transparent 62%);
-  filter:blur(30px);pointer-events:none;animation:breathe 14s ease-in-out infinite;
+  position:fixed;z-index:-2;width:46vw;height:46vw;left:0;top:0;margin:-23vw 0 0 -23vw;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%, rgba(198,255,58,.16), transparent 62%);
+  filter:blur(30px);pointer-events:none;will-change:transform;
+  transform:translate3d(58vw,8vh,0);
 }
-@keyframes breathe{0%,100%{transform:translate(0,0) scale(1);opacity:.85}50%{transform:translate(-4%,3%) scale(1.12);opacity:1}}
 /* fine film grain over everything (premium texture) */
 .fx-grain{
   position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
@@ -101,7 +101,7 @@ section{position:relative}
 .btn{
   display:inline-flex;align-items:center;gap:9px;
   font-family:var(--font-display);font-weight:600;font-size:15px;
-  padding:14px 24px;border-radius:12px;cursor:pointer;border:1px solid transparent;
+  padding:14px 24px;border-radius:12px;cursor:pointer;border:1px solid transparent;white-space:nowrap;
   transition:transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
 }
 .btn-primary{background:var(--accent);color:#0a0b0e;box-shadow:0 0 0 0 var(--accent-glow);position:relative;overflow:hidden}
@@ -127,7 +127,7 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
   background:var(--accent);color:#0a0b0e;font-weight:700;font-size:19px;
   box-shadow:0 8px 24px -8px var(--accent-glow);
 }
-.logo small{color:var(--muted);font-weight:400;font-size:12px;font-family:var(--font-mono);letter-spacing:.02em}
+.logo small{color:var(--muted);font-weight:400;font-size:12px;font-family:var(--font-mono);letter-spacing:.02em;white-space:nowrap}
 .nav-links{display:flex;gap:30px;align-items:center}
 .nav-links a{position:relative;color:var(--muted);font-size:15px;font-weight:500;transition:color .15s}
 .nav-links a:hover{color:var(--text)}
@@ -138,14 +138,16 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
 .burger svg{width:20px;height:20px}
 
 /* ---- hero ---- */
-.hero{padding:96px 0 80px}
+.hero{padding:96px 0 80px;position:relative}
+.fx-grid{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.9}
+.hero .wrap{position:relative;z-index:1}
 .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center}
 .hero h1{
   font-family:var(--font-display);font-weight:700;
   font-size:clamp(38px,5.4vw,68px);line-height:1.02;letter-spacing:-.025em;
   margin:22px 0 22px;
 }
-.hero h1 .hl{color:var(--accent);position:relative;white-space:nowrap}
+.hero h1 .hl{color:var(--accent);position:relative;white-space:nowrap;display:inline-block}
 .hero h1 .hl::after{content:"";position:absolute;left:0;right:0;bottom:.04em;height:.1em;border-radius:2px;background:var(--accent);box-shadow:0 0 16px var(--accent-glow);transform:scaleX(0);transform-origin:left;transition:transform .8s cubic-bezier(.4,0,.2,1) .35s}
 .reveal.in .hl::after{transform:scaleX(1)}
 .hero p.lead{font-size:19px;color:var(--muted);max-width:30em;margin-bottom:34px}
@@ -311,20 +313,27 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
   .steps{grid-template-columns:repeat(2,1fr)}
   .why{grid-template-columns:1fr 1fr}
 }
-@media (max-width:680px){
-  body{font-size:16px}
+/* collapse nav to burger early enough that links/buttons never wrap */
+@media (max-width:1024px){
   .nav-links{display:none}
   .nav-cta .btn-ghost{display:none}
   .burger{display:grid;place-items:center}
+  .mobile-menu{position:fixed;inset:70px 0 auto 0;z-index:49;background:var(--bg-2);border-bottom:1px solid var(--line);padding:18px 24px 26px;flex-direction:column;gap:4px}
+  .mobile-menu.open{display:flex}
+  .mobile-menu a{padding:13px 4px;color:var(--text);font-size:17px;border-bottom:1px solid var(--line);font-family:var(--font-display)}
+  .mobile-menu a:last-child{border:0}
+}
+@media (max-width:680px){
+  body{font-size:16px}
   .cards{grid-template-columns:1fr}
   .why{grid-template-columns:1fr}
   .sec{padding:64px 0}
   .hero{padding:64px 0 56px}
   .cta-box{padding:40px 22px}
-  .mobile-menu{position:fixed;inset:70px 0 auto 0;z-index:49;background:var(--bg-2);border-bottom:1px solid var(--line);padding:18px 24px 26px;flex-direction:column;gap:4px}
-  .mobile-menu.open{display:flex}
-  .mobile-menu a{padding:13px 4px;color:var(--text);font-size:17px;border-bottom:1px solid var(--line);font-family:var(--font-display)}
-  .mobile-menu a:last-child{border:0}
+}
+/* on phones keep only the logo + burger in the bar (Telegram CTA lives in the menu) */
+@media (max-width:600px){
+  .nav-cta .btn-primary{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   .reveal{opacity:1;transform:none;transition:none}
@@ -374,6 +383,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 
 <!-- HERO -->
 <section class="hero">
+  <canvas class="fx-grid" id="fxGrid" aria-hidden="true"></canvas>
   <div class="wrap hero-grid">
     <div class="reveal">
       <div class="mono">Лендинги · Корпоративные сайты · Редизайн</div>
@@ -424,10 +434,10 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 <section class="case sec" id="case">
   <div class="wrap case-grid">
     <div class="reveal ba" id="ba" tabindex="0" role="slider" aria-label="Сравнение: было и стало" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
-      <img src="assets/screens/after.png" alt="Новый сайт MBM-Trans">
+      <img src="assets/screens/after.webp" alt="Новый сайт MBM-Trans" width="1280" height="860" loading="lazy">
       <div class="after-wrap" id="afterWrap">
         <div class="ba-after-inner" id="afterInner">
-          <img src="assets/screens/before.png" alt="Старый сайт MBM-Trans">
+          <img src="assets/screens/before.webp" alt="Старый сайт MBM-Trans" width="1280" height="860" loading="lazy">
         </div>
       </div>
       <span class="ba-tag before">Было</span>
@@ -589,7 +599,6 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
       <p>Нужен сайт с нуля или переделать старый? Напишите в Telegram пару слов о проекте, отвечу с оценкой и сроком.</p>
       <div class="cta-actions">
         <a href="https://t.me/YTKON0S" target="_blank" rel="noopener" class="btn btn-tg"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21.9 4.3 18.6 20c-.25 1.1-.9 1.37-1.83.85l-5.05-3.72-2.44 2.35c-.27.27-.5.5-1.02.5l.36-5.14L17.9 6.3c.4-.36-.09-.56-.62-.2L6.27 13.1l-4.96-1.55c-1.08-.34-1.1-1.08.23-1.6l19.4-7.48c.9-.33 1.68.2 1.38 1.43z"/></svg>Написать в Telegram</a>
-        <a href="mailto:mmocaluk@gmail.com" class="btn btn-ghost">Написать на почту</a>
       </div>
     </div>
   </div>
@@ -742,6 +751,75 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(prefe
   }
   const obs=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){meta.querySelectorAll('b[data-count]').forEach(run);obs.disconnect();}});},{threshold:.4});
   obs.observe(meta);
+})();
+
+// ---- лаймовый свет следует за курсором (+ лёгкий дрейф) ----
+(function(){
+  const blob=document.querySelector('.fx-blob'); if(!blob) return;
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(reduce){blob.style.transform='translate3d('+(innerWidth*0.62)+'px,'+(innerHeight*0.12)+'px,0)';return;}
+  let tx=innerWidth*0.62, ty=innerHeight*0.12, cx=tx, cy=ty, t=0;
+  if(matchMedia('(pointer:fine)').matches){
+    addEventListener('pointermove',(e)=>{tx=e.clientX;ty=e.clientY;},{passive:true});
+  }
+  (function loop(){
+    t+=0.016;
+    const dx=Math.sin(t*0.5)*40, dy=Math.cos(t*0.4)*30;
+    cx+=((tx+dx)-cx)*0.05; cy+=((ty+dy)-cy)*0.05;
+    blob.style.transform='translate3d('+cx.toFixed(1)+'px,'+cy.toFixed(1)+'px,0)';
+    requestAnimationFrame(loop);
+  })();
+})();
+
+// ---- интерактивная точечная сетка в hero (реагирует на курсор) ----
+(function(){
+  const cv=document.getElementById('fxGrid'); if(!cv) return;
+  const ctx=cv.getContext('2d'), hero=cv.parentElement;
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const fine=matchMedia('(pointer:fine)').matches;
+  const dpr=Math.min(devicePixelRatio||1,2), GAP=34, R=160;
+  let w=0,h=0,mx=-999,my=-999,raf=0;
+  function resize(){const r=hero.getBoundingClientRect();w=r.width;h=r.height;cv.width=w*dpr;cv.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    for(let y=GAP/2;y<h;y+=GAP){
+      for(let x=GAP/2;x<w;x+=GAP){
+        const d=Math.hypot(x-mx,y-my), near=Math.max(0,1-d/R);
+        ctx.beginPath();
+        ctx.arc(x,y,1+near*2.8,0,6.2832);
+        ctx.fillStyle=near>0.03?'rgba(198,255,58,'+(0.1+near*0.7)+')':'rgba(255,255,255,0.045)';
+        ctx.fill();
+      }
+    }
+  }
+  resize(); addEventListener('resize',resize,{passive:true});
+  if(reduce||!fine){draw();return;}            // статичные точки на тач/при reduced-motion
+  hero.addEventListener('pointermove',(e)=>{const r=hero.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;},{passive:true});
+  hero.addEventListener('pointerleave',()=>{mx=-999;my=-999;});
+  function loop(){draw();raf=requestAnimationFrame(loop);}
+  new IntersectionObserver((es)=>es.forEach(e=>{
+    if(e.isIntersecting&&!raf)loop();
+    else if(!e.isIntersecting&&raf){cancelAnimationFrame(raf);raf=0;}
+  })).observe(hero);
+})();
+
+// ---- scramble-эффект на акцентном слове (techno-вайб) ----
+(function(){
+  const el=document.querySelector('.hero h1 .hl'); if(!el) return;
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  const final=el.textContent, glyphs='абвгдежзиклмнопрстухцчшщ@#%&_/\\<>';
+  let raf, frame=0;
+  function scramble(){
+    cancelAnimationFrame(raf); frame=0;
+    (function step(){
+      let out='';
+      for(let i=0;i<final.length;i++) out += (i<frame/3) ? final[i] : glyphs[Math.floor(Math.random()*glyphs.length)];
+      el.textContent=out; frame++;
+      if(frame/3<final.length) raf=requestAnimationFrame(step); else el.textContent=final;
+    })();
+  }
+  setTimeout(scramble,450);
+  el.addEventListener('pointerenter',scramble);
 })();
 </script>
 </body>
