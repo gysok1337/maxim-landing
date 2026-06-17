@@ -78,9 +78,9 @@ body::after{
 }
 /* lime light that follows the cursor (JS-driven) */
 .fx-blob{
-  position:fixed;z-index:-2;width:46vw;height:46vw;left:0;top:0;margin:-23vw 0 0 -23vw;border-radius:50%;
-  background:radial-gradient(circle at 50% 50%, rgba(198,255,58,.16), transparent 62%);
-  filter:blur(30px);pointer-events:none;will-change:transform;
+  position:fixed;z-index:-2;width:40vw;height:40vw;left:0;top:0;margin:-20vw 0 0 -20vw;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%, rgba(198,255,58,.09), transparent 60%);
+  filter:blur(34px);pointer-events:none;will-change:transform;
   transform:translate3d(58vw,8vh,0);
 }
 /* fine film grain over everything (premium texture) */
@@ -187,9 +187,9 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
   border:1px solid var(--line-strong);touch-action:pan-y;
   user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;
   box-shadow:0 40px 90px -45px rgba(0,0,0,.9);
-  background:#000;
-  cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Ccircle cx='18' cy='18' r='15' fill='%23c6ff3a'/%3E%3Cg stroke='%230a0b0e' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 13l-5 5 5 5M23 13l5 5-5 5M9 18h18'/%3E%3C/g%3E%3C/svg%3E") 18 18, ew-resize;
+  background:#000;cursor:ew-resize;
 }
+.ba.grabbing{cursor:grabbing}
 .ba:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
 .ba img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
 .ba .after-wrap{position:absolute;inset:0;overflow:hidden;width:50%}
@@ -689,13 +689,13 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
   // pointer drag (мышь + тач в одном API)
   ba.addEventListener('pointerdown',(e)=>{
     e.preventDefault();                 // не даём браузеру выделять текст
-    dragging=true;ba.classList.remove('smooth');
+    dragging=true;ba.classList.remove('smooth');ba.classList.add('grabbing');
     document.body.style.userSelect='none';
     try{ba.setPointerCapture(e.pointerId);}catch(_){}
     cacheRect();setFromX(e.clientX);
   });
   ba.addEventListener('pointermove',(e)=>{if(dragging)setFromX(e.clientX);});
-  function stop(){dragging=false;document.body.style.userSelect='';}
+  function stop(){dragging=false;ba.classList.remove('grabbing');document.body.style.userSelect='';}
   ba.addEventListener('pointerup',stop);
   ba.addEventListener('pointercancel',stop);
   ba.addEventListener('dragstart',(e)=>e.preventDefault());
@@ -716,7 +716,8 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
         ba.classList.add('smooth');
         setTimeout(()=>{pct=34;apply();},400);
         setTimeout(()=>{pct=66;apply();},950);
-        setTimeout(()=>{pct=50;apply();ba.classList.remove('smooth');},1550);
+        setTimeout(()=>{pct=50;apply();},1500);               // плавно возвращаемся в центр
+        setTimeout(()=>{ba.classList.remove('smooth');},2200); // снимаем плавность только после возврата
       }
     });
   },{threshold:.5});
@@ -786,8 +787,8 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(prefe
       for(let x=GAP/2;x<w;x+=GAP){
         const d=Math.hypot(x-mx,y-my), near=Math.max(0,1-d/R);
         ctx.beginPath();
-        ctx.arc(x,y,1+near*2.8,0,6.2832);
-        ctx.fillStyle=near>0.03?'rgba(198,255,58,'+(0.1+near*0.7)+')':'rgba(255,255,255,0.045)';
+        ctx.arc(x,y,1+near*2.1,0,6.2832);
+        ctx.fillStyle=near>0.03?'rgba(198,255,58,'+(0.06+near*0.4)+')':'rgba(255,255,255,0.03)';
         ctx.fill();
       }
     }
@@ -807,8 +808,11 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(prefe
 (function(){
   const el=document.querySelector('.hero h1 .hl'); if(!el) return;
   if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  const final=el.textContent, glyphs='абвгдежзиклмнопрстухцчшщ@#%&_/\\<>';
+  // узкий набор символов (близких по ширине), чтобы строка не дёргалась
+  const final=el.textContent, glyphs='абвгдеиклнортухзсц013579/\\<>=';
   let raf, frame=0;
+  // фиксируем ширину по финальному слову — без сдвигов и переноса строки
+  function lockWidth(){ el.style.width='auto'; el.style.width=Math.ceil(el.getBoundingClientRect().width)+'px'; }
   function scramble(){
     cancelAnimationFrame(raf); frame=0;
     (function step(){
@@ -818,7 +822,9 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(prefe
       if(frame/3<final.length) raf=requestAnimationFrame(step); else el.textContent=final;
     })();
   }
-  setTimeout(scramble,450);
+  function start(){ lockWidth(); setTimeout(scramble,450); }
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(start);
+  let rt; addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ cancelAnimationFrame(raf); el.textContent=final; lockWidth(); },150); });
   el.addEventListener('pointerenter',scramble);
 })();
 </script>
