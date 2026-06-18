@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Максим — делаю и переделываю сайты</title>
-<meta name="description" content="Лендинги, корпоративные сайты и редизайн старых сайтов. Быстро, адаптивно, с заявками. Реальный кейс — было/стало.">
+<title>Максим — делаю продающие сайты и редизайн</title>
+<meta name="description" content="Лендинги, корпоративные сайты и редизайн старых сайтов. Делаю не просто страницу, а сайт под заявки: структура, тексты, адаптив, формы и запуск.">
 
 <!-- ============================================================
      БРЕНД — меняется в одном месте.
@@ -13,8 +13,8 @@
      ============================================================ -->
 
 <meta name="theme-color" content="#0a0b0e">
-<meta property="og:title" content="Максим — делаю и переделываю сайты">
-<meta property="og:description" content="Лендинги, корпоративные сайты и редизайн старых сайтов. Собираю с нуля и довожу до запуска.">
+<meta property="og:title" content="Максим — делаю продающие сайты и редизайн">
+<meta property="og:description" content="Лендинги, корпоративные сайты и редизайн старых сайтов. Собираю с нуля, усиливаю структуру и довожу до запуска.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://maksim-site.ru/">
 <meta property="og:image" content="https://maksim-site.ru/assets/og-preview.png?v=20260618-2">
@@ -320,6 +320,31 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
 .tech-row .chip{font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--muted);transition:color .2s}
 .tech-row .chip:hover{color:var(--accent)}
 
+/* ---- result promise ---- */
+.result{
+  border-bottom:1px solid var(--line);
+  background:
+    radial-gradient(900px 520px at 72% 8%, rgba(198,255,58,.055), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.012), transparent);
+}
+.result-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:34px;align-items:start}
+.result-copy h2{font-family:var(--font-display);font-weight:700;font-size:clamp(28px,3.7vw,46px);letter-spacing:-.02em;line-height:1.06;margin:14px 0 18px}
+.result-copy p{color:var(--muted);font-size:17px;max-width:35em;margin-bottom:16px}
+.result-copy p b{color:var(--text);font-weight:600}
+.result-note{font-family:var(--font-mono);font-size:12.5px;color:var(--muted-2);margin-top:22px;line-height:1.65}
+.result-note b{color:var(--accent);font-weight:500}
+.result-panel{display:grid;gap:12px}
+.result-item{
+  display:grid;grid-template-columns:auto 1fr;gap:16px;
+  padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--surface);
+  transition:border-color .2s, transform .2s, background .2s;
+}
+.result-item:hover{border-color:var(--line-strong);background:var(--surface-2);transform:translateY(-2px)}
+.result-num{font-family:var(--font-mono);font-size:12px;color:var(--accent);padding-top:3px}
+.result-item h3{font-family:var(--font-display);font-size:19px;font-weight:600;letter-spacing:-.01em;margin-bottom:5px}
+.result-item p{color:var(--muted);font-size:14.5px;line-height:1.55}
+.result-item strong{color:var(--text);font-weight:600}
+
 /* ---- faq ---- */
 .faq{max-width:760px;margin:0 auto;display:grid;gap:12px}
 .q{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden;transition:border-color .2s}
@@ -368,6 +393,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
   .hero-grid{grid-template-columns:1fr;gap:40px}
   .term{order:2}
   .case-grid{grid-template-columns:1fr;gap:34px}
+  .result-grid{grid-template-columns:1fr}
   .included-head{display:block}
   .included-head .mono{display:block;margin-bottom:10px}
   .included-list{grid-template-columns:1fr 1fr}
@@ -457,12 +483,12 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
     <div class="reveal">
       <div class="mono">Лендинги · Корпоративные сайты · Редизайн</div>
       <h1>Делаю сайты,<br>которые <span class="hl">работают</span><br>на вас</h1>
-      <p class="lead">Соберу с нуля или переделаю старый сайт в современный, быстрый и адаптивный — такой, что приносит заявки, а не пылится в поисковой выдаче.</p>
+      <p class="lead">Соберу с нуля или переделаю старый сайт в современный, быстрый и адаптивный. Не просто «красивую страницу», а понятный путь к заявке: структура, оффер, доверие, форма и запуск.</p>
       <div class="hero-actions">
         <a href="https://t.me/YTKON0S" target="_blank" rel="noopener" class="btn btn-primary">Обсудить проект →</a>
         <a href="#case" class="btn btn-ghost">Кейс: было / стало</a>
       </div>
-      <div class="hero-note">Отвечаю обычно за <b>пару часов</b>. Первая консультация и оценка — бесплатно.</div>
+      <div class="hero-note">Отвечаю обычно за <b>пару часов</b>. Первая консультация, оценка старого сайта и план работ — бесплатно.</div>
     </div>
 
     <div class="reveal term" aria-hidden="true">
@@ -475,8 +501,10 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
         <div class="ln"><span class="k">const</span> site = {</div>
         <div class="ln">&nbsp;&nbsp;адаптив:&nbsp;<span class="s">'телефон + ПК'</span>,</div>
         <div class="ln">&nbsp;&nbsp;скорость:&nbsp;<span class="s">'&lt; 1.5 сек'</span>,</div>
+        <div class="ln">&nbsp;&nbsp;цель:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">'заявки и доверие'</span>,</div>
         <div class="ln">&nbsp;&nbsp;заявки:&nbsp;&nbsp;&nbsp;<span class="s">'на почту + Telegram'</span>,</div>
         <div class="ln">&nbsp;&nbsp;дизайн:&nbsp;&nbsp;&nbsp;<span class="s">'под вашу нишу'</span>,</div>
+        <div class="ln">&nbsp;&nbsp;правки:&nbsp;&nbsp;&nbsp;<span class="s">'довожу до запуска'</span>,</div>
         <div class="ln">&nbsp;&nbsp;срок:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="s">'от 3 дней'</span></div>
         <div class="ln">};</div>
         <div class="ln"><span class="k">deploy</span>(site)<span class="cursor"></span></div>
@@ -496,6 +524,42 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
     <span class="chip">SEO-база</span>
     <span class="chip">Скорость</span>
     <span class="chip">Редизайн</span>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section class="result sec" id="result">
+  <div class="wrap result-grid">
+    <div class="result-copy reveal">
+      <div class="mono">Подход</div>
+      <h2>Вы получаете не просто сайт, а рабочую точку входа для клиентов</h2>
+      <p>Продажи зависят от трафика и самого предложения, поэтому я честно <b>отвечаю за свою часть результата</b>: чтобы сайт понятно объяснял услугу, вызывал доверие, быстро открывался и не мешал человеку оставить заявку.</p>
+      <p>Если сайт уже есть, сначала бесплатно посмотрю, что в нём слабое: структура, тексты, мобильная версия, формы, скорость и общий вид.</p>
+      <div class="result-note">Можно начать без большого ТЗ: пришлите ссылку или пару слов о задаче — я скажу, <b>что стоит доделать, переделать или собрать с нуля</b>.</div>
+    </div>
+    <div class="result-panel">
+      <div class="result-item reveal">
+        <div class="result-num">01</div>
+        <div>
+          <h3>Бесплатная оценка старого сайта</h3>
+          <p>Покажу, где теряются заявки: слабый первый экран, непонятный оффер, плохой адаптив, лишние блоки или неудобная форма.</p>
+        </div>
+      </div>
+      <div class="result-item reveal">
+        <div class="result-num">02</div>
+        <div>
+          <h3>План работ или мини-драфт</h3>
+          <p>Перед стартом можно наметить новый первый экран, структуру и примерный стиль, чтобы было понятно, <strong>куда двигаемся</strong>.</p>
+        </div>
+      </div>
+      <div class="result-item reveal">
+        <div class="result-num">03</div>
+        <div>
+          <h3>Доделаю, переделаю, доведу</h3>
+          <p>Не бросаю на «почти готово»: проверяю адаптив, формы, домен, базовое SEO и финальные правки перед публикацией.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -547,13 +611,13 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
     <div class="sec-head reveal">
       <div class="mono">Услуги</div>
       <h2>Что я делаю</h2>
-      <p>Полный цикл — от идеи и текста до запуска на вашем домене. Быстрый лендинг и глубокий редизайн — разные задачи, поэтому я разделяю их по цене и объёму работы.</p>
+      <p>Полный цикл — от идеи и текста до запуска на вашем домене. Делаю сайт не ради галочки, а чтобы человек понял предложение и мог быстро оставить заявку.</p>
     </div>
     <div class="cards">
       <div class="card reveal">
         <div class="num">01</div>
-        <h3>Лендинг под ключ</h3>
-        <p>Одностраничник под услугу или рекламу: первый экран, выгоды, блок доверия, FAQ и форма заявки. Быстро, без лишней сложности.</p>
+        <h3>Продающий лендинг</h3>
+        <p>Одностраничник под услугу или рекламу: сильный первый экран, выгоды, доверие, FAQ и форма заявки. Быстро, без лишней сложности.</p>
         <div class="price"><span class="from">от</span><b>20 000 ₽</b></div>
       </div>
       <div class="card popular reveal">
@@ -566,7 +630,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
       <div class="card reveal">
         <div class="num">03</div>
         <h3>Корпоративный сайт / каталог</h3>
-        <p>Многостраничник с услугами, проектами и каталогом. Удобная структура, SEO-база, понятная админка.</p>
+        <p>Многостраничник с услугами, проектами и каталогом. Удобная структура, SEO-база, понятная админка и понятный путь к обращению.</p>
         <div class="price"><span class="from">от</span><b>60 000 ₽</b></div>
       </div>
     </div>
@@ -596,8 +660,8 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
       <p>Прозрачно и без сюрпризов. Вы видите результат на каждом этапе.</p>
     </div>
     <div class="steps">
-      <div class="step reveal"><h3>Бриф</h3><p>Созваниваемся или списываемся, разбираю задачу, цели и нишу. Фиксирую смету и срок.</p></div>
-      <div class="step reveal"><h3>Дизайн</h3><p>Собираю прототип и стиль. Согласуем первый экран и структуру до вёрстки.</p></div>
+      <div class="step reveal"><h3>Оценка</h3><p>Списываемся, смотрю задачу или старый сайт. Показываю слабые места, план работ, смету и срок.</p></div>
+      <div class="step reveal"><h3>Драфт</h3><p>Собираю структуру и направление дизайна. Согласуем первый экран и логику страницы до вёрстки.</p></div>
       <div class="step reveal"><h3>Вёрстка</h3><p>Делаю адаптивный сайт, наполняю контентом, подключаю формы и аналитику.</p></div>
       <div class="step reveal"><h3>Запуск</h3><p>Выкладываю на ваш домен, проверяю на всех экранах, довожу правки и передаю доступы.</p></div>
     </div>
@@ -717,7 +781,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
     <div class="cta-box reveal">
       <div class="mono" style="margin-bottom:14px">Свободен для заказа</div>
       <h2>Расскажите про задачу —<br>доведу сайт до результата</h2>
-      <p>Нужен сайт с нуля или переделать старый? Напишите в Telegram пару слов о проекте или пришлите ссылку — отвечу с оценкой и сроком.</p>
+      <p>Нужен сайт с нуля или переделать старый? Напишите в Telegram пару слов о проекте или пришлите ссылку — бесплатно разберу, что можно улучшить, и скажу срок/цену.</p>
       <div class="cta-actions">
         <a href="https://t.me/YTKON0S" target="_blank" rel="noopener" class="btn btn-tg"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21.9 4.3 18.6 20c-.25 1.1-.9 1.37-1.83.85l-5.05-3.72-2.44 2.35c-.27.27-.5.5-1.02.5l.36-5.14L17.9 6.3c.4-.36-.09-.56-.62-.2L6.27 13.1l-4.96-1.55c-1.08-.34-1.1-1.08.23-1.6l19.4-7.48c.9-.33 1.68.2 1.38 1.43z"/></svg>Написать в Telegram</a>
       </div>
