@@ -390,14 +390,9 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 .js .card.reveal.in:hover{transform:translateY(-3px)}
 
 /* ===== motion enhancements (motionsites-inspired, tasteful) ===== */
-/* scroll progress bar */
-.scroll-prog{position:fixed;top:0;left:0;height:3px;width:100%;z-index:60;background:var(--accent);transform:scaleX(0);transform-origin:left;box-shadow:0 0 12px var(--accent-glow);will-change:transform}
 /* terminal types itself, line by line */
 .js .term-body .ln{opacity:0;transform:translateY(3px)}
 .js .term-body .ln.typed{opacity:1;transform:none;transition:opacity .22s ease, transform .22s ease}
-/* terminal 3D tilt by cursor */
-.hero-grid{perspective:1100px}
-.term{transform-style:preserve-3d}
 /* staggered reveals */
 .js .cards .card:nth-child(2),.js .why .feat:nth-child(2),.js .steps .step:nth-child(2),.js .result-panel .result-item:nth-child(2){transition-delay:.08s}
 .js .cards .card:nth-child(3),.js .why .feat:nth-child(3),.js .steps .step:nth-child(3),.js .result-panel .result-item:nth-child(3){transition-delay:.16s}
@@ -412,9 +407,6 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 .marquee-item::before{content:"";position:absolute;left:-3px;top:50%;width:6px;height:6px;border-radius:50%;background:var(--accent);transform:translateY(-50%);opacity:.85}
 .marquee-item.lime{color:var(--text)}
 @keyframes marq{to{transform:translateX(-50%)}}
-/* card cursor spotlight */
-.card::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity .3s;border-radius:inherit;background:radial-gradient(200px circle at var(--mx,50%) var(--my,0%), rgba(198,255,58,.13), transparent 70%)}
-.card:hover::after{opacity:1}
 /* sticky mobile CTA */
 .sticky-cta{display:none}
 
@@ -479,7 +471,6 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 </head>
 <body>
 
-<div class="scroll-prog" id="scrollProg" aria-hidden="true"></div>
 <div class="fx-blob" aria-hidden="true"></div>
 <div class="fx-grain" aria-hidden="true"></div>
 
@@ -868,18 +859,13 @@ const mobileMenu=document.getElementById('mobileMenu');
 burger.addEventListener('click',()=>mobileMenu.classList.toggle('open'));
 mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>mobileMenu.classList.remove('open')));
 
-// ---- header scroll state + scroll progress + sticky mobile CTA ----
+// ---- header scroll state + sticky mobile CTA ----
 const header=document.querySelector('header');
-const scrollProg=document.getElementById('scrollProg');
 const stickyCta=document.getElementById('stickyCta');
 const contactSec=document.getElementById('contact');
 function onScroll(){
   const y=window.scrollY;
   header.classList.toggle('scrolled',y>10);
-  if(scrollProg){
-    const max=document.documentElement.scrollHeight-innerHeight;
-    scrollProg.style.transform='scaleX('+(max>0?(y/max).toFixed(4):0)+')';
-  }
   if(stickyCta){
     const beforeContact=!contactSec || contactSec.getBoundingClientRect().top>innerHeight*0.9;
     stickyCta.classList.toggle('show', y>700 && beforeContact);
@@ -1106,34 +1092,6 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(prefe
     lines[i++].classList.add('typed');
     setTimeout(next,90);
   },300);
-})();
-
-// ---- 3D-наклон терминала по курсору ----
-(function(){
-  const term=document.querySelector('.term'), hero=document.querySelector('.hero');
-  if(!term||!hero) return;
-  if(!matchMedia('(hover:hover) and (pointer:fine)').matches || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  hero.addEventListener('pointermove',(e)=>{
-    if(!term.classList.contains('in')) return;
-    const r=term.getBoundingClientRect();
-    const px=(e.clientX-(r.left+r.width/2))/r.width;
-    const py=(e.clientY-(r.top+r.height/2))/r.height;
-    term.style.transition='transform .12s ease';
-    term.style.transform='rotateY('+(px*6).toFixed(2)+'deg) rotateX('+(-py*6).toFixed(2)+'deg)';
-  },{passive:true});
-  hero.addEventListener('pointerleave',()=>{term.style.transform='';});
-})();
-
-// ---- спотлайт за курсором на карточках услуг ----
-(function(){
-  if(!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
-  document.querySelectorAll('.card').forEach(card=>{
-    card.addEventListener('pointermove',(e)=>{
-      const r=card.getBoundingClientRect();
-      card.style.setProperty('--mx',(e.clientX-r.left)+'px');
-      card.style.setProperty('--my',(e.clientY-r.top)+'px');
-    },{passive:true});
-  });
 })();
 
 </script>
