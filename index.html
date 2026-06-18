@@ -389,6 +389,35 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 .js .reveal.in{opacity:1;transform:none}
 .js .card.reveal.in:hover{transform:translateY(-3px)}
 
+/* ===== motion enhancements (motionsites-inspired, tasteful) ===== */
+/* scroll progress bar */
+.scroll-prog{position:fixed;top:0;left:0;height:3px;width:100%;z-index:60;background:var(--accent);transform:scaleX(0);transform-origin:left;box-shadow:0 0 12px var(--accent-glow);will-change:transform}
+/* terminal types itself, line by line */
+.js .term-body .ln{opacity:0;transform:translateY(3px)}
+.js .term-body .ln.typed{opacity:1;transform:none;transition:opacity .22s ease, transform .22s ease}
+/* terminal 3D tilt by cursor */
+.hero-grid{perspective:1100px}
+.term{transform-style:preserve-3d}
+/* staggered reveals */
+.js .cards .card:nth-child(2),.js .why .feat:nth-child(2),.js .steps .step:nth-child(2),.js .result-panel .result-item:nth-child(2){transition-delay:.08s}
+.js .cards .card:nth-child(3),.js .why .feat:nth-child(3),.js .steps .step:nth-child(3),.js .result-panel .result-item:nth-child(3){transition-delay:.16s}
+.js .why .feat:nth-child(4),.js .steps .step:nth-child(4){transition-delay:.24s}
+.js .why .feat:nth-child(5){transition-delay:.32s}
+.js .why .feat:nth-child(6){transition-delay:.40s}
+/* marquee ribbon */
+.marquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.marquee-track{display:flex;align-items:center;width:max-content;padding:24px 0;animation:marq 36s linear infinite}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-item{font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--muted);white-space:nowrap;padding:0 28px;position:relative}
+.marquee-item::before{content:"";position:absolute;left:-3px;top:50%;width:6px;height:6px;border-radius:50%;background:var(--accent);transform:translateY(-50%);opacity:.85}
+.marquee-item.lime{color:var(--text)}
+@keyframes marq{to{transform:translateX(-50%)}}
+/* card cursor spotlight */
+.card::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity .3s;border-radius:inherit;background:radial-gradient(200px circle at var(--mx,50%) var(--my,0%), rgba(198,255,58,.13), transparent 70%)}
+.card:hover::after{opacity:1}
+/* sticky mobile CTA */
+.sticky-cta{display:none}
+
 /* ---- mobile menu ---- */
 .mobile-menu{display:none}
 
@@ -428,6 +457,9 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 /* on phones keep only the logo + burger in the bar (Telegram CTA lives in the menu) */
 @media (max-width:600px){
   .nav-cta .btn-primary{display:none}
+  .sticky-cta{display:flex;position:fixed;left:16px;right:16px;bottom:16px;z-index:55;justify-content:center;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s ease, transform .25s ease}
+  .sticky-cta.show{opacity:1;transform:none;pointer-events:auto}
+  .sticky-cta .btn{width:100%;justify-content:center;box-shadow:0 16px 40px -12px var(--accent-glow),0 2px 10px rgba(0,0,0,.5)}
 }
 @media (prefers-reduced-motion:reduce){
   .reveal{opacity:1;transform:none;transition:none}
@@ -436,6 +468,8 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
   .hero::before,.hero::after{animation:none}
   .ba.smooth .after-wrap,.ba.smooth .ba-handle{transition:none}
   .hero h1 .hl::after,.btn-primary::after{transition:none}
+  .marquee-track{animation:none;flex-wrap:wrap;justify-content:center;width:auto;gap:6px 0}
+  .js .term-body .ln{opacity:1;transform:none}
   html{scroll-behavior:auto}
 }
 @media (max-width:420px){
@@ -445,6 +479,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 </head>
 <body>
 
+<div class="scroll-prog" id="scrollProg" aria-hidden="true"></div>
 <div class="fx-blob" aria-hidden="true"></div>
 <div class="fx-grain" aria-hidden="true"></div>
 
@@ -516,17 +551,30 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
   </div>
 </section>
 
-<!-- TECH STRIP -->
+<!-- TECH STRIP (бегущая строка) -->
 <section class="tech">
-  <div class="wrap tech-row">
-    <span class="lbl">Стек · подход</span>
-    <span class="chip">HTML / CSS</span>
-    <span class="chip">JavaScript</span>
-    <span class="chip">MODX</span>
-    <span class="chip">Адаптив</span>
-    <span class="chip">SEO-база</span>
-    <span class="chip">Скорость</span>
-    <span class="chip">Редизайн</span>
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span class="marquee-item lime">Продающие лендинги</span>
+      <span class="marquee-item">Редизайн старых сайтов</span>
+      <span class="marquee-item lime">Корпоративные сайты</span>
+      <span class="marquee-item">Адаптив под телефон</span>
+      <span class="marquee-item lime">Заявки в Telegram</span>
+      <span class="marquee-item">Скорость &lt; 1.5s</span>
+      <span class="marquee-item lime">SEO-база</span>
+      <span class="marquee-item">HTML · CSS · JS</span>
+      <span class="marquee-item">MODX</span>
+      <!-- дубль для бесшовного цикла -->
+      <span class="marquee-item lime">Продающие лендинги</span>
+      <span class="marquee-item">Редизайн старых сайтов</span>
+      <span class="marquee-item lime">Корпоративные сайты</span>
+      <span class="marquee-item">Адаптив под телефон</span>
+      <span class="marquee-item lime">Заявки в Telegram</span>
+      <span class="marquee-item">Скорость &lt; 1.5s</span>
+      <span class="marquee-item lime">SEO-база</span>
+      <span class="marquee-item">HTML · CSS · JS</span>
+      <span class="marquee-item">MODX</span>
+    </div>
   </div>
 </section>
 
@@ -805,6 +853,10 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
   </div>
 </footer>
 
+<div class="sticky-cta" id="stickyCta">
+  <a href="https://t.me/YTKON0S" target="_blank" rel="noopener" class="btn btn-primary">Обсудить проект в Telegram →</a>
+</div>
+
 <script>
 // ---- Telegram (один источник правды) ----
 const TG='https://t.me/YTKON0S';
@@ -816,14 +868,26 @@ const mobileMenu=document.getElementById('mobileMenu');
 burger.addEventListener('click',()=>mobileMenu.classList.toggle('open'));
 mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>mobileMenu.classList.remove('open')));
 
-// ---- header scroll state ----
+// ---- header scroll state + scroll progress + sticky mobile CTA ----
 const header=document.querySelector('header');
+const scrollProg=document.getElementById('scrollProg');
+const stickyCta=document.getElementById('stickyCta');
+const contactSec=document.getElementById('contact');
 function onScroll(){
   const y=window.scrollY;
   header.classList.toggle('scrolled',y>10);
+  if(scrollProg){
+    const max=document.documentElement.scrollHeight-innerHeight;
+    scrollProg.style.transform='scaleX('+(max>0?(y/max).toFixed(4):0)+')';
+  }
+  if(stickyCta){
+    const beforeContact=!contactSec || contactSec.getBoundingClientRect().top>innerHeight*0.9;
+    stickyCta.classList.toggle('show', y>700 && beforeContact);
+  }
   if(typeof updateNavActive==='function') updateNavActive();
 }
 window.addEventListener('scroll',onScroll,{passive:true});
+addEventListener('resize',onScroll,{passive:true});
 onScroll();
 
 // ---- reveal on scroll ----
@@ -1029,6 +1093,47 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(prefe
   (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(start);
   let rt; addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ cancelAnimationFrame(raf); el.textContent=final; lockWidth(); },150); });
   el.addEventListener('pointerenter',scramble);
+})();
+
+// ---- терминал «печатает» себя построчно ----
+(function(){
+  const lines=[...document.querySelectorAll('.term-body .ln')];
+  if(!lines.length) return;
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches){lines.forEach(l=>l.classList.add('typed'));return;}
+  let i=0;
+  setTimeout(function next(){
+    if(i>=lines.length) return;
+    lines[i++].classList.add('typed');
+    setTimeout(next,90);
+  },300);
+})();
+
+// ---- 3D-наклон терминала по курсору ----
+(function(){
+  const term=document.querySelector('.term'), hero=document.querySelector('.hero');
+  if(!term||!hero) return;
+  if(!matchMedia('(hover:hover) and (pointer:fine)').matches || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  hero.addEventListener('pointermove',(e)=>{
+    if(!term.classList.contains('in')) return;
+    const r=term.getBoundingClientRect();
+    const px=(e.clientX-(r.left+r.width/2))/r.width;
+    const py=(e.clientY-(r.top+r.height/2))/r.height;
+    term.style.transition='transform .12s ease';
+    term.style.transform='rotateY('+(px*6).toFixed(2)+'deg) rotateX('+(-py*6).toFixed(2)+'deg)';
+  },{passive:true});
+  hero.addEventListener('pointerleave',()=>{term.style.transform='';});
+})();
+
+// ---- спотлайт за курсором на карточках услуг ----
+(function(){
+  if(!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  document.querySelectorAll('.card').forEach(card=>{
+    card.addEventListener('pointermove',(e)=>{
+      const r=card.getBoundingClientRect();
+      card.style.setProperty('--mx',(e.clientX-r.left)+'px');
+      card.style.setProperty('--my',(e.clientY-r.top)+'px');
+    },{passive:true});
+  });
 })();
 
 </script>
