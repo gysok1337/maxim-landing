@@ -305,7 +305,7 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
 .feat p{color:var(--muted);font-size:14.5px}
 
 /* ---- about (личный блок) ---- */
-.about-grid{max-width:1040px;display:grid;grid-template-columns:1.25fr .8fr;gap:52px;align-items:center}
+.about-grid{max-width:1040px;display:grid;grid-template-columns:.8fr 1.25fr;gap:52px;align-items:center}
 .about-photo{position:relative}
 .about-photo img{width:100%;height:auto;display:block;border-radius:18px;border:1px solid var(--line-strong);box-shadow:0 34px 80px -34px rgba(0,0,0,.95)}
 .about-photo::after{content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;background:linear-gradient(180deg,rgba(10,14,9,.20) 0%,rgba(6,9,6,.60) 100%),rgba(74,96,46,.12)}
@@ -454,9 +454,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 /* on phones keep only the logo + burger in the bar (Telegram CTA lives in the menu) */
 @media (max-width:600px){
   .nav-cta .btn-primary{display:none}
-  .sticky-cta{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:55;justify-content:center;padding:16px 16px calc(16px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(10,11,14,0) 0%,rgba(10,11,14,.9) 45%,rgba(10,11,14,.98) 100%);opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s ease, transform .25s ease}
-  .sticky-cta.show{opacity:1;transform:none;pointer-events:auto}
-  .sticky-cta .btn{width:100%;justify-content:center;box-shadow:0 16px 40px -12px var(--accent-glow),0 2px 10px rgba(0,0,0,.5)}
+  .sticky-cta{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   .reveal{opacity:1;transform:none;transition:none}
@@ -754,6 +752,9 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 <!-- ABOUT -->
 <section class="sec" id="about">
   <div class="wrap about-grid">
+    <div class="about-photo reveal">
+      <img src="assets/maxim-work.webp" alt="Максим за работой" width="900" height="1200" loading="lazy">
+    </div>
     <div class="about-text reveal">
       <div class="about-id">
         <span>
@@ -769,9 +770,6 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
         <a href="https://t.me/maksim_site" target="_blank" rel="noopener" class="btn btn-primary">Написать в Telegram →</a>
         <a href="#case" class="btn btn-ghost">Смотреть кейс</a>
       </div>
-    </div>
-    <div class="about-photo reveal">
-      <img src="assets/maxim-work.webp" alt="Максим за работой" width="900" height="1200" loading="lazy">
     </div>
   </div>
 </section>
