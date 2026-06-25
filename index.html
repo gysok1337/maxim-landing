@@ -210,6 +210,17 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
 .term-body .c{color:var(--muted-2)}
 .cursor{display:inline-block;width:8px;height:16px;background:var(--accent);vertical-align:-2px;animation:blink 1.1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
+/* мягкий ореол вокруг терминала после печати */
+.term{transition:box-shadow .8s ease}
+.term.lit{animation:termGlow 4.6s ease-in-out infinite}
+@keyframes termGlow{
+  0%,100%{box-shadow:0 40px 80px -40px rgba(0,0,0,.8),0 0 42px -14px rgba(198,255,58,.16)}
+  50%{box-shadow:0 40px 80px -40px rgba(0,0,0,.8),0 0 72px -6px rgba(198,255,58,.30)}
+}
+/* лёгкая пульсация главной кнопки в hero */
+.hero-actions .btn-primary{animation:ctaPulse 3.4s ease-in-out infinite}
+.hero-actions .btn-primary:hover{animation:none}
+@keyframes ctaPulse{0%,100%{box-shadow:0 0 0 0 var(--accent-glow)}50%{box-shadow:0 0 26px 1px var(--accent-glow)}}
 
 /* ---- section heading ---- */
 .sec{padding:84px 0}
@@ -279,9 +290,10 @@ header.scrolled{background:rgba(10,11,14,.82);border-bottom-color:var(--line);bo
 .card .num{font-family:var(--font-mono);font-size:12px;color:var(--accent);margin-bottom:18px}
 .card h3{font-family:var(--font-display);font-size:22px;font-weight:600;margin-bottom:10px;letter-spacing:-.01em}
 .card p{color:var(--muted);font-size:15.5px;margin-bottom:20px}
-.card .price{font-family:var(--font-display);font-size:15px;color:var(--text);border-top:1px solid var(--line);padding-top:16px;margin-top:auto;display:flex;justify-content:space-between;align-items:center}
-.card .price b{color:var(--accent);font-weight:600}
-.card .price .from{font-family:var(--font-mono);font-size:13.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.card .foot{margin-top:auto;border-top:1px solid var(--line);padding-top:16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card .foot .meta{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted-2)}
+.card .foot .go{font-family:var(--font-display);font-weight:600;font-size:14.5px;color:var(--accent);display:inline-flex;align-items:center;gap:6px;transition:gap .2s;white-space:nowrap}
+.card:hover .foot .go{gap:11px}
 .included{margin-top:20px;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,rgba(255,255,255,.026),transparent);padding:24px}
 .included-head{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:18px}
 .included-head h3{font-family:var(--font-display);font-size:22px;font-weight:600;letter-spacing:-.01em;max-width:560px}
@@ -393,9 +405,11 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 .js .card.reveal.in:hover{transform:translateY(-3px)}
 
 /* ===== motion enhancements (motionsites-inspired, tasteful) ===== */
-/* terminal types itself, line by line */
-.js .term-body .ln{opacity:0;transform:translateY(3px)}
-.js .term-body .ln.typed{opacity:1;transform:none;transition:opacity .22s ease, transform .22s ease}
+/* terminal types itself char-by-char (monospace) */
+.js .term-body .ln{opacity:0}
+.js .term-body .ln.typed{opacity:1;width:fit-content;max-width:0;white-space:nowrap;overflow:hidden}
+.js .term-body .ln.typing{border-right:2px solid var(--accent);animation:caret 1s steps(1) infinite}
+@keyframes caret{50%{border-color:transparent}}
 /* staggered reveals */
 .js .cards .card:nth-child(2),.js .why .feat:nth-child(2),.js .steps .step:nth-child(2),.js .result-panel .result-item:nth-child(2){transition-delay:.08s}
 .js .cards .card:nth-child(3),.js .why .feat:nth-child(3),.js .steps .step:nth-child(3),.js .result-panel .result-item:nth-child(3){transition-delay:.16s}
@@ -464,7 +478,9 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
   .ba.smooth .after-wrap,.ba.smooth .ba-handle{transition:none}
   .hero h1 .hl::after,.btn-primary::after{transition:none}
   .marquee-track{animation:none;flex-wrap:wrap;justify-content:center;width:auto;gap:6px 0}
-  .js .term-body .ln{opacity:1;transform:none}
+  .js .term-body .ln{opacity:1;transform:none;max-width:none;width:auto}
+  .js .term-body .ln.typing{animation:none;border-right:0}
+  .term.lit,.hero-actions .btn-primary{animation:none}
   html{scroll-behavior:auto}
 }
 @media (max-width:420px){
@@ -656,27 +672,27 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
     <div class="sec-head reveal">
       <div class="mono">Услуги</div>
       <h2>Что я делаю</h2>
-      <p>Полный цикл — от идеи и текста до запуска на вашем домене. Делаю сайт не ради галочки, а чтобы человек понял предложение и мог быстро оставить заявку.</p>
+      <p>Полный цикл — от идеи и текста до запуска на вашем домене. Делаю сайт не ради галочки, а чтобы человек понял предложение и мог быстро оставить заявку. Цены не вывешиваю на витрину: стоимость зависит от объёма, назову её после короткого бесплатного разбора.</p>
     </div>
     <div class="cards">
       <div class="card reveal">
         <div class="num">01</div>
         <h3>Продающий лендинг</h3>
         <p>Одностраничник под услугу или рекламу: сильный первый экран, выгоды, доверие, FAQ и форма заявки. Быстро, без лишней сложности.</p>
-        <div class="price"><span class="from">от</span><b>20 000 ₽</b></div>
+        <div class="foot"><span class="meta">Под рекламу и услугу</span><a class="go" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить →</a></div>
       </div>
       <div class="card popular reveal">
         <span class="badge">Чаще всего</span>
         <div class="num">02</div>
         <h3>Редизайн старого сайта</h3>
         <p>Не просто меняю цвета. Разбираю старую структуру, переношу контент, переписываю слабые места, собираю адаптив, формы и запуск.</p>
-        <div class="price"><span class="from">от</span><b>45 000 ₽</b></div>
+        <div class="foot"><span class="meta">С переносом контента</span><a class="go" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить →</a></div>
       </div>
       <div class="card reveal">
         <div class="num">03</div>
         <h3>Корпоративный сайт / каталог</h3>
         <p>Многостраничник с услугами, проектами и каталогом. Удобная структура, SEO-база, понятная админка и понятный путь к обращению.</p>
-        <div class="price"><span class="from">от</span><b>60 000 ₽</b></div>
+        <div class="foot"><span class="meta">Каталог · SEO · админка</span><a class="go" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить →</a></div>
       </div>
     </div>
     <div class="included reveal">
@@ -784,7 +800,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
     <div class="faq reveal">
       <details class="q">
         <summary>Сколько стоит сайт?<span class="pl"></span></summary>
-        <div class="a">Лендинг — от 20 000 ₽, редизайн — от 45 000 ₽, многостраничник — от 60 000 ₽. Точную цену называю после короткого брифа и фиксирую до старта.</div>
+        <div class="a">Стоимость зависит от объёма и задач, поэтому не вывешиваю её на витрину — так цена остаётся честной под конкретный проект. Начинаю с бесплатного разбора и короткого брифа, после него называю точную сумму и фиксирую её до старта. Лендинг дешевле, редизайн и многостраничник — дороже, потому что работы больше.</div>
       </details>
       <details class="q">
         <summary>Почему редизайн дороже лендинга?<span class="pl"></span></summary>
@@ -1084,17 +1100,35 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(prefe
   el.addEventListener('pointerenter',scramble);
 })();
 
-// ---- терминал «печатает» себя построчно ----
+// ---- терминал печатает себя посимвольно (моноширинный) ----
 (function(){
+  const term=document.querySelector('.term');
   const lines=[...document.querySelectorAll('.term-body .ln')];
   if(!lines.length) return;
-  if(matchMedia('(prefers-reduced-motion:reduce)').matches){lines.forEach(l=>l.classList.add('typed'));return;}
+  const lit=()=>{ if(term) term.classList.add('lit'); };
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches){
+    lines.forEach(l=>{l.classList.add('typed');l.style.maxWidth='none';l.style.width='auto';});
+    lit(); return;
+  }
   let i=0;
-  setTimeout(function next(){
-    if(i>=lines.length) return;
-    lines[i++].classList.add('typed');
-    setTimeout(next,90);
-  },300);
+  function typeLine(line,done){
+    line.classList.add('typed','typing');
+    line.style.transition='none';
+    line.style.maxWidth='none';
+    const full=line.scrollWidth;                       // полная ширина текста (width:fit-content)
+    const len=Math.max(1,line.textContent.length);     // символов в строке
+    line.style.maxWidth='0px';
+    line.getBoundingClientRect();                       // reflow
+    const dur=Math.min(260,Math.max(70,len*13));
+    line.style.transition='max-width '+dur+'ms steps('+len+',end)';
+    line.style.maxWidth=full+'px';
+    setTimeout(()=>{ line.classList.remove('typing'); line.style.maxWidth='none'; done(); }, dur+25);
+  }
+  function next(){
+    if(i>=lines.length){ lit(); return; }
+    typeLine(lines[i++], ()=>setTimeout(next,22));
+  }
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>setTimeout(next,220));
 })();
 
 </script>
