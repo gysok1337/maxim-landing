@@ -405,11 +405,9 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 .js .card.reveal.in:hover{transform:translateY(-3px)}
 
 /* ===== motion enhancements (motionsites-inspired, tasteful) ===== */
-/* terminal types itself char-by-char (monospace) */
-.js .term-body .ln{opacity:0}
-.js .term-body .ln.typed{opacity:1;width:fit-content;max-width:0;white-space:nowrap;overflow:hidden}
-.js .term-body .ln.typing{border-right:2px solid var(--accent);animation:caret 1s steps(1) infinite}
-@keyframes caret{50%{border-color:transparent}}
+/* terminal reveals itself line by line (быстро) */
+.js .term-body .ln{opacity:0;transform:translateY(3px)}
+.js .term-body .ln.typed{opacity:1;transform:none;transition:opacity .22s ease, transform .22s ease}
 /* staggered reveals */
 .js .cards .card:nth-child(2),.js .why .feat:nth-child(2),.js .steps .step:nth-child(2),.js .result-panel .result-item:nth-child(2){transition-delay:.08s}
 .js .cards .card:nth-child(3),.js .why .feat:nth-child(3),.js .steps .step:nth-child(3),.js .result-panel .result-item:nth-child(3){transition-delay:.16s}
@@ -478,8 +476,7 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
   .ba.smooth .after-wrap,.ba.smooth .ba-handle{transition:none}
   .hero h1 .hl::after,.btn-primary::after{transition:none}
   .marquee-track{animation:none;flex-wrap:wrap;justify-content:center;width:auto;gap:6px 0}
-  .js .term-body .ln{opacity:1;transform:none;max-width:none;width:auto}
-  .js .term-body .ln.typing{animation:none;border-right:0}
+  .js .term-body .ln{opacity:1;transform:none}
   .term.lit,.hero-actions .btn-primary{animation:none}
   html{scroll-behavior:auto}
 }
@@ -1100,35 +1097,19 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches && !matchMedia('(prefe
   el.addEventListener('pointerenter',scramble);
 })();
 
-// ---- терминал печатает себя посимвольно (моноширинный) ----
+// ---- терминал появляется построчно (быстро) + ореол по завершении ----
 (function(){
   const term=document.querySelector('.term');
   const lines=[...document.querySelectorAll('.term-body .ln')];
   if(!lines.length) return;
   const lit=()=>{ if(term) term.classList.add('lit'); };
-  if(matchMedia('(prefers-reduced-motion:reduce)').matches){
-    lines.forEach(l=>{l.classList.add('typed');l.style.maxWidth='none';l.style.width='auto';});
-    lit(); return;
-  }
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches){lines.forEach(l=>l.classList.add('typed'));lit();return;}
   let i=0;
-  function typeLine(line,done){
-    line.classList.add('typed','typing');
-    line.style.transition='none';
-    line.style.maxWidth='none';
-    const full=line.scrollWidth;                       // полная ширина текста (width:fit-content)
-    const len=Math.max(1,line.textContent.length);     // символов в строке
-    line.style.maxWidth='0px';
-    line.getBoundingClientRect();                       // reflow
-    const dur=Math.min(260,Math.max(70,len*13));
-    line.style.transition='max-width '+dur+'ms steps('+len+',end)';
-    line.style.maxWidth=full+'px';
-    setTimeout(()=>{ line.classList.remove('typing'); line.style.maxWidth='none'; done(); }, dur+25);
-  }
-  function next(){
+  setTimeout(function next(){
     if(i>=lines.length){ lit(); return; }
-    typeLine(lines[i++], ()=>setTimeout(next,22));
-  }
-  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>setTimeout(next,220));
+    lines[i++].classList.add('typed');
+    setTimeout(next,90);
+  },300);
 })();
 
 </script>
