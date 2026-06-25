@@ -442,7 +442,6 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
 /* collapse nav to burger early enough that links/buttons never overflow */
 @media (max-width:1240px){
   .nav-links{display:none}
-  .nav-cta .btn-ghost{display:none}
   .burger{display:grid;place-items:center}
   .mobile-menu{position:fixed;inset:70px 0 auto 0;z-index:49;background:var(--bg-2);border-bottom:1px solid var(--line);padding:18px 24px 26px;flex-direction:column;gap:4px}
   .mobile-menu.open{display:flex}
@@ -504,7 +503,6 @@ footer{border-top:1px solid var(--line);padding:40px 0;margin-top:20px}
       <a href="#faq">Вопросы</a>
     </nav>
     <div class="nav-cta">
-      <a href="#case" class="btn btn-ghost">Смотреть работы</a>
       <a href="https://t.me/maksim_site" target="_blank" rel="noopener" class="btn btn-primary">Написать в Telegram</a>
       <button class="burger" id="burger" aria-label="Меню">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
