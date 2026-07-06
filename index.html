@@ -98,14 +98,9 @@ img{display:block;max-width:100%}
 .lp{position:absolute;left:0;right:0;height:50.5%;background:var(--dark)}
 .lp-t{top:0}.lp-b{bottom:0}
 .loader-core{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--dark-text);z-index:2}
-.loader-word{position:relative;font-weight:800;font-size:clamp(44px,8vw,84px);letter-spacing:-.02em;line-height:1.05}
-.loader-word .lw{display:block}
-.loader-word .base{color:rgba(243,241,236,.13)}
-.loader-word .fill{
-  position:absolute;inset:0;color:var(--dark-text);
-  clip-path:inset(0 100% 0 0);
-  text-shadow:0 0 26px rgba(243,241,236,.5),0 0 70px rgba(243,241,236,.22);
-}
+.loader-word{display:flex;overflow:hidden;font-weight:800;font-size:clamp(40px,7vw,64px);letter-spacing:-.02em;line-height:1.08;color:var(--dark-text)}
+.loader-word span{display:inline-block;transform:translateY(120%);transition:transform .6s cubic-bezier(.22,1,.36,1)}
+.loader-word span.in{transform:translateY(0)}
 .loader-sub{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(243,241,236,.45);overflow:hidden}
 .loader-sub span{display:inline-block;transform:translateY(130%);transition:transform .6s cubic-bezier(.22,1,.36,1)}
 .loader-sub span.in{transform:translateY(0)}
@@ -370,9 +365,9 @@ html.fx .work-reveal{clip-path:inset(0 0 100% 0 round 20px)}
   .works-grid{grid-template-columns:1fr}
   .ap-row{grid-template-columns:56px 1fr}
   .ap-row p{grid-column:2}
-  .about-grid{grid-template-columns:1fr;gap:30px}
-  .about-ph{width:100%;max-width:none}
-  .about-ph img{aspect-ratio:16/10;object-fit:cover;object-position:center 22%}
+  .about-grid{grid-template-columns:1fr;gap:30px;justify-items:center}
+  .about-ph{width:100%;max-width:300px;margin:0 auto} /* фото по центру, натуральный размер, без обрезки */
+  .about-txt{width:100%}
   .svc-row{grid-template-columns:1fr}
   .svc-num{display:none}
   .svc-go{justify-self:start}
@@ -393,17 +388,14 @@ html.fx .work-reveal{clip-path:inset(0 0 100% 0 round 20px)}
   .ba.smooth .ba-after,.ba.smooth .ba-handle{transition:none}
   .q .aw{transition:none}
 }
-/* «дорогой» текст: хром-градиент в заголовках + мягкое свечение (как на PROD/simonprod) */
-.hero h1 .line-in,.contact h2 .line-in,.sec-head h2,.about-txt h2,.slot-t{
-  background:linear-gradient(180deg,#2E2D28 0%,#6B6960 115%);
+/* «дорогой» текст: как раньше (сплошной) + мягкое свечение и еле заметный градиент в тёмной теме */
+html.dark .hero h1 .line-in,html.dark .contact h2 .line-in{
+  background:linear-gradient(180deg,#FBFAF7 0%,#DEDCD5 100%);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;-webkit-text-fill-color:transparent;
 }
-html.dark .hero h1 .line-in,html.dark .contact h2 .line-in,html.dark .sec-head h2,html.dark .about-txt h2,html.dark .slot-t{
-  background:linear-gradient(180deg,#FFFFFF 0%,#8E8B83 130%);
-  -webkit-background-clip:text;background-clip:text;
-}
-html.dark .hero h1,html.dark .contact h2{filter:drop-shadow(0 0 26px rgba(243,241,236,.16))}
+html.dark .hero h1{filter:drop-shadow(0 0 26px rgba(243,241,236,.16)) drop-shadow(0 0 80px rgba(243,241,236,.08))}
+html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
 </style>
 </head>
 <body>
@@ -413,7 +405,7 @@ html.dark .hero h1,html.dark .contact h2{filter:drop-shadow(0 0 26px rgba(243,24
   <div class="lp lp-t"></div>
   <div class="lp lp-b"></div>
   <div class="loader-core">
-    <div class="loader-word"><span class="lw base">Максим</span><span class="lw fill" id="lwFill" aria-hidden="true">Максим</span></div>
+    <div class="loader-word" id="loaderWord"></div>
     <div class="loader-sub"><span id="loaderSub">сайты под ключ</span></div>
   </div>
 </div>
@@ -790,7 +782,8 @@ html.dark .hero h1,html.dark .contact h2{filter:drop-shadow(0 0 26px rgba(243,24
 
   /* ---------- прелоадер: заливка внутри букв + счётчик + шторки ---------- */
   var loader=document.getElementById('loader');
-  var lwFill=document.getElementById('lwFill');
+  var word=document.getElementById('loaderWord');
+  if(word)'Максим'.split('').forEach(function(ch){var s=document.createElement('span');s.textContent=ch;word.appendChild(s);});
   var seen=false;
   try{seen=sessionStorage.getItem('introSeen')==='1';}catch(_){}
   function killLoader(){if(loader){loader.style.display='none';}document.documentElement.classList.remove('loading');}
@@ -813,16 +806,15 @@ html.dark .hero h1,html.dark .contact h2{filter:drop-shadow(0 0 26px rgba(243,24
 
     if(!seen&&loader){
       document.documentElement.classList.add('loading');
-      var cnt={v:0};
-      setTimeout(function(){document.getElementById('loaderSub').classList.add('in');},380);
+      document.querySelectorAll('#loaderWord span').forEach(function(s,i){
+        setTimeout(function(){s.classList.add('in');},80+i*55);
+      });
+      setTimeout(function(){document.getElementById('loaderSub').classList.add('in');},430);
       var ltl=gsap.timeline({onComplete:function(){killLoader();markSeen();}});
-      ltl.to(cnt,{v:100,duration:1.35,ease:'power2.inOut',onUpdate:function(){
-           if(lwFill)lwFill.style.clipPath='inset(0 '+(100-cnt.v)+'% 0 0)'; // заливка букв слева направо
-         }},.1)
-         .to('.loader-core',{opacity:0,duration:.3,ease:'power1.out'},1.55)
-         .to('.lp-t',{yPercent:-100,duration:.8,ease:'power4.inOut'},1.7)
-         .to('.lp-b',{yPercent:100,duration:.8,ease:'power4.inOut'},1.7);
-      heroIn(2.0);
+      ltl.to('.loader-core',{opacity:0,duration:.35,ease:'power1.out'},1.25)
+         .to('.lp-t',{yPercent:-100,duration:.8,ease:'power4.inOut'},1.4)
+         .to('.lp-b',{yPercent:100,duration:.8,ease:'power4.inOut'},1.4);
+      heroIn(1.75);
     }else{
       killLoader();
       heroIn(.15);
