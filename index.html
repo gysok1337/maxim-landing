@@ -67,7 +67,7 @@ html.dark{
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:auto}
+html{scroll-behavior:auto;scroll-padding-top:150px}
 html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
 body{
@@ -109,7 +109,6 @@ img{display:block;max-width:100%}
 .loader-sub{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(243,241,236,.45);overflow:hidden}
 .loader-sub span{display:inline-block;transform:translateY(130%);transition:transform .6s cubic-bezier(.22,1,.36,1)}
 .loader-sub span.in{transform:translateY(0)}
-.loader-count{position:absolute;right:clamp(20px,4vw,48px);bottom:clamp(16px,3vh,34px);z-index:2;font-weight:800;font-size:clamp(40px,7vw,84px);letter-spacing:-.04em;color:rgba(243,241,236,.9);font-variant-numeric:tabular-nums}
 html.loading{overflow:hidden}
 
 /* ---------- header ---------- */
@@ -160,11 +159,30 @@ html.dark .tswitch .moon{display:block}
 .burger span:nth-child(2){top:26px}
 .burger.open span:nth-child(1){transform:translateY(5px) rotate(45deg)}
 .burger.open span:nth-child(2){transform:translateY(-5px) rotate(-45deg)}
-.mmenu{position:fixed;inset:0;z-index:95;background:var(--bg);display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad);gap:6px;opacity:0;pointer-events:none;transition:opacity .35s ease}
-.mmenu.open{opacity:1;pointer-events:auto}
-.mmenu a{font-size:clamp(30px,8vw,44px);font-weight:700;letter-spacing:-.02em;padding:8px 0;border-bottom:1px solid var(--line)}
+/* меню-шторка: ниже шапки (z 85 < header 90), бургер остаётся кликабельным */
+.mmenu{
+  position:fixed;inset:0;z-index:85;background:var(--bg);
+  display:flex;flex-direction:column;justify-content:center;gap:6px;
+  padding:90px var(--pad) 30px;
+  transform:translateY(-102%);pointer-events:none;
+  transition:transform .65s cubic-bezier(.76,0,.24,1);
+}
+.mmenu.open{transform:none;pointer-events:auto}
+.mmenu a{
+  font-size:clamp(30px,8vw,44px);font-weight:700;letter-spacing:-.02em;padding:8px 0;border-bottom:1px solid var(--line);
+  opacity:0;transform:translateY(26px);
+  transition:opacity .45s ease,transform .55s cubic-bezier(.22,1,.36,1);
+}
+.mmenu.open a{opacity:1;transform:none}
+.mmenu.open a:nth-child(2){transition-delay:.16s}
+.mmenu.open a:nth-child(3){transition-delay:.22s}
+.mmenu.open a:nth-child(4){transition-delay:.28s}
+.mmenu.open a:nth-child(5){transition-delay:.34s}
+.mmenu.open a:nth-child(6){transition-delay:.40s}
+.mmenu.open a:nth-child(7){transition-delay:.46s}
 .mmenu a:last-child{border:0}
-.mmenu .mono{margin-bottom:18px}
+.mmenu .mono{margin-bottom:18px;opacity:0;transition:opacity .4s ease .1s}
+.mmenu.open .mono{opacity:1}
 
 /* ---------- hero ---------- */
 .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding-top:110px;padding-bottom:40px;position:relative}
@@ -323,10 +341,8 @@ html.dark .ba-handle{background:#F3F1EC}
 .q .x::before,.q .x::after{content:"";position:absolute;background:var(--ink);border-radius:1px;transition:transform .3s ease}
 .q .x::before{top:10px;left:2px;right:2px;height:2px}
 .q .x::after{left:10px;top:2px;bottom:2px;width:2px}
-/* плавное раскрытие ответа (grid-rows 0fr→1fr, обёртка .aw создаётся в JS) */
-.q .aw{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s cubic-bezier(.22,1,.36,1)}
-.q.o .aw{grid-template-rows:1fr}
-.q .aw>.a{overflow:hidden;min-height:0}
+/* плавное раскрытие ответа (height в px из JS, обёртка .aw создаётся в JS) */
+.q .aw{height:0;overflow:hidden;transition:height .45s cubic-bezier(.22,1,.36,1)}
 .q.o .x::after{transform:scaleY(0)}
 .q .a{padding:0 4px 26px;color:var(--muted);font-size:16px;line-height:1.7;max-width:56em}
 
@@ -355,7 +371,8 @@ html.fx .work-reveal{clip-path:inset(0 0 100% 0 round 20px)}
   .ap-row{grid-template-columns:56px 1fr}
   .ap-row p{grid-column:2}
   .about-grid{grid-template-columns:1fr;gap:30px}
-  .about-ph{max-width:440px}
+  .about-ph{width:100%;max-width:none}
+  .about-ph img{aspect-ratio:16/10;object-fit:cover;object-position:center 22%}
   .svc-row{grid-template-columns:1fr}
   .svc-num{display:none}
   .svc-go{justify-self:start}
@@ -376,9 +393,17 @@ html.fx .work-reveal{clip-path:inset(0 0 100% 0 round 20px)}
   .ba.smooth .ba-after,.ba.smooth .ba-handle{transition:none}
   .q .aw{transition:none}
 }
-/* лёгкое свечение заголовка в тёмной теме (как на simonprod) */
-html.dark .hero h1{text-shadow:0 0 26px rgba(243,241,236,.18),0 0 90px rgba(243,241,236,.10)}
-html.dark .contact h2{text-shadow:0 0 26px rgba(243,241,236,.14)}
+/* «дорогой» текст: хром-градиент в заголовках + мягкое свечение (как на PROD/simonprod) */
+.hero h1 .line-in,.contact h2 .line-in,.sec-head h2,.about-txt h2,.slot-t{
+  background:linear-gradient(180deg,#2E2D28 0%,#6B6960 115%);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;-webkit-text-fill-color:transparent;
+}
+html.dark .hero h1 .line-in,html.dark .contact h2 .line-in,html.dark .sec-head h2,html.dark .about-txt h2,html.dark .slot-t{
+  background:linear-gradient(180deg,#FFFFFF 0%,#8E8B83 130%);
+  -webkit-background-clip:text;background-clip:text;
+}
+html.dark .hero h1,html.dark .contact h2{filter:drop-shadow(0 0 26px rgba(243,241,236,.16))}
 </style>
 </head>
 <body>
@@ -391,7 +416,6 @@ html.dark .contact h2{text-shadow:0 0 26px rgba(243,241,236,.14)}
     <div class="loader-word"><span class="lw base">Максим</span><span class="lw fill" id="lwFill" aria-hidden="true">Максим</span></div>
     <div class="loader-sub"><span id="loaderSub">сайты под ключ</span></div>
   </div>
-  <div class="loader-count" id="loaderCount">0</div>
 </div>
 
 <header id="header">
@@ -719,6 +743,7 @@ html.dark .contact h2{text-shadow:0 0 26px rgba(243,241,236,.14)}
     var open=mmenu.classList.toggle('open');
     burger.classList.toggle('open',open);
     document.documentElement.classList.toggle('loading',open);
+    header.classList.remove('hide'); // шапка с крестиком всегда видна над меню
   });
   mmenu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){
     mmenu.classList.remove('open');burger.classList.remove('open');
@@ -726,12 +751,17 @@ html.dark .contact h2{text-shadow:0 0 26px rgba(243,241,236,.14)}
   });});
 
   /* ---------- header: скрывать при скролле вниз ---------- */
-  var header=document.getElementById('header'),lastY=0;
+  var header=document.getElementById('header'),lastY=0,idleT;
   function onScrollDir(y){
     header.classList.toggle('solid',y>30);
-    if(y>140&&y>lastY+4)header.classList.add('hide');
-    else if(y<lastY-4)header.classList.remove('hide');
+    var menuOpen=document.getElementById('mmenu').classList.contains('open');
+    if(!menuOpen){
+      if(y>140&&y>lastY+4)header.classList.add('hide');
+      else if(y<lastY-4)header.classList.remove('hide');
+    }else header.classList.remove('hide');
     lastY=y;
+    clearTimeout(idleT); // скролл остановился — показать шапку
+    idleT=setTimeout(function(){header.classList.remove('hide');},420);
   }
 
   /* ---------- Lenis ---------- */
@@ -751,7 +781,7 @@ html.dark .contact h2{text-shadow:0 0 26px rgba(243,241,236,.14)}
       a.addEventListener('click',function(e){
         var id=a.getAttribute('href');if(id.length<2)return;
         var el=document.querySelector(id);if(!el)return;
-        e.preventDefault();lenis.scrollTo(el,{offset:-70});
+        e.preventDefault();lenis.scrollTo(el,{offset:-150}); // останавливаемся выше: заголовок секции с воздухом
       });
     });
   }else{
@@ -783,14 +813,13 @@ html.dark .contact h2{text-shadow:0 0 26px rgba(243,241,236,.14)}
 
     if(!seen&&loader){
       document.documentElement.classList.add('loading');
-      var cnt={v:0},cntEl=document.getElementById('loaderCount');
+      var cnt={v:0};
       setTimeout(function(){document.getElementById('loaderSub').classList.add('in');},380);
       var ltl=gsap.timeline({onComplete:function(){killLoader();markSeen();}});
-      ltl.to(cnt,{v:100,duration:1.35,ease:'power2.inOut',snap:{v:1},onUpdate:function(){
-           cntEl.textContent=Math.round(cnt.v);
+      ltl.to(cnt,{v:100,duration:1.35,ease:'power2.inOut',onUpdate:function(){
            if(lwFill)lwFill.style.clipPath='inset(0 '+(100-cnt.v)+'% 0 0)'; // заливка букв слева направо
          }},.1)
-         .to('.loader-core, .loader-count',{opacity:0,duration:.3,ease:'power1.out'},1.55)
+         .to('.loader-core',{opacity:0,duration:.3,ease:'power1.out'},1.55)
          .to('.lp-t',{yPercent:-100,duration:.8,ease:'power4.inOut'},1.7)
          .to('.lp-b',{yPercent:100,duration:.8,ease:'power4.inOut'},1.7);
       heroIn(2.0);
@@ -868,23 +897,28 @@ html.dark .contact h2{text-shadow:0 0 26px rgba(243,241,236,.14)}
     }
   })();
 
-  /* ---------- FAQ: плавное раскрытие ---------- */
+  /* ---------- FAQ: плавное раскрытие (height в px — стабильно) ---------- */
   document.querySelectorAll('.q').forEach(function(d){
     var a=d.querySelector('.a'),s=d.querySelector('summary');
     if(!a||!s)return;
     var w=document.createElement('div');w.className='aw';
     a.parentNode.insertBefore(w,a);w.appendChild(a);
+    var busy=false;
     s.addEventListener('click',function(e){
       e.preventDefault();
-      if(reduce){d.open=!d.open;d.classList.toggle('o',d.open);return;}
+      if(reduce){d.open=!d.open;d.classList.toggle('o',d.open);w.style.height=d.open?'auto':'0px';return;}
+      if(busy)return;busy=true;
       if(!d.open){
-        d.open=true;
-        requestAnimationFrame(function(){requestAnimationFrame(function(){d.classList.add('o');});});
+        d.open=true;d.classList.add('o');
+        var h=a.offsetHeight;
+        w.style.height='0px';w.offsetHeight;      // reflow
+        w.style.height=h+'px';
+        setTimeout(function(){w.style.height='auto';busy=false;},480);
       }else{
         d.classList.remove('o');
-        var done=function(ev){if(ev.propertyName==='grid-template-rows'){d.open=false;w.removeEventListener('transitionend',done);}};
-        w.addEventListener('transitionend',done);
-        setTimeout(function(){if(!d.classList.contains('o'))d.open=false;},650); // страховка
+        w.style.height=a.offsetHeight+'px';w.offsetHeight;
+        w.style.height='0px';
+        setTimeout(function(){d.open=false;busy=false;},480);
       }
     });
   });
