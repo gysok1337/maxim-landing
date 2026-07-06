@@ -67,7 +67,7 @@ html.dark{
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:auto;scroll-padding-top:150px}
+html{scroll-behavior:auto;scroll-padding-top:100px}
 html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
 body{
@@ -202,21 +202,25 @@ html.dark .tswitch .moon{display:block}
 .hero-scroll svg{width:16px;height:16px;animation:bob 2s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(6px)}}
 /* вращающийся бейдж */
-.spin-badge{position:absolute;right:clamp(24px,6vw,90px);top:34%;width:clamp(110px,12vw,150px);height:clamp(110px,12vw,150px);display:grid;place-items:center}
+.spin-badge{position:absolute;right:clamp(24px,6vw,90px);top:34%;width:clamp(110px,12vw,150px);height:clamp(110px,12vw,150px);display:grid;place-items:center;animation:badgeFloat 6s ease-in-out infinite}
 .spin-badge svg{position:absolute;inset:0;width:100%;height:100%;animation:spin 16s linear infinite}
 .spin-badge text{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;fill:var(--muted)}
-.spin-badge .core{width:44%;height:44%;border-radius:50%;border:1px solid var(--line-2);display:grid;place-items:center;color:var(--ink);transition:background .3s,color .3s,border-color .3s}
-.spin-badge:hover .core{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.spin-badge .core svg{position:static;width:20px;height:20px;animation:none}
+.spin-badge .core{
+  width:46%;height:46%;border-radius:50%;border:1px solid var(--line-2);display:grid;place-items:center;
+  font-family:var(--serif);font-style:italic;font-weight:600;font-size:clamp(26px,2.6vw,34px);line-height:1;color:var(--ink);
+  transition:background .3s,color .3s,border-color .3s,transform .3s;
+}
+.spin-badge:hover .core{background:var(--ink);color:var(--bg);border-color:var(--ink);transform:scale(1.06)}
+@keyframes badgeFloat{50%{transform:translateY(-9px)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ---------- marquee ---------- */
 .tape{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;background:var(--card)}
-.tape-track{display:flex;width:max-content;align-items:baseline;gap:0;padding:20px 0;animation:tape 30s linear infinite;will-change:transform}
+.tape-track{display:flex;width:max-content;align-items:baseline;padding:20px 0;will-change:transform} /* движение из JS (rAF) — без разрывов */
+.tape-set{display:flex;align-items:baseline;flex:0 0 auto}
 .tape-item{font-weight:700;font-size:clamp(18px,2.2vw,26px);letter-spacing:-.01em;white-space:nowrap;padding:0 26px;position:relative}
 .tape-item.alt{font-family:var(--serif);font-style:italic;font-weight:600;color:var(--muted)}
 .tape-item::after{content:"·";position:absolute;right:-6px;color:var(--muted-2)}
-@keyframes tape{to{transform:translateX(-50%)}}
 
 /* ---------- section shell ---------- */
 .sec{padding:clamp(80px,12vh,150px) 0}
@@ -384,7 +388,7 @@ html.fx .work-reveal{clip-path:inset(0 0 100% 0 round 20px)}
 @media (prefers-reduced-motion:reduce){
   html.fx .frev{opacity:1;transform:none}
   html.fx .work-reveal{clip-path:none}
-  .hero-status .dot,.hero-scroll svg,.spin-badge svg{animation:none}
+  .hero-status .dot,.hero-scroll svg,.spin-badge svg,.spin-badge{animation:none}
   .tape-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}
   .ba.smooth .ba-after,.ba.smooth .ba-handle{transition:none}
   .q .aw{transition:none}
@@ -464,7 +468,7 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
       <defs><path id="circ" d="M60,60 m-48,0 a48,48 0 1,1 96,0 a48,48 0 1,1 -96,0"/></defs>
       <text><textPath href="#circ">бесплатный макет · разбор ниши · под ключ · </textPath></text>
     </svg>
-    <span class="core"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></span>
+    <span class="core">М</span>
   </a>
   <div class="hero-scroll" aria-hidden="true">
     <span class="mono">скролл</span>
@@ -475,16 +479,18 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
 <!-- TAPE -->
 <div class="tape" aria-hidden="true">
   <div class="tape-track" id="tapeTrack">
-    <span class="tape-item">Лендинги</span>
-    <span class="tape-item alt">магазины</span>
-    <span class="tape-item">Рестораны</span>
-    <span class="tape-item alt">редизайн</span>
-    <span class="tape-item">Воронки заявок</span>
-    <span class="tape-item alt">боты</span>
-    <span class="tape-item">Автоматизация</span>
-    <span class="tape-item alt">CRM</span>
-    <span class="tape-item">ИИ-помощники</span>
-    <span class="tape-item alt">SEO-база</span>
+    <div class="tape-set">
+      <span class="tape-item">Лендинги</span>
+      <span class="tape-item alt">магазины</span>
+      <span class="tape-item">Каталоги</span>
+      <span class="tape-item alt">редизайн</span>
+      <span class="tape-item">Воронки заявок</span>
+      <span class="tape-item alt">боты</span>
+      <span class="tape-item">Автоматизация</span>
+      <span class="tape-item alt">CRM</span>
+      <span class="tape-item">ИИ-помощники</span>
+      <span class="tape-item alt">SEO-база</span>
+    </div>
   </div>
 </div>
 
@@ -603,8 +609,8 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
     <div class="svc-row frev">
       <span class="svc-num">/ 03</span>
       <div>
-        <h3>Сайт для магазина <span class="serif">или ресторана</span></h3>
-        <p>Каталог товаров или меню, корзина или кнопка заказа, интеграция с доставкой и оплатой.</p>
+        <h3>Интернет-магазин <span class="serif">и каталог</span></h3>
+        <p>Каталог товаров или услуг, корзина или кнопка заказа, оплата и доставка. Для магазинов, шоурумов и производств.</p>
       </div>
       <a class="svc-go" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить →</a>
     </div>
@@ -774,7 +780,7 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
       a.addEventListener('click',function(e){
         var id=a.getAttribute('href');if(id.length<2)return;
         var el=document.querySelector(id);if(!el)return;
-        e.preventDefault();lenis.scrollTo(el,{offset:-150}); // останавливаемся выше: заголовок секции с воздухом
+        e.preventDefault();lenis.scrollTo(el,{offset:-90}); // долистываем ближе к блоку, но заголовок не липнет к шапке
       });
     });
   }else{
@@ -932,9 +938,35 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
     });
   }
 
-  /* ---------- лента: дубль для бесшовного цикла ---------- */
-  var tape=document.getElementById('tapeTrack');
-  if(tape)tape.innerHTML+=tape.innerHTML;
+  /* ---------- лента: rAF-цикл по ширине набора (без разрывов и лагов) ---------- */
+  (function(){
+    var track=document.getElementById('tapeTrack');if(!track)return;
+    var set=track.querySelector('.tape-set');if(!set)return;
+    if(reduce){ // статично, в несколько строк по центру
+      track.style.flexWrap='wrap';set.style.flexWrap='wrap';set.style.justifyContent='center';track.style.width='auto';
+      return;
+    }
+    function build(){
+      // клонов столько, чтобы покрыть 2 экрана + запас
+      track.querySelectorAll('.tape-set:not(:first-child)').forEach(function(c){c.remove();});
+      var need=Math.max(2,Math.ceil((innerWidth*2)/set.offsetWidth)+1);
+      for(var i=0;i<need;i++)track.appendChild(set.cloneNode(true));
+    }
+    var x=0,last=0,setW=0,SPEED=42; // px/сек
+    function measure(){setW=set.offsetWidth;}
+    build();measure();
+    addEventListener('resize',function(){build();measure();},{passive:true});
+    (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){build();measure();});
+    function loop(t){
+      if(!last)last=t;
+      var dt=Math.min(64,t-last);last=t;
+      x-=SPEED*dt/1000;
+      if(setW>0&&x<=-setW)x+=setW; // бесшовный сброс ровно на ширину набора
+      track.style.transform='translate3d('+x.toFixed(2)+'px,0,0)';
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+  })();
 
   /* ---------- страховка ---------- */
   setTimeout(killLoader,6000);
