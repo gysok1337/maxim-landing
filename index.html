@@ -27,7 +27,7 @@
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111213'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-style='italic' font-size='38' text-anchor='middle' fill='%23F6F5F2'%3E%D0%9C%3C/text%3E%3C/svg%3E">
 
-<script>(function(){try{if(localStorage.getItem('theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}})()</script>
+<script>(function(){try{if(localStorage.getItem('theme')!=='light')document.documentElement.classList.add('dark')}catch(e){document.documentElement.classList.add('dark')}})()</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -98,9 +98,14 @@ img{display:block;max-width:100%}
 .lp{position:absolute;left:0;right:0;height:50.5%;background:var(--dark)}
 .lp-t{top:0}.lp-b{bottom:0}
 .loader-core{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--dark-text);z-index:2}
-.loader-word{display:flex;overflow:hidden;font-weight:800;font-size:clamp(34px,6vw,58px);letter-spacing:-.02em;line-height:1.05}
-.loader-word span{display:inline-block;transform:translateY(120%);transition:transform .65s cubic-bezier(.22,1,.36,1)}
-.loader-word span.in{transform:translateY(0)}
+.loader-word{position:relative;font-weight:800;font-size:clamp(44px,8vw,84px);letter-spacing:-.02em;line-height:1.05}
+.loader-word .lw{display:block}
+.loader-word .base{color:rgba(243,241,236,.13)}
+.loader-word .fill{
+  position:absolute;inset:0;color:var(--dark-text);
+  clip-path:inset(0 100% 0 0);
+  text-shadow:0 0 26px rgba(243,241,236,.5),0 0 70px rgba(243,241,236,.22);
+}
 .loader-sub{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(243,241,236,.45);overflow:hidden}
 .loader-sub span{display:inline-block;transform:translateY(130%);transition:transform .6s cubic-bezier(.22,1,.36,1)}
 .loader-sub span.in{transform:translateY(0)}
@@ -224,12 +229,20 @@ a.work:hover .work-visual>img{transform:scale(1.035)}
 .work-meta{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:16px 4px 0;flex-wrap:wrap}
 .work-meta h3{font-weight:700;font-size:clamp(20px,2.2vw,27px);letter-spacing:-.02em}
 .work-meta .facts{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+.work-links{display:flex;gap:8px}
+.work-links a{
+  font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  border:1px solid var(--line-2);border-radius:100px;padding:6px 13px;color:var(--muted);
+  transition:background .25s,color .25s,border-color .25s;
+}
+.work-links a:hover{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 /* до/после слайдер */
 .ba{position:absolute;inset:0;touch-action:pan-y;cursor:ew-resize;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
 .ba.grabbing{cursor:grabbing}
 .ba img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;pointer-events:none}
 .ba-after{position:absolute;inset:0;overflow:hidden;width:50%}
-.ba-after-in{position:absolute;inset:0;height:100%}
+.ba-after-in{position:absolute;top:0;left:0;height:100%} /* ширина в px из JS, чтобы картинка не сжималась при драге */
+.ba-after-in img{width:100%;height:100%;object-fit:cover}
 .ba.smooth .ba-after,.ba.smooth .ba-handle{transition:width .55s cubic-bezier(.4,0,.2,1),left .55s cubic-bezier(.4,0,.2,1)}
 .ba-handle{position:absolute;top:0;bottom:0;width:2px;background:var(--dark-text);transform:translateX(-1px);box-shadow:0 0 14px rgba(0,0,0,.35);z-index:2}
 html.dark .ba-handle{background:#F3F1EC}
@@ -310,7 +323,11 @@ html.dark .ba-handle{background:#F3F1EC}
 .q .x::before,.q .x::after{content:"";position:absolute;background:var(--ink);border-radius:1px;transition:transform .3s ease}
 .q .x::before{top:10px;left:2px;right:2px;height:2px}
 .q .x::after{left:10px;top:2px;bottom:2px;width:2px}
-.q[open] .x::after{transform:scaleY(0)}
+/* плавное раскрытие ответа (grid-rows 0fr→1fr, обёртка .aw создаётся в JS) */
+.q .aw{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s cubic-bezier(.22,1,.36,1)}
+.q.o .aw{grid-template-rows:1fr}
+.q .aw>.a{overflow:hidden;min-height:0}
+.q.o .x::after{transform:scaleY(0)}
 .q .a{padding:0 4px 26px;color:var(--muted);font-size:16px;line-height:1.7;max-width:56em}
 
 /* ---------- contact ---------- */
@@ -357,7 +374,11 @@ html.fx .work-reveal{clip-path:inset(0 0 100% 0 round 20px)}
   .hero-status .dot,.hero-scroll svg,.spin-badge svg{animation:none}
   .tape-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}
   .ba.smooth .ba-after,.ba.smooth .ba-handle{transition:none}
+  .q .aw{transition:none}
 }
+/* лёгкое свечение заголовка в тёмной теме (как на simonprod) */
+html.dark .hero h1{text-shadow:0 0 26px rgba(243,241,236,.18),0 0 90px rgba(243,241,236,.10)}
+html.dark .contact h2{text-shadow:0 0 26px rgba(243,241,236,.14)}
 </style>
 </head>
 <body>
@@ -367,7 +388,7 @@ html.fx .work-reveal{clip-path:inset(0 0 100% 0 round 20px)}
   <div class="lp lp-t"></div>
   <div class="lp lp-b"></div>
   <div class="loader-core">
-    <div class="loader-word" id="loaderWord"></div>
+    <div class="loader-word"><span class="lw base">Максим</span><span class="lw fill" id="lwFill" aria-hidden="true">Максим</span></div>
     <div class="loader-sub"><span id="loaderSub">сайты под ключ</span></div>
   </div>
   <div class="loader-count" id="loaderCount">0</div>
@@ -474,8 +495,14 @@ html.fx .work-reveal{clip-path:inset(0 0 100% 0 round 20px)}
           </div>
         </div>
         <div class="work-meta">
-          <h3>MBM-Trans</h3>
-          <span class="facts">Перевозки негабарита · Редизайн под ключ</span>
+          <div>
+            <h3>MBM-Trans</h3>
+            <span class="facts">Перевозки негабарита · Редизайн под ключ</span>
+          </div>
+          <div class="work-links">
+            <a href="https://mbm-trans.ru/old-site-backup-2026-06-14/" target="_blank" rel="noopener">Было ↗</a>
+            <a href="https://mbm-trans.ru" target="_blank" rel="noopener">Стало ↗</a>
+          </div>
         </div>
       </div>
 
@@ -731,10 +758,9 @@ html.fx .work-reveal{clip-path:inset(0 0 100% 0 round 20px)}
     addEventListener('scroll',function(){onScrollDir(scrollY);},{passive:true});
   }
 
-  /* ---------- прелоадер: буквы + счётчик + шторки ---------- */
+  /* ---------- прелоадер: заливка внутри букв + счётчик + шторки ---------- */
   var loader=document.getElementById('loader');
-  var word=document.getElementById('loaderWord');
-  'Максим'.split('').forEach(function(ch){var s=document.createElement('span');s.textContent=ch;word.appendChild(s);});
+  var lwFill=document.getElementById('lwFill');
   var seen=false;
   try{seen=sessionStorage.getItem('introSeen')==='1';}catch(_){}
   function killLoader(){if(loader){loader.style.display='none';}document.documentElement.classList.remove('loading');}
@@ -758,13 +784,12 @@ html.fx .work-reveal{clip-path:inset(0 0 100% 0 round 20px)}
     if(!seen&&loader){
       document.documentElement.classList.add('loading');
       var cnt={v:0},cntEl=document.getElementById('loaderCount');
-      // буквы и подпись — чистый CSS-transition с каскадом классов (надёжно)
-      document.querySelectorAll('#loaderWord span').forEach(function(s,i){
-        setTimeout(function(){s.classList.add('in');},60+i*55);
-      });
-      setTimeout(function(){document.getElementById('loaderSub').classList.add('in');},420);
+      setTimeout(function(){document.getElementById('loaderSub').classList.add('in');},380);
       var ltl=gsap.timeline({onComplete:function(){killLoader();markSeen();}});
-      ltl.to(cnt,{v:100,duration:1.35,ease:'power2.inOut',snap:{v:1},onUpdate:function(){cntEl.textContent=Math.round(cnt.v);}},.1)
+      ltl.to(cnt,{v:100,duration:1.35,ease:'power2.inOut',snap:{v:1},onUpdate:function(){
+           cntEl.textContent=Math.round(cnt.v);
+           if(lwFill)lwFill.style.clipPath='inset(0 '+(100-cnt.v)+'% 0 0)'; // заливка букв слева направо
+         }},.1)
          .to('.loader-core, .loader-count',{opacity:0,duration:.3,ease:'power1.out'},1.55)
          .to('.lp-t',{yPercent:-100,duration:.8,ease:'power4.inOut'},1.7)
          .to('.lp-b',{yPercent:100,duration:.8,ease:'power4.inOut'},1.7);
@@ -795,16 +820,20 @@ html.fx .work-reveal{clip-path:inset(0 0 100% 0 round 20px)}
       scrollTrigger:{trigger:'.about-ph',start:'top bottom',end:'bottom top',scrub:true}});
   }else{
     killLoader();markSeen();
-    document.querySelectorAll('.frev,.line-in,#loaderWord span').forEach(function(el){el.style.opacity='1';el.style.transform='none';});
+    document.querySelectorAll('.frev,.line-in').forEach(function(el){el.style.opacity='1';el.style.transform='none';});
   }
 
   /* ---------- слайдер до/после ---------- */
   (function(){
     var ba=document.getElementById('ba');if(!ba)return;
     var after=document.getElementById('baAfter'),handle=document.getElementById('baHandle');
+    var inn=document.getElementById('baAfterIn');
     var pct=50,dragging=false,rectW=0,rectL=0;
     function apply(){after.style.width=pct+'%';handle.style.left=pct+'%';ba.setAttribute('aria-valuenow',Math.round(pct));}
-    function cacheRect(){var r=ba.getBoundingClientRect();rectW=r.width;rectL=r.left;}
+    function cacheRect(){
+      var r=ba.getBoundingClientRect();rectW=r.width;rectL=r.left;
+      if(inn)inn.style.width=rectW+'px'; // фикс: нижний слой не сжимается при драге
+    }
     function setFromX(x){pct=Math.max(0,Math.min(100,(x-rectL)/rectW*100));apply();}
     addEventListener('resize',function(){cacheRect();apply();},{passive:true});
     cacheRect();apply();
@@ -838,6 +867,27 @@ html.fx .work-reveal{clip-path:inset(0 0 100% 0 round 20px)}
       },{threshold:.5}).observe(ba);
     }
   })();
+
+  /* ---------- FAQ: плавное раскрытие ---------- */
+  document.querySelectorAll('.q').forEach(function(d){
+    var a=d.querySelector('.a'),s=d.querySelector('summary');
+    if(!a||!s)return;
+    var w=document.createElement('div');w.className='aw';
+    a.parentNode.insertBefore(w,a);w.appendChild(a);
+    s.addEventListener('click',function(e){
+      e.preventDefault();
+      if(reduce){d.open=!d.open;d.classList.toggle('o',d.open);return;}
+      if(!d.open){
+        d.open=true;
+        requestAnimationFrame(function(){requestAnimationFrame(function(){d.classList.add('o');});});
+      }else{
+        d.classList.remove('o');
+        var done=function(ev){if(ev.propertyName==='grid-template-rows'){d.open=false;w.removeEventListener('transitionend',done);}};
+        w.addEventListener('transitionend',done);
+        setTimeout(function(){if(!d.classList.contains('o'))d.open=false;},650); // страховка
+      }
+    });
+  });
 
   /* ---------- магнитные кнопки ---------- */
   if(fine&&!reduce){
