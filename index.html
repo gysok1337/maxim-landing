@@ -7,7 +7,7 @@
 <meta name="description" content="Сайты под ключ: изучаю нишу, показываю бесплатный макет до старта, собираю сайт и довожу до заявок. Лендинги, магазины, боты, автоматизация.">
 
 <!-- ============================================================
-     БРЕНД: имя в .logo и футере (сейчас «Максим»).
+     БРЕНД: знак «М» в .logo / .foot-brand + favicon.svg.
      Telegram: константа TG внизу файла + ссылки t.me/maksim_site.
      КЕЙСЫ: секция #works — карточка «Лидер Вино» помечена
      data-case="soon", по готовности заменить содержимое.
@@ -19,13 +19,14 @@
 <meta property="og:description" content="Изучаю нишу, показываю бесплатный макет до старта, собираю сайт под ключ и довожу до заявок.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://maksim-site.ru/">
-<meta property="og:image" content="https://maksim-site.ru/assets/og-preview.png?v=20260618-2">
+<meta property="og:image" content="https://maksim-site.ru/assets/og-preview.png?v=20260708-1">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://maksim-site.ru/assets/og-preview.png?v=20260618-2">
+<meta name="twitter:image" content="https://maksim-site.ru/assets/og-preview.png?v=20260708-1">
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23111213'/%3E%3Ctext x='32' y='45' font-family='Georgia,serif' font-style='italic' font-size='38' text-anchor='middle' fill='%23F6F5F2'%3E%D0%9C%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="assets/favicon.svg?v=20260708-1" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260708-1">
 
 <script>(function(){try{if(localStorage.getItem('theme')!=='light')document.documentElement.classList.add('dark')}catch(e){document.documentElement.classList.add('dark')}})()</script>
 
@@ -116,7 +117,15 @@ header{
 header.solid{background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:var(--line)}
 header.hide{transform:translateY(-100%)}
 .nav{display:flex;align-items:center;justify-content:space-between;height:76px;gap:14px}
-.logo{font-weight:700;font-size:19px;letter-spacing:-.02em;display:flex;align-items:baseline;gap:8px}
+.logo{font-weight:700;font-size:19px;letter-spacing:-.02em;display:inline-flex;align-items:center;gap:10px}
+.logo-mark{
+  width:34px;height:34px;border-radius:11px;display:grid;place-items:center;flex:0 0 auto;
+  background:var(--ink);color:var(--bg);font-family:var(--serif);font-style:italic;font-weight:600;font-size:25px;line-height:1;
+  box-shadow:0 12px 30px -22px var(--ink);
+  transition:transform .35s cubic-bezier(.22,1,.36,1),border-radius .35s cubic-bezier(.22,1,.36,1);
+}
+.logo:hover .logo-mark{transform:translateY(-1px) rotate(-4deg);border-radius:13px}
+.logo-text{display:inline-flex;align-items:baseline;gap:8px}
 .logo em{font-family:var(--serif);font-weight:500;font-size:17px;color:var(--muted)}
 .nav-links{display:flex;gap:34px;align-items:center}
 .nav-links a{font-size:14.5px;font-weight:500;color:var(--muted);position:relative;transition:color .2s}
@@ -356,6 +365,8 @@ html.dark .contact{background:var(--card);border-top:1px solid var(--line)}
 .contact .mono{color:rgba(243,241,236,.5)}
 .contact .btn{font-size:16px;padding:17px 34px}
 .contact-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.12);padding:26px 0 34px;font-family:var(--mono);font-size:12px;color:rgba(243,241,236,.45)}
+.foot-brand{display:inline-flex;align-items:center;gap:10px}
+.foot-brand .logo-mark{width:28px;height:28px;border-radius:9px;font-size:20px;background:var(--dark-text);color:var(--dark);box-shadow:none}
 .contact-foot a{transition:color .2s}
 .contact-foot a:hover{color:var(--dark-text)}
 
@@ -417,7 +428,10 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
 
 <header id="header">
   <div class="wrap nav">
-    <a href="#" class="logo">Максим <em>web dev</em></a>
+    <a href="#" class="logo" aria-label="Максим — на главную">
+      <span class="logo-mark">М</span>
+      <span class="logo-text">Максим <em>web dev</em></span>
+    </a>
     <nav class="nav-links">
       <a href="#works">Кейсы</a>
       <a href="#approach">Подход</a>
@@ -697,7 +711,7 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
     <a href="https://t.me/maksim_site" target="_blank" rel="noopener" class="btn btn-w magnetic frev">Написать в Telegram</a>
   </div>
   <div class="wrap contact-foot">
-    <span>© 2026 Максим</span>
+    <span class="foot-brand"><span class="logo-mark" aria-hidden="true">М</span>© 2026 Максим</span>
     <a href="https://t.me/maksim_site" target="_blank" rel="noopener">t.me/maksim_site</a>
     <span>Сайты под ключ</span>
   </div>
