@@ -7,7 +7,7 @@
 <title>Максим — сообщение превращается в код</title>
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="preload" as="image" href="assets/screens/lider-hero-lab.png?v=20260711-3">
+<link rel="preload" as="image" href="assets/screens/lider-hero-lab.png?v=20260711-4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -545,7 +545,7 @@ button{font:inherit;color:inherit}
 .blueprint-copy{left:3%;top:60%;width:42%;height:11%}.blueprint-copy i{display:block;height:2px;margin-top:7%;background:currentColor;opacity:.68}.blueprint-copy i:nth-child(1){width:96%}.blueprint-copy i:nth-child(2){width:82%}.blueprint-copy i:nth-child(3){width:68%}
 .blueprint-actions{left:3%;top:75%;width:34%;height:9%;display:flex;gap:6%}.blueprint-actions i{width:47%;height:100%;border:1px solid currentColor}.blueprint-actions i:first-child{border-color:var(--accent);background:rgba(var(--accent-rgb),.14)}
 .blueprint-proof{left:3%;right:3%;bottom:4%;height:7%;display:grid;grid-template-columns:repeat(4,1fr);gap:4%;align-items:end;border-top:1px solid rgba(255,255,255,.35);padding-top:2%}.blueprint-proof i{height:2px;background:currentColor;opacity:.62}.blueprint-proof i::before{content:"";display:inline-block;width:4px;height:4px;margin-right:7px;border-radius:50%;background:var(--accent);vertical-align:middle}
-.final-site-shot{position:absolute;z-index:10;inset:0;display:block;overflow:hidden;background-color:#17120f;background-image:url("assets/screens/lider-hero-lab.png?v=20260711-3");background-repeat:no-repeat;background-position:center top;background-size:contain;opacity:0;clip-path:inset(0);contain:paint;isolation:isolate;transform:translate3d(0,0,0);transform-origin:50% 50%;-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:opacity,transform}
+.final-site-shot{position:absolute;z-index:10;inset:0;display:block;overflow:hidden;background-color:#17120f;background-image:url("assets/screens/lider-hero-lab.png?v=20260711-4");background-repeat:no-repeat;background-position:center top;background-size:contain;opacity:0;clip-path:inset(0);isolation:isolate;transform:translate3d(0,0,0);transform-origin:50% 50%;-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:opacity,transform}
 .assembly-beam{position:absolute;z-index:9;left:14px;right:14px;top:15%;height:2px;opacity:0;transform-origin:left;pointer-events:none;will-change:top,opacity,transform}
 .assembly-beam::before{content:"";position:absolute;inset:-5px 0;background:rgba(var(--accent-rgb),.12);filter:blur(5px)}
 .assembly-beam::after{content:"";position:absolute;right:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 15px rgba(var(--accent-rgb),.78)}
@@ -718,7 +718,7 @@ body.fx-enabled .fx-panel{
   .stage-foot{display:none}
   .visual-field{inset:68px 0 0;perspective-origin:50% 70%}
   .visual-field::after{background:linear-gradient(180deg,var(--bg) 0 28%,rgba(13,13,12,.84) 41%,transparent 55% 93%,rgba(13,13,12,.3));opacity:.58}
-  .object-wrap{left:50%;top:69%;width:calc(100vw - 28px);height:330px}
+  .object-wrap{left:50%;top:clamp(62%,calc(28% + 258px),71.5%);width:calc(100vw - 28px);height:330px}
   .morph-shell{clip-path:inset(52px 8px 218px 18px round 15px)}
   .notification-content{left:27px;right:41px;top:84px;grid-template-columns:34px 1fr auto;gap:9px}
   .notification-avatar{width:34px;height:34px}
@@ -751,7 +751,7 @@ body.fx-enabled .fx-panel{
   .blueprint-copy{width:58%}
   .blueprint-actions{width:52%}
   .blueprint-proof{gap:3%}
-  .final-site-shot{background-color:transparent;background-position:center;background-size:contain}
+  .final-site-shot{background-color:transparent;background-position:18% center;background-size:cover}
   .world-grid{inset:-10% -60% -20%;background-size:56px 56px;opacity:.22}
   .page-progress{right:10px;bottom:56px;height:44px}
   .scroll-cue{bottom:15px;padding:8px 11px}.scroll-cue span{font-size:7.5px}
@@ -759,6 +759,10 @@ body.fx-enabled .fx-panel{
 }
 
 @supports (-webkit-touch-callout:none){
+  .object-wrap.is-webkit-final{left:var(--webkit-flat-left)!important;top:var(--webkit-flat-top)!important;width:var(--webkit-flat-width)!important;height:var(--webkit-flat-height)!important;transform:none!important;transform-style:flat!important}
+  .object-wrap.is-webkit-final .morph-shell,
+  .object-wrap.is-webkit-final .browser-content,
+  .object-wrap.is-webkit-final .browser-page{transform-style:flat!important;perspective:none!important}
   .final-site-shot{filter:none!important;transform:translate3d(0,0,0)!important}
 }
 
@@ -930,7 +934,7 @@ body.fx-enabled .fx-panel{
                     <div class="semantic-module blueprint-proof" data-semantic-module="4"><i></i><i></i><i></i><i></i></div>
                   </div>
                 </div>
-                <div class="final-site-shot" id="finalPreview" data-src="assets/screens/lider-hero-lab.png?v=20260711-3" role="img" aria-label="Первый экран сайта «Лидер Вино»"></div>
+                <div class="final-site-shot" id="finalPreview" data-src="assets/screens/lider-hero-lab.png?v=20260711-4" role="img" aria-label="Первый экран сайта «Лидер Вино»"></div>
                 <svg class="assembly-route" id="assemblyRoute" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
                   <path class="assembly-route-glow" id="assemblyRouteGlow" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
                   <path class="assembly-route-core" id="assemblyRouteCore" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
@@ -1067,6 +1071,9 @@ body.fx-enabled .fx-panel{
   var noticeAction=0;
   var runAction=0;
   var lastTypedCount=-1;
+  var desktopRibbonPath=ribbonCore.getAttribute('d');
+  var mobileRibbonPath='M835 604 C945 540 958 410 866 338 C758 254 544 292 365 315 C180 339 72 374 48 448 C20 538 131 606 318 623 C517 642 739 612 835 548 C902 503 912 424 850 382';
+  var activeRibbonPath='';
   var ribbonLength=1;
   var ribbonHeadScaleX=1;
   var assemblyRouteLength=1;
@@ -1182,8 +1189,19 @@ body.fx-enabled .fx-panel{
   }
 
   function measure(){
-    var shellLeft=objectWrap.offsetLeft-objectWrap.offsetWidth/2;
-    var shellTop=objectWrap.offsetTop-objectWrap.offsetHeight/2;
+    var restoreWebkitFlat=objectWrap.classList.contains('is-webkit-final');
+    objectWrap.classList.remove('is-webkit-final');
+    var nextRibbonPath=window.innerWidth<=700?mobileRibbonPath:desktopRibbonPath;
+    if(activeRibbonPath!==nextRibbonPath){
+      ribbonGlow.setAttribute('d',nextRibbonPath);
+      ribbonCore.setAttribute('d',nextRibbonPath);
+      activeRibbonPath=nextRibbonPath;
+      ribbonLength=ribbonCore.getTotalLength?ribbonCore.getTotalLength():1;
+    }
+    var objectAnchorLeft=objectWrap.offsetLeft;
+    var objectAnchorTop=objectWrap.offsetTop;
+    var shellLeft=objectAnchorLeft-objectWrap.offsetWidth/2;
+    var shellTop=objectAnchorTop-objectWrap.offsetHeight/2;
     tokenMetrics=sourceTokens.map(function(source){
       var targetElement=document.querySelector('[data-code-token="'+source.dataset.token+'"]');
       var sourceRect=layoutRect(source,morphShell);
@@ -1206,6 +1224,16 @@ body.fx-enabled .fx-panel{
     var playRect=layoutRect(playControl,morphShell);
     var objectHeight=objectWrap.offsetHeight;
     var objectWidth=objectWrap.offsetWidth;
+    var mobileLayout=window.innerWidth<=700;
+    var finalScale=mobileLayout?1:1.035;
+    var finalX=mobileLayout?0:-52;
+    var finalY=mobileLayout?0:2;
+    var flatWidth=objectWidth*finalScale;
+    var flatHeight=objectHeight*finalScale;
+    objectWrap.style.setProperty('--webkit-flat-left',(objectAnchorLeft+finalX-flatWidth/2).toFixed(2)+'px');
+    objectWrap.style.setProperty('--webkit-flat-top',(objectAnchorTop+finalY-flatHeight/2).toFixed(2)+'px');
+    objectWrap.style.setProperty('--webkit-flat-width',flatWidth.toFixed(2)+'px');
+    objectWrap.style.setProperty('--webkit-flat-height',flatHeight.toFixed(2)+'px');
     var ribbonRect=ribbonSvg.getBoundingClientRect();
     if(ribbonRect.width>0&&ribbonRect.height>0){
       ribbonHeadScaleX=(ribbonRect.height/700)/(ribbonRect.width/1000);
@@ -1242,6 +1270,7 @@ body.fx-enabled .fx-panel{
       playX:shellLeft+playRect.left+playRect.width*.46,
       playY:shellTop+playRect.top+playRect.height*.48
     };
+    objectWrap.classList.toggle('is-webkit-final',restoreWebkitFlat);
     if(!cursor.x&&!cursor.y){cursor.x=cursorMetrics.noticeStartX;cursor.y=cursorMetrics.noticeStartY;}
   }
 
@@ -1306,6 +1335,8 @@ body.fx-enabled .fx-panel{
     var objectRotateX=-pointer.y*2.3*depth*pointerWeight+sideView*(isMobile?4:17);
     var objectRotateY=pointer.x*3.2*depth*pointerWeight-sideView*(isMobile?.35:2);
     var objectRotateZ=-sideView*(isMobile?0:1.2);
+    var webkitFinalFlat=webkitTouch&&buildP>=.84;
+    objectWrap.classList.toggle('is-webkit-final',webkitFinalFlat);
     setOpacity(objectWrap,arrival);
     setTransform(objectWrap,
       'translate3d(calc(-50% + '+objectX.toFixed(1)+'px),calc(-50% + '+objectY.toFixed(1)+'px),0) '+
@@ -1458,7 +1489,7 @@ body.fx-enabled .fx-panel{
     var backdropIn=smooth(segment(buildP,.012,.075));
     var artboardIn=smooth(segment(buildP,.035,.10));
     var moduleStarts=[.09,.19,.30,.41,.52];
-    var materialP=smooth(segment(buildP,.82,.97));
+    var materialP=smooth(segment(buildP,webkitTouch?.88:.82,.97));
     setOpacity(semanticAssembly,1);
     setOpacity(assemblyBackplate,backdropIn);
     setTransform(assemblyBackplate,'scale('+mix(1.035,1,backdropIn).toFixed(4)+')');
@@ -1476,7 +1507,7 @@ body.fx-enabled .fx-panel{
       module.style.filter='blur('+(1.2*(1-reveal)+materialP).toFixed(2)+'px)';
     });
 
-    setOpacity(finalPreview,finalPreviewReady?materialP:0);
+    setOpacity(finalPreview,finalPreviewReady&&(!webkitTouch||webkitFinalFlat)?materialP:0);
     setTransform(finalPreview,webkitTouch?'translate3d(0,0,0)':'translate3d(0,0,14px)');
     finalPreview.style.filter=webkitTouch?'none':'grayscale('+(1-materialP).toFixed(3)+') blur('+(2.6*(1-materialP)).toFixed(2)+'px)';
     buildPieces.forEach(function(piece){
@@ -1711,7 +1742,9 @@ body.fx-enabled .fx-panel{
     fallbackScroll();
   }
 
-  var fxEnabled=new URLSearchParams(window.location.search).get('fx')==='1';
+  var fxParams=new URLSearchParams(window.location.search);
+  var fxEnabled=fxParams.get('fx')==='1';
+  var fxScene=parseFloat(fxParams.get('scene'));
   var fxProgress=document.getElementById('fxProgress');
   var fxDepth=document.getElementById('fxDepth');
   var fxFollow=document.getElementById('fxFollow');
@@ -1769,7 +1802,15 @@ body.fx-enabled .fx-panel{
   else setTimeout(measure,200);
 
   measure();
-  render(0);
+  if(fxEnabled&&Number.isFinite(fxScene)){
+    manual=true;
+    target=visual=clamp(fxScene/100,0,storyUnits);
+    fxProgress.value=(visual*100).toFixed(1);
+    render(visual);
+    syncFx();
+  }else{
+    render(0);
+  }
   requestAnimationFrame(frame);
 })();
 </script>
