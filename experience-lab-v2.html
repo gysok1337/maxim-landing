@@ -7,6 +7,7 @@
 <title>Максим — сообщение превращается в код</title>
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preload" as="image" href="assets/screens/lider-hero-lab.png?v=20260711-3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -544,7 +545,7 @@ button{font:inherit;color:inherit}
 .blueprint-copy{left:3%;top:60%;width:42%;height:11%}.blueprint-copy i{display:block;height:2px;margin-top:7%;background:currentColor;opacity:.68}.blueprint-copy i:nth-child(1){width:96%}.blueprint-copy i:nth-child(2){width:82%}.blueprint-copy i:nth-child(3){width:68%}
 .blueprint-actions{left:3%;top:75%;width:34%;height:9%;display:flex;gap:6%}.blueprint-actions i{width:47%;height:100%;border:1px solid currentColor}.blueprint-actions i:first-child{border-color:var(--accent);background:rgba(var(--accent-rgb),.14)}
 .blueprint-proof{left:3%;right:3%;bottom:4%;height:7%;display:grid;grid-template-columns:repeat(4,1fr);gap:4%;align-items:end;border-top:1px solid rgba(255,255,255,.35);padding-top:2%}.blueprint-proof i{height:2px;background:currentColor;opacity:.62}.blueprint-proof i::before{content:"";display:inline-block;width:4px;height:4px;margin-right:7px;border-radius:50%;background:var(--accent);vertical-align:middle}
-.final-site-shot{position:absolute;z-index:10;inset:0;width:100%;height:100%;display:block;object-fit:contain;object-position:center top;background:#17120f;opacity:0;clip-path:inset(0);transform-origin:50% 50%;-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:opacity,transform,filter}
+.final-site-shot{position:absolute;z-index:10;inset:0;display:block;overflow:hidden;background-color:#17120f;background-image:url("assets/screens/lider-hero-lab.png?v=20260711-3");background-repeat:no-repeat;background-position:center top;background-size:contain;opacity:0;clip-path:inset(0);contain:paint;isolation:isolate;transform:translate3d(0,0,0);transform-origin:50% 50%;-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:opacity,transform}
 .assembly-beam{position:absolute;z-index:9;left:14px;right:14px;top:15%;height:2px;opacity:0;transform-origin:left;pointer-events:none;will-change:top,opacity,transform}
 .assembly-beam::before{content:"";position:absolute;inset:-5px 0;background:rgba(var(--accent-rgb),.12);filter:blur(5px)}
 .assembly-beam::after{content:"";position:absolute;right:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 15px rgba(var(--accent-rgb),.78)}
@@ -596,10 +597,15 @@ button{font:inherit;color:inherit}
   z-index:30;
   left:0;
   top:0;
-  width:32px;
-  height:40px;
+  width:29px;
+  height:39px;
+  aspect-ratio:29/39;
   opacity:0;
   filter:drop-shadow(0 8px 9px rgba(0,0,0,.48));
+  contain:layout paint;
+  transform-origin:4px 4px;
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
   will-change:transform,opacity;
 }
 .virtual-cursor svg{display:block;width:100%;height:100%;overflow:visible}
@@ -616,21 +622,6 @@ button{font:inherit;color:inherit}
   opacity:0;
   will-change:transform,opacity;
 }
-.run-confirm{
-  position:absolute;
-  z-index:24;
-  left:50%;
-  bottom:28px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  color:var(--muted);
-  opacity:0;
-  transform:translate(-50%,10px);
-  will-change:transform,opacity;
-}
-.run-confirm i{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px rgba(var(--accent-rgb),.72)}
-
 .page-progress{position:absolute;z-index:50;right:clamp(20px,3vw,44px);bottom:34px;width:1px;height:86px;background:var(--line)}
 .page-progress span{display:block;width:100%;height:100%;background:var(--accent);transform:scaleY(0);transform-origin:top;box-shadow:0 0 8px rgba(var(--accent-rgb),.5);will-change:transform}
 
@@ -727,8 +718,8 @@ body.fx-enabled .fx-panel{
   .stage-foot{display:none}
   .visual-field{inset:68px 0 0;perspective-origin:50% 70%}
   .visual-field::after{background:linear-gradient(180deg,var(--bg) 0 28%,rgba(13,13,12,.84) 41%,transparent 55% 93%,rgba(13,13,12,.3));opacity:.58}
-  .object-wrap{left:50%;top:71%;width:calc(100vw - 20px);height:460px}
-  .morph-shell{clip-path:inset(70px 8px 310px 18px round 15px)}
+  .object-wrap{left:50%;top:69%;width:calc(100vw - 28px);height:330px}
+  .morph-shell{clip-path:inset(52px 8px 218px 18px round 15px)}
   .notification-content{left:27px;right:41px;top:84px;grid-template-columns:34px 1fr auto;gap:9px}
   .notification-avatar{width:34px;height:34px}
   .bubble-tail{right:6px;bottom:105px}
@@ -747,12 +738,11 @@ body.fx-enabled .fx-panel{
   .code-area{padding:7px 4px 8px 2px}
   .code-row{min-height:18px;grid-template-columns:22px 1fr;font-size:8.2px;white-space:nowrap}
   .line-no{font-size:6.5px;padding-right:5px}
-  .virtual-cursor{width:28px;height:35px}
+  .virtual-cursor{width:26px;height:35px}
   .flight-token{font-size:15px}
-  .run-confirm{bottom:16px;white-space:nowrap}
-  .browser-chrome{height:44px;grid-template-columns:auto 1fr;padding:0 9px;gap:8px}
-  .browser-address{height:28px;padding:0 8px;font-size:7px}
-  .browser-page{top:44px}
+  .browser-chrome{height:40px;grid-template-columns:auto 1fr;padding:0 8px;gap:7px}
+  .browser-address{height:26px;padding:0 8px;font-size:7px}
+  .browser-page{top:40px}
   .assembly-artboard{inset:0}
   .assembly-artboard::before{right:7px;top:6px;font-size:4.2px}
   .bp-nav-links{display:none}.blueprint-nav{grid-template-columns:1fr .42fr}
@@ -761,11 +751,15 @@ body.fx-enabled .fx-panel{
   .blueprint-copy{width:58%}
   .blueprint-actions{width:52%}
   .blueprint-proof{gap:3%}
-  .final-site-shot{object-fit:contain;object-position:center;background:transparent}
+  .final-site-shot{background-color:transparent;background-position:center;background-size:contain}
   .world-grid{inset:-10% -60% -20%;background-size:56px 56px;opacity:.22}
-  .page-progress{right:14px;bottom:20px;height:62px}
+  .page-progress{right:10px;bottom:56px;height:44px}
   .scroll-cue{bottom:15px;padding:8px 11px}.scroll-cue span{font-size:7.5px}
   body.fx-enabled .fx-panel{left:10px;right:10px;bottom:10px;width:auto}
+}
+
+@supports (-webkit-touch-callout:none){
+  .final-site-shot{filter:none!important;transform:translate3d(0,0,0)!important}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -936,7 +930,7 @@ body.fx-enabled .fx-panel{
                     <div class="semantic-module blueprint-proof" data-semantic-module="4"><i></i><i></i><i></i><i></i></div>
                   </div>
                 </div>
-                <img class="final-site-shot" id="finalPreview" src="assets/screens/lider-hero-lab.png?v=20260711-2" width="1280" height="800" alt="Первый экран сайта «Лидер Вино»" loading="eager" decoding="sync" fetchpriority="high" draggable="false">
+                <div class="final-site-shot" id="finalPreview" data-src="assets/screens/lider-hero-lab.png?v=20260711-3" role="img" aria-label="Первый экран сайта «Лидер Вино»"></div>
                 <svg class="assembly-route" id="assemblyRoute" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
                   <path class="assembly-route-glow" id="assemblyRouteGlow" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
                   <path class="assembly-route-core" id="assemblyRouteCore" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
@@ -957,7 +951,6 @@ body.fx-enabled .fx-panel{
         <div class="token-layer" id="tokenLayer"></div>
         <div class="virtual-cursor" id="virtualCursor"><svg viewBox="0 0 29 39" aria-hidden="true"><path d="M2.9 2.2C2.25 1.73 1.6 2.18 1.6 2.97V27.55C1.6 28.6 2.84 29.16 3.62 28.45L9.2 23.32L14.3 35.15C14.75 36.2 15.97 36.68 17.02 36.23L20.25 34.83C21.32 34.37 21.8 33.12 21.34 32.06L16.25 20.26H24.28C25.53 20.26 26.05 18.64 25.02 17.92L2.9 2.2Z"/></svg></div>
         <div class="click-ring" id="clickRing"></div>
-        <div class="run-confirm mono" id="runConfirm"><i></i><span>Команда принята</span></div>
       </div>
 
       <div class="scroll-cue is-visible" id="scrollCue" aria-hidden="true"><span id="scrollCueText">Листайте, чтобы продолжить</span><i></i></div>
@@ -1001,6 +994,8 @@ body.fx-enabled .fx-panel{
   ];
 
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var coarsePointer=window.matchMedia('(pointer:coarse)').matches;
+  var webkitTouch=window.CSS&&CSS.supports&&CSS.supports('-webkit-touch-callout','none');
   var section=document.getElementById('labExperience');
   var sticky=document.getElementById('labSticky');
   var visualField=document.getElementById('visualField');
@@ -1030,7 +1025,8 @@ body.fx-enabled .fx-panel{
   var moduleLinks=Array.prototype.slice.call(document.querySelectorAll('[data-module-link]'));
   var moduleNodes=Array.prototype.slice.call(document.querySelectorAll('[data-module-node]'));
   var finalPreview=document.getElementById('finalPreview');
-  var finalPreviewReady=finalPreview.complete&&finalPreview.naturalWidth>0;
+  var finalPreviewReady=false;
+  var finalPreviewAsset=new Image();
   var buildSeam=document.getElementById('buildSeam');
   var assemblyBeam=document.getElementById('assemblyBeam');
   var assemblyRoute=document.getElementById('assemblyRoute');
@@ -1043,7 +1039,6 @@ body.fx-enabled .fx-panel{
   var playControl=document.getElementById('playControl');
   var virtualCursor=document.getElementById('virtualCursor');
   var clickRing=document.getElementById('clickRing');
-  var runConfirm=document.getElementById('runConfirm');
   var ribbonSvg=document.getElementById('ribbonSvg');
   var ribbonGlow=document.getElementById('ribbonGlow');
   var ribbonCore=document.getElementById('ribbonCore');
@@ -1073,6 +1068,7 @@ body.fx-enabled .fx-panel{
   var runAction=0;
   var lastTypedCount=-1;
   var ribbonLength=1;
+  var ribbonHeadScaleX=1;
   var assemblyRouteLength=1;
   var noticeTopInset=75;
   var noticeBottomInset=365;
@@ -1080,8 +1076,10 @@ body.fx-enabled .fx-panel{
   var messageRightInset=36;
   var messageBottomInset=180;
   var runHoverTime=0;
+  var runAutoAdvanced=false;
   var lastFrameTime=performance.now();
-  var exitGuardProgress=.955;
+  var buildStart=.955;
+  var exitGuardProgress=buildStart;
   var wheelFrame=0;
   var wheelStep=0;
   var exitGuardFrame=0;
@@ -1099,6 +1097,14 @@ body.fx-enabled .fx-panel{
   function backOut(value){var c1=1.36,c3=c1+1;return 1+c3*Math.pow(value-1,3)+c1*Math.pow(value-1,2);}
   function setOpacity(element,value){element.style.opacity=clamp(value,0,1).toFixed(3);}
   function setTransform(element,value){element.style.transform=value;}
+
+  function markFinalPreviewReady(){finalPreviewReady=true;}
+
+  finalPreviewAsset.decoding='async';
+  finalPreviewAsset.addEventListener('load',markFinalPreviewReady,{once:true});
+  finalPreviewAsset.src=finalPreview.dataset.src;
+  if(finalPreviewAsset.complete&&finalPreviewAsset.naturalWidth)markFinalPreviewReady();
+  else if(finalPreviewAsset.decode)finalPreviewAsset.decode().then(markFinalPreviewReady).catch(function(){});
 
   function hexToRgb(hex){
     var clean=hex.replace('#','');
@@ -1200,6 +1206,10 @@ body.fx-enabled .fx-panel{
     var playRect=layoutRect(playControl,morphShell);
     var objectHeight=objectWrap.offsetHeight;
     var objectWidth=objectWrap.offsetWidth;
+    var ribbonRect=ribbonSvg.getBoundingClientRect();
+    if(ribbonRect.width>0&&ribbonRect.height>0){
+      ribbonHeadScaleX=(ribbonRect.height/700)/(ribbonRect.width/1000);
+    }
     var compactMessage=window.innerWidth<=700;
     noticeTopInset=clamp(noticeRect.top-8,0,objectHeight-40);
     noticeBottomInset=clamp(
@@ -1209,8 +1219,8 @@ body.fx-enabled .fx-panel{
     );
     messageBottomInset=clamp(
       objectHeight-(messageRect.top+messageRect.height+16),
-      window.innerWidth<=700?115:185,
-      window.innerWidth<=700?190:275
+      window.innerWidth<=700?38:185,
+      window.innerWidth<=700?92:275
     );
     messageLeftInset=clamp(
       messageRect.left-(compactMessage?12:18),
@@ -1239,11 +1249,11 @@ body.fx-enabled .fx-panel{
     var timeline=Math.max(0,progress);
     var p=clamp(timeline,0,1);
     var isMobile=window.innerWidth<=700;
-    var buildP=smooth(segment(timeline,1.01,buildEnd));
-    var buildCopyOut=smooth(segment(buildP,.005,.04));
-    var buildCopy=smooth(segment(buildP,.02,.085));
-    var browserIn=smooth(segment(buildP,.004,.07));
-    var perspectiveIn=smooth(segment(buildP,.006,.09));
+    var buildP=smooth(segment(timeline,buildStart,buildEnd));
+    var buildCopyOut=smooth(segment(buildP,.001,.018));
+    var buildCopy=smooth(segment(buildP,.006,.03));
+    var browserIn=smooth(segment(buildP,.002,.04));
+    var perspectiveIn=smooth(segment(buildP,.004,.06));
     var frontAlign=smooth(segment(buildP,.70,.84));
     var sideView=(reduced?0:perspectiveIn*(1-frontAlign));
     var arrival=backOut(segment(p,.015,.075));
@@ -1256,7 +1266,6 @@ body.fx-enabled .fx-panel{
     var playIn=smooth(segment(p,.84,.895));
     var runCursorIn=smooth(segment(p,.825,.87));
     var runCursorMove=smooth(segment(p,.845,.925));
-    var confirmed=smooth(segment(runAction,.46,1));
     var copySwap=smooth(segment(p,.52,.68));
     var noticeClickPhase=segment(noticeAction,.02,.58);
     var runClickPhase=segment(runAction,.02,.58);
@@ -1276,21 +1285,27 @@ body.fx-enabled .fx-panel{
     copyThree.style.filter='blur('+(3*(1-buildCopy)).toFixed(2)+'px)';
     copyThree.setAttribute('aria-hidden',buildCopy>.5?'false':'true');
     stageTabs[0].classList.toggle('is-active',timeline<.5);
-    stageTabs[1].classList.toggle('is-active',timeline>=.5&&timeline<1.01);
-    stageTabs[2].classList.toggle('is-active',timeline>=1.01);
-    stageCount.textContent=timeline<.5?'01 / 03':(timeline<1.01?'02 / 03':'03 / 03');
+    stageTabs[1].classList.toggle('is-active',timeline>=.5&&timeline<buildStart);
+    stageTabs[2].classList.toggle('is-active',timeline>=buildStart);
+    stageCount.textContent=timeline<.5?'01 / 03':(timeline<buildStart?'02 / 03':'03 / 03');
     var overallProgress=clamp(timeline/storyUnits,0,1);
     stageTrack.style.transform='scaleX('+overallProgress.toFixed(4)+')';
     pageProgress.style.transform='scaleY('+overallProgress.toFixed(4)+')';
     if(overallProgress>=.98)hideScrollCue();
 
-    var objectScale=mix(.92,1,arrival)-noticePress*.006-sideView*(isMobile?.055:.08)+frontAlign*(isMobile?.008:.035);
-    var objectX=mix(90,0,arrival)-sideView*(isMobile?0:2)+frontAlign*(isMobile?0:-52);
-    var objectY=mix(24,0,arrival)+sideView*(isMobile?2:5)+frontAlign*(isMobile?-5:2);
+    var objectScale=isMobile
+      ?mix(.92,1,arrival)-noticePress*.006-sideView*.02
+      :mix(.92,1,arrival)-noticePress*.006-sideView*.08+frontAlign*.035;
+    var objectX=isMobile
+      ?mix(70,0,arrival)
+      :mix(90,0,arrival)-sideView*2-frontAlign*52;
+    var objectY=isMobile
+      ?mix(18,0,arrival)+sideView
+      :mix(24,0,arrival)+sideView*5+frontAlign*2;
     var pointerWeight=1-morph*.65-buildP*.12;
-    var objectRotateX=-pointer.y*2.3*depth*pointerWeight+sideView*(isMobile?10:17);
-    var objectRotateY=pointer.x*3.2*depth*pointerWeight-sideView*(isMobile?1:2);
-    var objectRotateZ=-sideView*(isMobile?.7:1.2);
+    var objectRotateX=-pointer.y*2.3*depth*pointerWeight+sideView*(isMobile?4:17);
+    var objectRotateY=pointer.x*3.2*depth*pointerWeight-sideView*(isMobile?.35:2);
+    var objectRotateZ=-sideView*(isMobile?0:1.2);
     setOpacity(objectWrap,arrival);
     setTransform(objectWrap,
       'translate3d(calc(-50% + '+objectX.toFixed(1)+'px),calc(-50% + '+objectY.toFixed(1)+'px),0) '+
@@ -1345,7 +1360,7 @@ body.fx-enabled .fx-panel{
     ribbonCore.style.strokeDashoffset=dash.toFixed(4);
     if(ribbonCore.getPointAtLength){
       var point=ribbonCore.getPointAtLength(ribbonLength*scanP);
-      ribbonHead.setAttribute('transform','translate('+point.x.toFixed(2)+' '+point.y.toFixed(2)+') rotate('+mix(-13,-5,scanP).toFixed(2)+') scale(.96)');
+      ribbonHead.setAttribute('transform','translate('+point.x.toFixed(2)+' '+point.y.toFixed(2)+') rotate('+mix(-13,-5,scanP).toFixed(2)+') scale('+(.96*ribbonHeadScaleX).toFixed(3)+' .96)');
     }
     setOpacity(ribbonHead,scanP>0&&scanP<.995?clamp(ribbonVisibility*2.4,0,1):0);
 
@@ -1382,7 +1397,7 @@ body.fx-enabled .fx-panel{
       targetElement.style.textShadow=settle>.5?'0 0 14px rgba(var(--accent-rgb),.28)':'none';
     });
 
-    var editorOut=smooth(segment(buildP,.004,.08));
+    var editorOut=smooth(segment(buildP,.002,.045));
     setOpacity(editorContent,morph*(1-editorOut));
     setTransform(editorContent,'translate3d('+(18*(1-morph)).toFixed(1)+'px,'+(-5*editorOut).toFixed(1)+'px,'+(-22*editorOut).toFixed(1)+'px) scale('+mix(1,.992,editorOut).toFixed(4)+')');
     editorContent.style.filter='blur('+(2.2*(1-morph)+editorOut*.7).toFixed(2)+'px)';
@@ -1434,9 +1449,6 @@ body.fx-enabled .fx-panel{
     var ringOpacity=Math.max(noticePress,runPress);
     setOpacity(clickRing,ringOpacity);
     setTransform(clickRing,'translate3d('+(cursor.x-16).toFixed(1)+'px,'+(cursor.y-16).toFixed(1)+'px,0) scale('+mix(.55,1.45,out(ringP)).toFixed(3)+')');
-    setOpacity(runConfirm,confirmed*(1-smooth(segment(buildP,.015,.16))));
-    setTransform(runConfirm,'translate(-50%,'+(10*(1-confirmed)).toFixed(1)+'px)');
-
     setOpacity(browserContent,smooth(segment(browserIn,0,.18)));
     browserContent.style.clipPath='none';
     setTransform(browserContent,'translate3d(0,'+(7*(1-browserIn)).toFixed(1)+'px,0) scale('+mix(.992,1,browserIn).toFixed(4)+')');
@@ -1465,8 +1477,8 @@ body.fx-enabled .fx-panel{
     });
 
     setOpacity(finalPreview,finalPreviewReady?materialP:0);
-    setTransform(finalPreview,'translate3d(0,0,14px) scale(1)');
-    finalPreview.style.filter='grayscale('+(1-materialP).toFixed(3)+') blur('+(2.6*(1-materialP)).toFixed(2)+'px)';
+    setTransform(finalPreview,webkitTouch?'translate3d(0,0,0)':'translate3d(0,0,14px)');
+    finalPreview.style.filter=webkitTouch?'none':'grayscale('+(1-materialP).toFixed(3)+') blur('+(2.6*(1-materialP)).toFixed(2)+'px)';
     buildPieces.forEach(function(piece){
       setOpacity(piece,1);
       setTransform(piece,'none');
@@ -1501,9 +1513,10 @@ body.fx-enabled .fx-panel{
       gatedTarget=Math.max(gatedTarget,visual);
       var visualDelta=(gatedTarget-visual)*follow;
       var messageCorridor=visual>.255&&visual<.42;
-      var codeCorridor=visual>.42&&visual<.94;
-      var buildCorridor=visual>1&&visual<buildEnd;
-      var maxVisualRate=messageCorridor?.18:(codeCorridor?.095:(buildCorridor?.105:.72));
+      var codeCorridor=visual>.42&&visual<buildStart;
+      var buildCorridor=visual>buildStart&&visual<buildEnd;
+      var buildIntro=visual>buildStart&&visual<buildStart+.15;
+      var maxVisualRate=messageCorridor?.18:(codeCorridor?.095:(buildCorridor?(buildIntro?.26:.16):.72));
       var maxVisualStep=maxVisualRate*Math.max(deltaTime,1/240);
       visual+=clamp(visualDelta,-maxVisualStep,maxVisualStep);
     }
@@ -1529,6 +1542,7 @@ body.fx-enabled .fx-panel{
     if(target<.88&&visual<.88){
       runActionTarget=0;
       runHoverTime=0;
+      runAutoAdvanced=false;
     }else if(runAction<.96){
       if(runReady)runHoverTime=Math.min(.26,runHoverTime+(reduced?.18:deltaTime));
       else runHoverTime=0;
@@ -1536,7 +1550,11 @@ body.fx-enabled .fx-panel{
     }else{
       runActionTarget=1;
     }
-    runAction+=(runActionTarget-runAction)*(reduced?1:.1);
+    runAction+=(runActionTarget-runAction)*(reduced?1:.18);
+    if(!manual&&!runAutoAdvanced&&runAction>=.96){
+      runAutoAdvanced=true;
+      target=Math.max(target,buildStart+.13);
+    }
 
     render(visual);
     syncFx();
@@ -1603,6 +1621,7 @@ body.fx-enabled .fx-panel{
 
   function scrollToProgress(progress){
     manual=false;
+    runAutoAdvanced=progress>.935;
     if(progress<visual){
       visual=progress;
       noticeAction=progress>.16?1:0;
@@ -1661,7 +1680,7 @@ body.fx-enabled .fx-panel{
   }
 
   function guardSectionExit(){
-    if(reduced||manual)return;
+    if(reduced||manual||coarsePointer)return;
     var state=sectionProgress();
     var limitTimeline;
     if(runAction<.96)limitTimeline=exitGuardProgress;
@@ -1746,7 +1765,6 @@ body.fx-enabled .fx-panel{
     resizeTimer=setTimeout(function(){measure();if(window.ScrollTrigger)window.ScrollTrigger.refresh();},120);
   });
   window.addEventListener('load',function(){measure();if(window.ScrollTrigger)window.ScrollTrigger.refresh();});
-  finalPreview.addEventListener('load',function(){finalPreviewReady=true;});
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(measure);
   else setTimeout(measure,200);
 
