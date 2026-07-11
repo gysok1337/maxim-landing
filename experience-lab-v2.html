@@ -544,8 +544,7 @@ button{font:inherit;color:inherit}
 .blueprint-copy{left:3%;top:60%;width:42%;height:11%}.blueprint-copy i{display:block;height:2px;margin-top:7%;background:currentColor;opacity:.68}.blueprint-copy i:nth-child(1){width:96%}.blueprint-copy i:nth-child(2){width:82%}.blueprint-copy i:nth-child(3){width:68%}
 .blueprint-actions{left:3%;top:75%;width:34%;height:9%;display:flex;gap:6%}.blueprint-actions i{width:47%;height:100%;border:1px solid currentColor}.blueprint-actions i:first-child{border-color:var(--accent);background:rgba(var(--accent-rgb),.14)}
 .blueprint-proof{left:3%;right:3%;bottom:4%;height:7%;display:grid;grid-template-columns:repeat(4,1fr);gap:4%;align-items:end;border-top:1px solid rgba(255,255,255,.35);padding-top:2%}.blueprint-proof i{height:2px;background:currentColor;opacity:.62}.blueprint-proof i::before{content:"";display:inline-block;width:4px;height:4px;margin-right:7px;border-radius:50%;background:var(--accent);vertical-align:middle}
-.wireframe-hold{position:absolute;z-index:12;right:5%;bottom:5%;padding:5px 8px;border:1px solid rgba(255,255,255,.28);background:rgba(17,15,14,.68);color:rgba(255,255,255,.68);font-family:var(--mono);font-size:5.5px;letter-spacing:.11em;text-transform:uppercase;white-space:nowrap;opacity:0;will-change:opacity,transform}
-.final-site-shot{position:absolute;z-index:10;inset:0;width:100%;height:100%;display:block;object-fit:contain;object-position:center top;background:#17120f;opacity:0;will-change:opacity,transform,filter}
+.final-site-shot{position:absolute;z-index:10;inset:0;width:100%;height:100%;display:block;object-fit:contain;object-position:center top;background:#17120f;opacity:0;clip-path:inset(0);transform-origin:50% 50%;-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:opacity,transform,filter}
 .assembly-beam{position:absolute;z-index:9;left:14px;right:14px;top:15%;height:2px;opacity:0;transform-origin:left;pointer-events:none;will-change:top,opacity,transform}
 .assembly-beam::before{content:"";position:absolute;inset:-5px 0;background:rgba(var(--accent-rgb),.12);filter:blur(5px)}
 .assembly-beam::after{content:"";position:absolute;right:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 15px rgba(var(--accent-rgb),.78)}
@@ -639,31 +638,31 @@ button{font:inherit;color:inherit}
   position:absolute;
   z-index:58;
   left:50%;
-  bottom:21px;
+  bottom:24px;
   display:flex;
   align-items:center;
-  gap:9px;
-  padding:7px 10px;
-  border:1px solid rgba(255,255,255,.1);
+  gap:11px;
+  padding:9px 14px;
+  border:1px solid rgba(255,255,255,.25);
   border-radius:999px;
-  background:rgba(15,15,14,.72);
-  color:var(--quiet);
+  background:rgba(15,15,14,.9);
+  color:rgba(243,241,236,.68);
   opacity:0;
   transform:translate3d(-50%,8px,0);
   -webkit-backdrop-filter:blur(12px);
   backdrop-filter:blur(12px);
-  box-shadow:0 12px 34px rgba(0,0,0,.2);
+  box-shadow:0 12px 36px rgba(0,0,0,.32),inset 0 0 0 1px rgba(255,255,255,.025);
   pointer-events:none;
   transition:opacity .32s ease,transform .42s var(--ease-out),border-color .32s ease,color .32s ease;
 }
 .scroll-cue.is-visible{opacity:1;transform:translate3d(-50%,0,0)}
-.scroll-cue.is-idle{border-color:rgba(var(--accent-rgb),.22);color:var(--muted)}
-.scroll-cue span{font-family:var(--mono);font-size:8px;letter-spacing:.13em;text-transform:uppercase;white-space:nowrap}
-.scroll-cue i{position:relative;width:9px;height:13px;display:block}
-.scroll-cue i::before{content:"";position:absolute;left:4px;top:0;width:1px;height:10px;background:currentColor}
-.scroll-cue i::after{content:"";position:absolute;left:2px;bottom:1px;width:5px;height:5px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg)}
+.scroll-cue.is-idle{border-color:rgba(var(--accent-rgb),.38);color:var(--ink-2)}
+.scroll-cue span{font-family:var(--mono);font-size:9px;letter-spacing:.13em;text-transform:uppercase;white-space:nowrap}
+.scroll-cue i{position:relative;width:10px;height:13px;display:block;overflow:hidden}
+.scroll-cue i::before{content:"";position:absolute;left:4.5px;top:0;width:1px;height:9px;background:currentColor}
+.scroll-cue i::after{content:"";position:absolute;left:2px;bottom:2px;width:5px;height:5px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg)}
 .scroll-cue.is-nudging i{animation:scrollCueNudge .82s var(--ease-out) 2}
-@keyframes scrollCueNudge{0%,100%{transform:translateY(0)}45%{transform:translateY(5px)}}
+@keyframes scrollCueNudge{0%,100%{transform:translateY(0)}45%{transform:translateY(2px)}}
 
 .lab-next{
   min-height:100svh;
@@ -762,11 +761,10 @@ body.fx-enabled .fx-panel{
   .blueprint-copy{width:58%}
   .blueprint-actions{width:52%}
   .blueprint-proof{gap:3%}
-  .wireframe-hold{right:6%;bottom:5%;font-size:4.5px}
   .final-site-shot{object-fit:contain;object-position:center;background:transparent}
   .world-grid{inset:-10% -60% -20%;background-size:56px 56px;opacity:.22}
   .page-progress{right:14px;bottom:20px;height:62px}
-  .scroll-cue{bottom:13px;padding:6px 9px}.scroll-cue span{font-size:7px}
+  .scroll-cue{bottom:15px;padding:8px 11px}.scroll-cue span{font-size:7.5px}
   body.fx-enabled .fx-panel{left:10px;right:10px;bottom:10px;width:auto}
 }
 
@@ -787,22 +785,22 @@ body.fx-enabled .fx-panel{
     <span>Максим</span>
     <em>web dev</em>
   </a>
-  <div class="lab-status mono">Лаборатория · Сообщение / Код / Макет</div>
+  <div class="lab-status mono">Лаборатория · Сообщение / Код / Сборка</div>
   <a class="lab-back" href="index.html">Вернуться к сайту</a>
 </header>
 
 <main>
-  <section class="lab-scroll" id="labExperience" aria-label="Разбор задачи и подготовка макета">
+  <section class="lab-scroll" id="labExperience" aria-label="Разбор задачи, код и сборка сайта">
     <div class="lab-sticky" id="labSticky">
       <div class="world-grid" id="worldGrid" aria-hidden="true"></div>
 
       <div class="stage-layout">
         <aside class="stage-copy">
           <div class="chapter-label mono">Как я работаю · 01—03</div>
-          <nav class="stage-tabs" aria-label="Этапы прототипа">
+          <nav class="stage-tabs" aria-label="Этапы процесса">
             <button class="stage-tab is-active" type="button" data-jump="0.08">01 Разбор</button>
             <button class="stage-tab" type="button" data-jump="0.58">02 Код</button>
-            <button class="stage-tab" type="button" data-jump="1.16">03 Макет</button>
+            <button class="stage-tab" type="button" data-jump="1.16">03 Сборка</button>
           </nav>
           <div class="copy-stack">
             <article class="copy-step copy-one" id="copyOne">
@@ -814,12 +812,12 @@ body.fx-enabled .fx-panel{
               <p>Перевожу задачу в рабочую страницу: <strong>собираю структуру, добавляю тексты, изображения и нужные функции.</strong></p>
             </article>
             <article class="copy-step copy-three" id="copyThree" aria-hidden="true">
-              <h2>Собираю <em>макет</em></h2>
-              <p>Код превращается в готовый сайт: <strong>с дизайном, изображениями и рабочими формами.</strong></p>
+              <h2>Собираю <em>сайт</em></h2>
+              <p>Код превращается в готовую страницу: <strong>добавляю дизайн, изображения и рабочие формы.</strong></p>
             </article>
           </div>
           <div class="stage-foot mono" aria-hidden="true">
-            <span class="stage-count" id="stageCount">01 / 02</span>
+            <span class="stage-count" id="stageCount">01 / 03</span>
             <span class="stage-track"><span id="stageTrack"></span></span>
           </div>
         </aside>
@@ -937,9 +935,8 @@ body.fx-enabled .fx-panel{
                     <div class="semantic-module blueprint-actions" data-semantic-module="3"><i></i><i></i></div>
                     <div class="semantic-module blueprint-proof" data-semantic-module="4"><i></i><i></i><i></i><i></i></div>
                   </div>
-                  <div class="wireframe-hold" id="wireframeHold">Макет готов</div>
                 </div>
-                <img class="final-site-shot" id="finalPreview" src="assets/screens/lider-hero-lab.png" alt="Первый экран сайта «Лидер Вино»">
+                <img class="final-site-shot" id="finalPreview" src="assets/screens/lider-hero-lab.png?v=20260711-2" width="1280" height="800" alt="Первый экран сайта «Лидер Вино»" loading="eager" decoding="sync" fetchpriority="high" draggable="false">
                 <svg class="assembly-route" id="assemblyRoute" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
                   <path class="assembly-route-glow" id="assemblyRouteGlow" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
                   <path class="assembly-route-core" id="assemblyRouteCore" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
@@ -970,8 +967,8 @@ body.fx-enabled .fx-panel{
 
   <section class="lab-next">
     <div>
-      <div class="mono">Следующий фрагмент</div>
-      <h2>Сборка и <em>запуск</em></h2>
+      <div class="mono">Следующий этап</div>
+      <h2>Запуск <em>сайта</em></h2>
     </div>
   </section>
 </main>
@@ -1032,8 +1029,8 @@ body.fx-enabled .fx-panel{
   var semanticModules=Array.prototype.slice.call(document.querySelectorAll('[data-semantic-module]'));
   var moduleLinks=Array.prototype.slice.call(document.querySelectorAll('[data-module-link]'));
   var moduleNodes=Array.prototype.slice.call(document.querySelectorAll('[data-module-node]'));
-  var wireframeHold=document.getElementById('wireframeHold');
   var finalPreview=document.getElementById('finalPreview');
+  var finalPreviewReady=finalPreview.complete&&finalPreview.naturalWidth>0;
   var buildSeam=document.getElementById('buildSeam');
   var assemblyBeam=document.getElementById('assemblyBeam');
   var assemblyRoute=document.getElementById('assemblyRoute');
@@ -1450,9 +1447,6 @@ body.fx-enabled .fx-panel{
     var artboardIn=smooth(segment(buildP,.035,.10));
     var moduleStarts=[.09,.19,.30,.41,.52];
     var materialP=smooth(segment(buildP,.82,.97));
-    var holdIn=smooth(segment(buildP,.68,.72));
-    var holdOut=smooth(segment(buildP,.81,.86));
-
     setOpacity(semanticAssembly,1);
     setOpacity(assemblyBackplate,backdropIn);
     setTransform(assemblyBackplate,'scale('+mix(1.035,1,backdropIn).toFixed(4)+')');
@@ -1470,10 +1464,7 @@ body.fx-enabled .fx-panel{
       module.style.filter='blur('+(1.2*(1-reveal)+materialP).toFixed(2)+'px)';
     });
 
-    setOpacity(wireframeHold,holdIn*(1-holdOut)*(1-materialP));
-    setTransform(wireframeHold,'translate3d(0,'+mix(5,0,holdIn).toFixed(1)+'px,18px)');
-
-    setOpacity(finalPreview,materialP);
+    setOpacity(finalPreview,finalPreviewReady?materialP:0);
     setTransform(finalPreview,'translate3d(0,0,14px) scale(1)');
     finalPreview.style.filter='grayscale('+(1-materialP).toFixed(3)+') blur('+(2.6*(1-materialP)).toFixed(2)+'px)';
     buildPieces.forEach(function(piece){
@@ -1755,6 +1746,7 @@ body.fx-enabled .fx-panel{
     resizeTimer=setTimeout(function(){measure();if(window.ScrollTrigger)window.ScrollTrigger.refresh();},120);
   });
   window.addEventListener('load',function(){measure();if(window.ScrollTrigger)window.ScrollTrigger.refresh();});
+  finalPreview.addEventListener('load',function(){finalPreviewReady=true;});
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(measure);
   else setTimeout(measure,200);
 
