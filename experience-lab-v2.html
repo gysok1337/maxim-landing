@@ -453,7 +453,7 @@ button{font:inherit;color:inherit}
 .browser-chrome{
   height:50px;
   display:grid;
-  grid-template-columns:auto minmax(160px,1fr) auto;
+  grid-template-columns:auto minmax(160px,1fr);
   align-items:center;
   gap:12px;
   padding:0 13px;
@@ -484,8 +484,6 @@ button{font:inherit;color:inherit}
 .address-lock{position:relative;width:8px;height:7px;flex:0 0 auto;border:1px solid var(--accent);border-radius:2px}
 .address-lock::before{content:"";position:absolute;left:4px;top:-6px;width:4px;height:5px;border:1px solid var(--accent);border-bottom:0;border-radius:4px 4px 0 0;transform:rotate(27deg);transform-origin:0 100%}
 .address-text{overflow:hidden;text-overflow:ellipsis}
-.browser-live{display:flex;align-items:center;gap:7px;color:#7e7a73;font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
-.browser-live::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(var(--accent-rgb),.6)}
 .browser-page{position:absolute;left:0;right:0;top:50px;bottom:0;overflow:hidden;background:#171513;transform-style:preserve-3d;perspective:1100px;perspective-origin:64% 42%}
 .browser-page::before{
   content:"";
@@ -501,13 +499,13 @@ button{font:inherit;color:inherit}
   position:absolute;
   z-index:0;
   inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position:center;
+  background:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px),
+    #171513;
+  background-size:34px 34px;
   opacity:0;
-  filter:grayscale(1) contrast(.82) brightness(.34) blur(2px);
-  transform:scale(1.025);
+  transform:scale(1.02);
   will-change:opacity,transform,filter;
 }
 .assembly-veil{position:absolute;z-index:1;inset:0;background:rgba(15,13,12,.54);opacity:0;will-change:opacity}
@@ -547,7 +545,7 @@ button{font:inherit;color:inherit}
 .blueprint-actions{left:3%;top:75%;width:34%;height:9%;display:flex;gap:6%}.blueprint-actions i{width:47%;height:100%;border:1px solid currentColor}.blueprint-actions i:first-child{border-color:var(--accent);background:rgba(var(--accent-rgb),.14)}
 .blueprint-proof{left:3%;right:3%;bottom:4%;height:7%;display:grid;grid-template-columns:repeat(4,1fr);gap:4%;align-items:end;border-top:1px solid rgba(255,255,255,.35);padding-top:2%}.blueprint-proof i{height:2px;background:currentColor;opacity:.62}.blueprint-proof i::before{content:"";display:inline-block;width:4px;height:4px;margin-right:7px;border-radius:50%;background:var(--accent);vertical-align:middle}
 .wireframe-hold{position:absolute;z-index:12;right:5%;bottom:5%;padding:5px 8px;border:1px solid rgba(255,255,255,.28);background:rgba(17,15,14,.68);color:rgba(255,255,255,.68);font-family:var(--mono);font-size:5.5px;letter-spacing:.11em;text-transform:uppercase;white-space:nowrap;opacity:0;will-change:opacity,transform}
-.final-site-shot{position:absolute;z-index:10;inset:0;width:100%;height:100%;display:block;object-fit:contain;object-position:center;background:transparent;opacity:0;will-change:opacity,transform,filter}
+.final-site-shot{position:absolute;z-index:10;inset:0;width:100%;height:100%;display:block;object-fit:contain;object-position:center top;background:#17120f;opacity:0;will-change:opacity,transform,filter}
 .assembly-beam{position:absolute;z-index:9;left:14px;right:14px;top:15%;height:2px;opacity:0;transform-origin:left;pointer-events:none;will-change:top,opacity,transform}
 .assembly-beam::before{content:"";position:absolute;inset:-5px 0;background:rgba(var(--accent-rgb),.12);filter:blur(5px)}
 .assembly-beam::after{content:"";position:absolute;right:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 15px rgba(var(--accent-rgb),.78)}
@@ -606,7 +604,7 @@ button{font:inherit;color:inherit}
   will-change:transform,opacity;
 }
 .virtual-cursor svg{display:block;width:100%;height:100%;overflow:visible}
-.virtual-cursor path{fill:#070707;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.virtual-cursor path{fill:#070707;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
 .click-ring{
   position:absolute;
   z-index:25;
@@ -754,7 +752,6 @@ body.fx-enabled .fx-panel{
   .flight-token{font-size:15px}
   .run-confirm{bottom:16px;white-space:nowrap}
   .browser-chrome{height:44px;grid-template-columns:auto 1fr;padding:0 9px;gap:8px}
-  .browser-live{display:none}
   .browser-address{height:28px;padding:0 8px;font-size:7px}
   .browser-page{top:44px}
   .assembly-artboard{inset:3%}
@@ -766,7 +763,7 @@ body.fx-enabled .fx-panel{
   .blueprint-actions{width:52%}
   .blueprint-proof{gap:3%}
   .wireframe-hold{right:6%;bottom:5%;font-size:4.5px}
-  .final-site-shot{object-fit:contain;object-position:center}
+  .final-site-shot{object-fit:contain;object-position:center;background:transparent}
   .world-grid{inset:-10% -60% -20%;background-size:56px 56px;opacity:.22}
   .page-progress{right:14px;bottom:20px;height:62px}
   .scroll-cue{bottom:13px;padding:6px 9px}.scroll-cue span{font-size:7px}
@@ -920,11 +917,10 @@ body.fx-enabled .fx-panel{
               <div class="browser-chrome">
                 <div class="browser-nav" aria-hidden="true"><span></span><span></span><span></span></div>
                 <div class="browser-address"><i class="address-lock" aria-hidden="true"></i><span class="address-text">preview.local / lider-vino</span></div>
-                <div class="browser-live">собираю страницу</div>
               </div>
               <div class="browser-page">
                 <div class="semantic-assembly" id="semanticAssembly">
-                  <img class="assembly-backplate" id="assemblyBackplate" src="assets/screens/lider-hero.png" alt="">
+                  <div class="assembly-backplate" id="assemblyBackplate" aria-hidden="true"></div>
                   <div class="assembly-veil" id="assemblyVeil"></div>
                   <div class="assembly-artboard" id="assemblyArtboard">
                     <div class="semantic-module blueprint-nav" data-semantic-module="0">
@@ -943,7 +939,7 @@ body.fx-enabled .fx-panel{
                   </div>
                   <div class="wireframe-hold" id="wireframeHold">Макет готов</div>
                 </div>
-                <img class="final-site-shot" id="finalPreview" src="assets/screens/lider-hero.png" alt="Первый экран сайта «Лидер Вино»">
+                <img class="final-site-shot" id="finalPreview" src="assets/screens/lider-hero-lab.png" alt="Первый экран сайта «Лидер Вино»">
                 <svg class="assembly-route" id="assemblyRoute" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
                   <path class="assembly-route-glow" id="assemblyRouteGlow" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
                   <path class="assembly-route-core" id="assemblyRouteCore" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
@@ -962,7 +958,7 @@ body.fx-enabled .fx-panel{
         </div>
 
         <div class="token-layer" id="tokenLayer"></div>
-        <div class="virtual-cursor" id="virtualCursor"><svg viewBox="0 0 32 42" aria-hidden="true"><path d="M3.4 2.7C2.8 2.4 2.2 2.8 2.2 3.5V30.4C2.2 31.3 3.2 31.8 3.9 31.2L10.8 25.2L17 39C17.4 39.8 18.2 40.1 19 39.7L23.4 37.7C24.2 37.3 24.5 36.4 24.1 35.7L18 22.2H27.3C28.3 22.2 28.7 21 27.9 20.4L3.4 2.7Z"/></svg></div>
+        <div class="virtual-cursor" id="virtualCursor"><svg viewBox="0 0 29 39" aria-hidden="true"><path d="M2.9 2.2C2.25 1.73 1.6 2.18 1.6 2.97V27.55C1.6 28.6 2.84 29.16 3.62 28.45L9.2 23.32L14.3 35.15C14.75 36.2 15.97 36.68 17.02 36.23L20.25 34.83C21.32 34.37 21.8 33.12 21.34 32.06L16.25 20.26H24.28C25.53 20.26 26.05 18.64 25.02 17.92L2.9 2.2Z"/></svg></div>
         <div class="click-ring" id="clickRing"></div>
         <div class="run-confirm mono" id="runConfirm"><i></i><span>Команда принята</span></div>
       </div>
@@ -1257,12 +1253,11 @@ body.fx-enabled .fx-panel{
     var noticeCursorIn=smooth(segment(p,.045,.08));
     var noticeCursorMove=smooth(segment(p,.065,.13));
     var openMessage=smooth(segment(p,.185,.285));
-    var typeP=smooth(segment(p,.275,.445));
-    var scanP=smooth(segment(p,.445,.60));
-    var morph=smooth(segment(p,.55,.72));
-    var codeP=smooth(segment(p,.64,.90));
-    var playIn=smooth(segment(p,.81,.875));
-    var runCursorIn=smooth(segment(p,.825,.865));
+    var typeP=smooth(segment(p,.275,.49));
+    var scanP=smooth(segment(p,.50,.69));
+    var morph=smooth(segment(p,.62,.81));
+    var playIn=smooth(segment(p,.84,.895));
+    var runCursorIn=smooth(segment(p,.825,.87));
     var runCursorMove=smooth(segment(p,.845,.925));
     var confirmed=smooth(segment(runAction,.46,1));
     var copySwap=smooth(segment(p,.52,.68));
@@ -1333,18 +1328,18 @@ body.fx-enabled .fx-panel{
     setTransform(bubbleTail,'rotate(2deg) scale('+mix(1,.4,morph).toFixed(3)+')');
     bubbleTail.style.right=Math.max(2,messageRightInset-(isMobile?2:16)).toFixed(1)+'px';
     bubbleTail.style.bottom=(messageBottomInset+5).toFixed(1)+'px';
-    setOpacity(messageContent,messageReveal*(1-smooth(segment(p,.59,.74))));
+    setOpacity(messageContent,messageReveal*(1-smooth(segment(p,.64,.81))));
     setTransform(messageContent,'translate3d('+(morph*-18).toFixed(1)+'px,'+(mix(12,0,openMessage)+morph*-14).toFixed(1)+'px,0) scale('+mix(.985,.97,morph).toFixed(3)+')');
     messageContent.style.filter='blur('+(mix(2.2,0,openMessage)+morph*1.4).toFixed(2)+'px)';
 
     var typedCount=Math.floor(typeP*allChars.length);
     allChars.forEach(function(character,index){character.classList.toggle('is-visible',index<typedCount);});
     updateCaret(typedCount);
-    var caretVisible=smooth(segment(p,.235,.265))*(1-smooth(segment(p,.45,.49)));
+    var caretVisible=smooth(segment(p,.235,.265))*(1-smooth(segment(p,.49,.525)));
     var blink=typeP>=1?(Math.sin(performance.now()*.012)>.05?1:.2):1;
     setOpacity(typingCaret,caretVisible*blink*openMessage*(1-morph));
 
-    var ribbonVisibility=scanP*(1-smooth(segment(p,.515,.575)));
+    var ribbonVisibility=scanP*(1-smooth(segment(p,.68,.74)));
     setOpacity(ribbonSvg,ribbonVisibility>0?1:0);
     setOpacity(ribbonGlow,ribbonVisibility);
     setOpacity(ribbonCore,ribbonVisibility);
@@ -1359,7 +1354,7 @@ body.fx-enabled .fx-panel{
 
     sourceTokens.forEach(function(source,index){
       var hit=smooth(segment(scanP,.08+index*.15,.34+index*.15));
-      var extraction=smooth(segment(p,.55+index*.025,.675+index*.025));
+      var extraction=smooth(segment(p,.62+index*.028,.76+index*.028));
       var handoff=smooth(segment(extraction,0,.12));
       source.style.backgroundSize=(hit*100).toFixed(1)+'% 38%';
       source.style.color=hit>.2?'var(--accent)':'var(--ink)';
@@ -1369,8 +1364,11 @@ body.fx-enabled .fx-panel{
     flightTokens.forEach(function(token,index){
       var metric=tokenMetrics[index];
       if(!metric)return;
-      var fly=smooth(segment(p,.55+index*.025,.675+index*.025));
-      var settle=smooth(segment(p,.655+index*.025,.735+index*.025));
+      var flightStart=.62+index*.028;
+      var flightEnd=.76+index*.028;
+      var settleStart=flightEnd-.006;
+      var fly=smooth(segment(p,flightStart,flightEnd));
+      var settle=smooth(segment(p,settleStart,flightEnd+.05));
       var arc=Math.sin(fly*Math.PI);
       var bendX=[110,70,-58,94][index]||0;
       var bendY=[-96,-52,74,102][index]||0;
@@ -1392,14 +1390,19 @@ body.fx-enabled .fx-panel{
     setTransform(editorContent,'translate3d('+(18*(1-morph)).toFixed(1)+'px,'+(-5*editorOut).toFixed(1)+'px,'+(-22*editorOut).toFixed(1)+'px) scale('+mix(1,.992,editorOut).toFixed(4)+')');
     editorContent.style.filter='blur('+(2.2*(1-morph)+editorOut*.7).toFixed(2)+'px)';
     editorContent.style.clipPath='none';
+    var rowRevealStarts=[
+      .630,.642,.654,.666,.678,.690,.702,.714,.726,.738,
+      .754,.762,.769,.776,.782,.810,.818,.838,.846,.858,
+      .870,.882,.894
+    ];
     codeRows.forEach(function(row,index){
-      var rowStart=(index/Math.max(1,codeRows.length-1))*.78;
-      var rowP=smooth(segment(codeP,rowStart,Math.min(1,rowStart+.2)));
+      var rowStart=rowRevealStarts[index]||(.63+index*.012);
+      var rowP=smooth(segment(p,rowStart,rowStart+.04));
       var rowTarget=row.querySelector('.code-target');
       if(rowTarget){
         var rowTokenIndex=sourceTokens.findIndex(function(source){return source.dataset.token===rowTarget.dataset.codeToken;});
-        var seeded=smooth(segment(p,.655+rowTokenIndex*.025,.735+rowTokenIndex*.025));
-        rowP=Math.max(rowP,seeded);
+        var tokenArrival=.754+rowTokenIndex*.028;
+        rowP=smooth(segment(p,tokenArrival,tokenArrival+.04));
       }
       setOpacity(row,rowP);
       setTransform(row,'translate3d('+(12*(1-rowP)).toFixed(1)+'px,0,0)');
@@ -1452,8 +1455,8 @@ body.fx-enabled .fx-panel{
 
     setOpacity(semanticAssembly,1);
     setOpacity(assemblyBackplate,backdropIn);
-    setTransform(assemblyBackplate,'scale('+mix(1.025,1.012,backdropIn).toFixed(4)+')');
-    assemblyBackplate.style.filter='grayscale(1) contrast('+mix(.72,.86,backdropIn).toFixed(3)+') brightness('+mix(.25,.38,backdropIn).toFixed(3)+') blur('+mix(4,1.5,backdropIn).toFixed(2)+'px)';
+    setTransform(assemblyBackplate,'scale('+mix(1.035,1,backdropIn).toFixed(4)+')');
+    assemblyBackplate.style.filter='none';
     setOpacity(assemblyVeil,backdropIn*(1-materialP*.68));
     setOpacity(assemblyArtboard,artboardIn*(1-materialP));
     setTransform(assemblyArtboard,'translate3d(0,'+(6*(1-artboardIn)).toFixed(1)+'px,'+(sideView*8).toFixed(1)+'px) scale('+mix(.992,1,artboardIn).toFixed(4)+')');
@@ -1471,7 +1474,7 @@ body.fx-enabled .fx-panel{
     setTransform(wireframeHold,'translate3d(0,'+mix(5,0,holdIn).toFixed(1)+'px,18px)');
 
     setOpacity(finalPreview,materialP);
-    setTransform(finalPreview,'translate3d(0,0,14px) scale('+mix(1.012,1,materialP).toFixed(4)+')');
+    setTransform(finalPreview,'translate3d(0,0,14px) scale(1)');
     finalPreview.style.filter='grayscale('+(1-materialP).toFixed(3)+') blur('+(2.6*(1-materialP)).toFixed(2)+'px)';
     buildPieces.forEach(function(piece){
       setOpacity(piece,1);
