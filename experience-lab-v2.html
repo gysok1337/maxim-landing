@@ -545,7 +545,7 @@ button{font:inherit;color:inherit}
 .blueprint-copy{left:3%;top:60%;width:42%;height:11%}.blueprint-copy i{display:block;height:2px;margin-top:7%;background:currentColor;opacity:.68}.blueprint-copy i:nth-child(1){width:96%}.blueprint-copy i:nth-child(2){width:82%}.blueprint-copy i:nth-child(3){width:68%}
 .blueprint-actions{left:3%;top:75%;width:34%;height:9%;display:flex;gap:6%}.blueprint-actions i{width:47%;height:100%;border:1px solid currentColor}.blueprint-actions i:first-child{border-color:var(--accent);background:rgba(var(--accent-rgb),.14)}
 .blueprint-proof{left:3%;right:3%;bottom:4%;height:7%;display:grid;grid-template-columns:repeat(4,1fr);gap:4%;align-items:end;border-top:1px solid rgba(255,255,255,.35);padding-top:2%}.blueprint-proof i{height:2px;background:currentColor;opacity:.62}.blueprint-proof i::before{content:"";display:inline-block;width:4px;height:4px;margin-right:7px;border-radius:50%;background:var(--accent);vertical-align:middle}
-.final-site-shot{position:absolute;z-index:10;inset:0;display:block;overflow:hidden;background-color:#17120f;background-image:url("assets/screens/lider-hero-lab.png?v=20260711-4");background-repeat:no-repeat;background-position:center top;background-size:contain;opacity:0;clip-path:inset(0);isolation:isolate;transform:translate3d(0,0,0);transform-origin:50% 50%;-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:opacity,transform}
+.final-site-shot{position:absolute;z-index:10;inset:0;width:100%;height:100%;display:block;object-fit:cover;object-position:center top;background:#17120f;opacity:0;clip-path:inset(0);isolation:isolate;transform:translate3d(0,0,0);transform-origin:50% 50%;-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:opacity,transform}
 .assembly-beam{position:absolute;z-index:9;left:14px;right:14px;top:15%;height:2px;opacity:0;transform-origin:left;pointer-events:none;will-change:top,opacity,transform}
 .assembly-beam::before{content:"";position:absolute;inset:-5px 0;background:rgba(var(--accent-rgb),.12);filter:blur(5px)}
 .assembly-beam::after{content:"";position:absolute;right:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 15px rgba(var(--accent-rgb),.78)}
@@ -752,7 +752,7 @@ body.fx-enabled .fx-panel{
   .blueprint-copy{width:58%}
   .blueprint-actions{width:52%}
   .blueprint-proof{gap:3%}
-  .final-site-shot{background-color:transparent;background-position:center top;background-size:100% auto}
+  .final-site-shot{object-fit:contain;object-position:center top;background:transparent}
   .world-grid{inset:-10% -60% -20%;background-size:56px 56px;opacity:.22}
   .page-progress{right:10px;bottom:56px;height:44px}
   .scroll-cue{bottom:15px;padding:8px 11px}.scroll-cue span{font-size:7.5px}
@@ -935,7 +935,7 @@ body.fx-enabled .fx-panel{
                     <div class="semantic-module blueprint-proof" data-semantic-module="4"><i></i><i></i><i></i><i></i></div>
                   </div>
                 </div>
-                <div class="final-site-shot" id="finalPreview" data-src="assets/screens/lider-hero-lab.png?v=20260711-4" role="img" aria-label="Первый экран сайта «Лидер Вино»"></div>
+                <img class="final-site-shot" id="finalPreview" src="assets/screens/lider-hero-lab.png?v=20260711-6" alt="Первый экран сайта «Лидер Вино»" width="1280" height="800" decoding="async">
                 <svg class="assembly-route" id="assemblyRoute" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
                   <path class="assembly-route-glow" id="assemblyRouteGlow" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
                   <path class="assembly-route-core" id="assemblyRouteCore" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
@@ -1032,7 +1032,6 @@ body.fx-enabled .fx-panel{
   var moduleNodes=Array.prototype.slice.call(document.querySelectorAll('[data-module-node]'));
   var finalPreview=document.getElementById('finalPreview');
   var finalPreviewReady=false;
-  var finalPreviewAsset=new Image();
   var buildSeam=document.getElementById('buildSeam');
   var assemblyBeam=document.getElementById('assemblyBeam');
   var assemblyRoute=document.getElementById('assemblyRoute');
@@ -1074,7 +1073,7 @@ body.fx-enabled .fx-panel{
   var runAction=0;
   var lastTypedCount=-1;
   var desktopRibbonPath=ribbonCore.getAttribute('d');
-  var mobileRibbonPath='M110 510 C40 470 80 400 230 375 C470 335 815 350 900 420 C980 490 825 545 570 550 C315 555 150 535 110 500 C280 535 510 545 730 545 C850 545 890 565 850 595';
+  var mobileRibbonPath='M429 536 C743 530 918 485 819 427 C705 359 240 364 145 429 C61 487 296 520 580 506 C853 493 942 548 800 594 C629 648 211 626 107 565 C40 527 131 497 287 481';
   var activeRibbonPath='';
   var ribbonLength=1;
   var ribbonHeadScaleX=1;
@@ -1110,11 +1109,9 @@ body.fx-enabled .fx-panel{
 
   function markFinalPreviewReady(){finalPreviewReady=true;}
 
-  finalPreviewAsset.decoding='async';
-  finalPreviewAsset.addEventListener('load',markFinalPreviewReady,{once:true});
-  finalPreviewAsset.src=finalPreview.dataset.src;
-  if(finalPreviewAsset.complete&&finalPreviewAsset.naturalWidth)markFinalPreviewReady();
-  else if(finalPreviewAsset.decode)finalPreviewAsset.decode().then(markFinalPreviewReady).catch(function(){});
+  finalPreview.addEventListener('load',markFinalPreviewReady,{once:true});
+  if(finalPreview.complete&&finalPreview.naturalWidth)markFinalPreviewReady();
+  else if(finalPreview.decode)finalPreview.decode().then(markFinalPreviewReady).catch(function(){});
 
   function hexToRgb(hex){
     var clean=hex.replace('#','');
