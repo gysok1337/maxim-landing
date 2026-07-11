@@ -512,11 +512,11 @@ button{font:inherit;color:inherit}
 .assembly-artboard{
   position:absolute;
   z-index:5;
-  inset:3.5%;
+  inset:0;
   overflow:hidden;
-  border:1px solid rgba(255,255,255,.2);
-  background:rgba(20,18,17,.12);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);
+  border:0;
+  background:rgba(20,18,17,.08);
+  box-shadow:none;
   opacity:0;
   transform-style:preserve-3d;
   will-change:opacity,transform,filter;
@@ -754,7 +754,7 @@ body.fx-enabled .fx-panel{
   .browser-chrome{height:44px;grid-template-columns:auto 1fr;padding:0 9px;gap:8px}
   .browser-address{height:28px;padding:0 8px;font-size:7px}
   .browser-page{top:44px}
-  .assembly-artboard{inset:3%}
+  .assembly-artboard{inset:0}
   .assembly-artboard::before{right:7px;top:6px;font-size:4.2px}
   .bp-nav-links{display:none}.blueprint-nav{grid-template-columns:1fr .42fr}
   .bp-brand span{width:45%}
@@ -1339,7 +1339,7 @@ body.fx-enabled .fx-panel{
     var blink=typeP>=1?(Math.sin(performance.now()*.012)>.05?1:.2):1;
     setOpacity(typingCaret,caretVisible*blink*openMessage*(1-morph));
 
-    var ribbonVisibility=scanP*(1-smooth(segment(p,.68,.74)));
+    var ribbonVisibility=scanP*(1-smooth(segment(p,.586,.659)));
     setOpacity(ribbonSvg,ribbonVisibility>0?1:0);
     setOpacity(ribbonGlow,ribbonVisibility);
     setOpacity(ribbonCore,ribbonVisibility);
