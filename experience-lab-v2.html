@@ -7,7 +7,7 @@
 <title>Максим — сообщение превращается в код</title>
 
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="preload" as="image" href="assets/screens/lider-hero-lab.png?v=20260711-4">
+<link rel="preload" as="image" href="assets/screens/lider-hero-lab.png?v=20260712-1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -546,6 +546,21 @@ button{font:inherit;color:inherit}
 .blueprint-actions{left:3%;top:75%;width:34%;height:9%;display:flex;gap:6%}.blueprint-actions i{width:47%;height:100%;border:1px solid currentColor}.blueprint-actions i:first-child{border-color:var(--accent);background:rgba(var(--accent-rgb),.14)}
 .blueprint-proof{left:3%;right:3%;bottom:4%;height:7%;display:grid;grid-template-columns:repeat(4,1fr);gap:4%;align-items:end;border-top:1px solid rgba(255,255,255,.35);padding-top:2%}.blueprint-proof i{height:2px;background:currentColor;opacity:.62}.blueprint-proof i::before{content:"";display:inline-block;width:4px;height:4px;margin-right:7px;border-radius:50%;background:var(--accent);vertical-align:middle}
 .final-site-shot{position:absolute;z-index:10;inset:0;width:100%;height:100%;display:block;object-fit:cover;object-position:center top;background:#17120f;opacity:0;clip-path:inset(0);isolation:isolate;transform:translate3d(0,0,0);transform-origin:50% 50%;-webkit-backface-visibility:hidden;backface-visibility:hidden;will-change:opacity,transform}
+.webkit-final-portal{
+  position:absolute;
+  z-index:13;
+  display:none;
+  overflow:hidden;
+  border-radius:0 0 15px 15px;
+  background:#17120f;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  contain:paint;
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
+}
+.webkit-final-portal img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top}
 .assembly-beam{position:absolute;z-index:9;left:14px;right:14px;top:15%;height:2px;opacity:0;transform-origin:left;pointer-events:none;will-change:top,opacity,transform}
 .assembly-beam::before{content:"";position:absolute;inset:-5px 0;background:rgba(var(--accent-rgb),.12);filter:blur(5px)}
 .assembly-beam::after{content:"";position:absolute;right:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 15px rgba(var(--accent-rgb),.78)}
@@ -753,19 +768,22 @@ body.fx-enabled .fx-panel{
   .blueprint-actions{width:52%}
   .blueprint-proof{gap:3%}
   .final-site-shot{object-fit:contain;object-position:center top;background:transparent}
+  .webkit-final-portal{background:transparent}
+  .webkit-final-portal img{object-fit:contain;object-position:center top}
   .world-grid{inset:-10% -60% -20%;background-size:56px 56px;opacity:.22}
   .page-progress{right:10px;bottom:56px;height:44px}
   .scroll-cue{bottom:15px;padding:8px 11px}.scroll-cue span{font-size:7.5px}
   body.fx-enabled .fx-panel{left:10px;right:10px;bottom:10px;width:auto}
 }
 
-@supports (-webkit-touch-callout:none){
-  .object-wrap.is-webkit-final{left:var(--webkit-flat-left)!important;top:var(--webkit-flat-top)!important;width:var(--webkit-flat-width)!important;height:var(--webkit-flat-height)!important;transform:none!important;transform-style:flat!important}
-  .object-wrap.is-webkit-final .morph-shell,
-  .object-wrap.is-webkit-final .browser-content,
-  .object-wrap.is-webkit-final .browser-page{transform-style:flat!important;perspective:none!important}
-  .final-site-shot{filter:none!important;transform:translate3d(0,0,0)!important}
-}
+.is-apple-webkit .final-site-shot{display:none!important;visibility:hidden!important;will-change:auto!important}
+.is-apple-webkit .webkit-final-portal{display:block}
+.is-apple-webkit .webkit-final-portal.is-visible{visibility:visible}
+.is-apple-webkit .object-wrap.is-webkit-final{left:var(--webkit-flat-left)!important;top:var(--webkit-flat-top)!important;width:var(--webkit-flat-width)!important;height:var(--webkit-flat-height)!important;transform:none!important;transform-style:flat!important}
+.is-apple-webkit .object-wrap.is-webkit-final .morph-shell,
+.is-apple-webkit .object-wrap.is-webkit-final .browser-content,
+.is-apple-webkit .object-wrap.is-webkit-final .browser-page{transform-style:flat!important;perspective:none!important}
+.is-apple-webkit .final-site-shot{filter:none!important;transform:translate3d(0,0,0)!important}
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -935,7 +953,7 @@ body.fx-enabled .fx-panel{
                     <div class="semantic-module blueprint-proof" data-semantic-module="4"><i></i><i></i><i></i><i></i></div>
                   </div>
                 </div>
-                <img class="final-site-shot" id="finalPreview" src="assets/screens/lider-hero-lab.png?v=20260711-6" alt="Первый экран сайта «Лидер Вино»" width="1280" height="800" decoding="async">
+                <img class="final-site-shot" id="finalPreview" src="assets/screens/lider-hero-lab.png?v=20260712-1" alt="Первый экран сайта «Лидер Вино»" width="1280" height="800" decoding="async">
                 <svg class="assembly-route" id="assemblyRoute" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
                   <path class="assembly-route-glow" id="assemblyRouteGlow" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
                   <path class="assembly-route-core" id="assemblyRouteCore" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
@@ -951,6 +969,10 @@ body.fx-enabled .fx-panel{
             </div>
             <div class="build-seam" id="buildSeam"></div>
           </div>
+        </div>
+
+        <div class="webkit-final-portal" id="webkitFinalPortal" aria-hidden="true">
+          <img id="webkitFinalPortalImage" src="assets/screens/lider-hero-lab.png?v=20260712-1" alt="" width="1280" height="800" decoding="async">
         </div>
 
         <div class="token-layer" id="tokenLayer"></div>
@@ -1000,7 +1022,8 @@ body.fx-enabled .fx-panel{
 
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   var coarsePointer=window.matchMedia('(pointer:coarse)').matches;
-  var webkitTouch=window.CSS&&CSS.supports&&CSS.supports('-webkit-touch-callout','none');
+  var webkitTouch=/AppleWebKit/i.test(navigator.userAgent)&&!/(Chrome|Chromium|CriOS|Edg|EdgiOS|OPR|OPiOS|FxiOS|Android)/i.test(navigator.userAgent);
+  document.documentElement.classList.toggle('is-apple-webkit',webkitTouch);
   var section=document.getElementById('labExperience');
   var sticky=document.getElementById('labSticky');
   var visualField=document.getElementById('visualField');
@@ -1032,6 +1055,9 @@ body.fx-enabled .fx-panel{
   var moduleNodes=Array.prototype.slice.call(document.querySelectorAll('[data-module-node]'));
   var finalPreview=document.getElementById('finalPreview');
   var finalPreviewReady=false;
+  var webkitFinalPortal=document.getElementById('webkitFinalPortal');
+  var webkitFinalPortalImage=document.getElementById('webkitFinalPortalImage');
+  var webkitFinalPortalReady=false;
   var buildSeam=document.getElementById('buildSeam');
   var assemblyBeam=document.getElementById('assemblyBeam');
   var assemblyRoute=document.getElementById('assemblyRoute');
@@ -1073,7 +1099,7 @@ body.fx-enabled .fx-panel{
   var runAction=0;
   var lastTypedCount=-1;
   var desktopRibbonPath=ribbonCore.getAttribute('d');
-  var mobileRibbonPath='M429 536 C743 530 918 485 819 427 C705 359 240 364 145 429 C61 487 296 520 580 506 C853 493 942 548 800 594 C629 648 211 626 107 565 C40 527 131 497 287 481';
+  var mobileRibbonPath='M430 620 C650 620 790 585 875 530 C945 485 950 390 885 330 C775 235 540 245 340 285 C165 320 78 405 88 495 C98 575 220 620 400 620 C575 620 710 585 800 530';
   var activeRibbonPath='';
   var ribbonLength=1;
   var ribbonHeadScaleX=1;
@@ -1108,10 +1134,14 @@ body.fx-enabled .fx-panel{
   function setTransform(element,value){element.style.transform=value;}
 
   function markFinalPreviewReady(){finalPreviewReady=true;}
+  function markWebkitFinalPortalReady(){webkitFinalPortalReady=true;}
 
   finalPreview.addEventListener('load',markFinalPreviewReady,{once:true});
   if(finalPreview.complete&&finalPreview.naturalWidth)markFinalPreviewReady();
   else if(finalPreview.decode)finalPreview.decode().then(markFinalPreviewReady).catch(function(){});
+  webkitFinalPortalImage.addEventListener('load',markWebkitFinalPortalReady,{once:true});
+  if(webkitFinalPortalImage.complete&&webkitFinalPortalImage.naturalWidth)markWebkitFinalPortalReady();
+  else if(webkitFinalPortalImage.decode)webkitFinalPortalImage.decode().then(markWebkitFinalPortalReady).catch(function(){});
 
   function hexToRgb(hex){
     var clean=hex.replace('#','');
@@ -1237,6 +1267,11 @@ body.fx-enabled .fx-panel{
     objectWrap.style.setProperty('--webkit-flat-top',(objectAnchorTop+finalY-flatHeight/2).toFixed(2)+'px');
     objectWrap.style.setProperty('--webkit-flat-width',flatWidth.toFixed(2)+'px');
     objectWrap.style.setProperty('--webkit-flat-height',flatHeight.toFixed(2)+'px');
+    var webkitPageTop=mobileLayout?40:50;
+    webkitFinalPortal.style.left=(objectAnchorLeft+finalX-flatWidth/2+1).toFixed(2)+'px';
+    webkitFinalPortal.style.top=(objectAnchorTop+finalY-flatHeight/2+webkitPageTop).toFixed(2)+'px';
+    webkitFinalPortal.style.width=Math.max(1,flatWidth-2).toFixed(2)+'px';
+    webkitFinalPortal.style.height=Math.max(1,flatHeight-webkitPageTop-1).toFixed(2)+'px';
     var ribbonRect=ribbonSvg.getBoundingClientRect();
     if(ribbonRect.width>0&&ribbonRect.height>0){
       ribbonHeadScaleX=(ribbonRect.height/700)/(ribbonRect.width/1000);
@@ -1342,7 +1377,9 @@ body.fx-enabled .fx-panel{
     var objectRotateY=pointer.x*3.2*depth*pointerWeight-sideView*(isMobile?.35:2);
     var objectRotateZ=-sideView*(isMobile?0:1.2);
     var webkitFinalFlat=webkitTouch&&buildP>=.84;
+    var webkitImageReady=webkitTouch&&buildP>=.90;
     objectWrap.classList.toggle('is-webkit-final',webkitFinalFlat);
+    webkitFinalPortal.classList.toggle('is-visible',webkitImageReady&&webkitFinalPortalReady);
     setOpacity(objectWrap,arrival);
     setTransform(objectWrap,
       'translate3d(calc(-50% + '+objectX.toFixed(1)+'px),calc(-50% + '+objectY.toFixed(1)+'px),0) '+
@@ -1396,18 +1433,21 @@ body.fx-enabled .fx-panel{
     var blink=typeP>=1?(Math.sin(performance.now()*.012)>.05?1:.2):1;
     setOpacity(typingCaret,caretVisible*blink*openMessage*(1-morph));
 
-    var ribbonVisibility=scanP*(1-smooth(segment(p,.586,.659)));
-    setOpacity(ribbonSvg,ribbonVisibility>0?1:0);
+    var ribbonFade=1-smooth(segment(p,.586,.659));
+    var ribbonDrawP=isMobile?smooth(segment(scanP,.075,1)):scanP;
+    var ribbonVisibility=ribbonDrawP*ribbonFade;
+    var ribbonHeadVisibility=smooth(segment(scanP,0,.045))*ribbonFade;
+    setOpacity(ribbonSvg,Math.max(ribbonVisibility,ribbonHeadVisibility)>0?1:0);
     setOpacity(ribbonGlow,ribbonVisibility);
     setOpacity(ribbonCore,ribbonVisibility);
-    var dash=1-scanP;
+    var dash=1-ribbonDrawP;
     ribbonGlow.style.strokeDashoffset=dash.toFixed(4);
     ribbonCore.style.strokeDashoffset=dash.toFixed(4);
     if(ribbonCore.getPointAtLength){
       var point=ribbonCore.getPointAtLength(ribbonLength*scanP);
       ribbonHead.setAttribute('transform','translate('+point.x.toFixed(2)+' '+point.y.toFixed(2)+') rotate('+mix(-13,-5,scanP).toFixed(2)+') scale('+(.96*ribbonHeadScaleX).toFixed(3)+' .96)');
     }
-    setOpacity(ribbonHead,scanP>0&&scanP<.995?clamp(ribbonVisibility*2.4,0,1):0);
+    setOpacity(ribbonHead,scanP>0&&scanP<.995?clamp(ribbonHeadVisibility,0,1):0);
 
     sourceTokens.forEach(function(source,index){
       var hit=smooth(segment(scanP,.08+index*.15,.34+index*.15));
@@ -1523,9 +1563,10 @@ body.fx-enabled .fx-panel{
       module.style.filter='blur('+(1.2*(1-reveal)+materialP).toFixed(2)+'px)';
     });
 
-    setOpacity(finalPreview,finalPreviewReady&&(!webkitTouch||webkitFinalFlat)?materialP:0);
+    setOpacity(finalPreview,finalPreviewReady&&!webkitTouch?materialP:0);
     setTransform(finalPreview,webkitTouch?'translate3d(0,0,0)':'translate3d(0,0,14px)');
     finalPreview.style.filter=webkitTouch?'none':'grayscale('+(1-materialP).toFixed(3)+') blur('+(2.6*(1-materialP)).toFixed(2)+'px)';
+    setOpacity(webkitFinalPortal,webkitTouch&&webkitImageReady&&webkitFinalPortalReady?materialP:0);
     buildPieces.forEach(function(piece){
       setOpacity(piece,1);
       setTransform(piece,'none');
