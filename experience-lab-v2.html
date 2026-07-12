@@ -88,7 +88,7 @@ button{font:inherit;color:inherit}
 .lab-brand img{width:38px;height:38px;border-radius:10px}
 .lab-brand em{font-family:var(--serif);font-size:17px;font-weight:500;color:var(--muted)}
 .lab-status{display:flex;align-items:center;gap:10px;color:var(--muted)}
-.lab-status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 18px rgba(var(--accent-rgb),.72)}
+.lab-status::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
 .lab-back{
   display:inline-flex;
   align-items:center;
@@ -103,7 +103,7 @@ button{font:inherit;color:inherit}
 .lab-back:hover{border-color:var(--line-bright);color:var(--ink)}
 .lab-back:active{transform:scale(.97)}
 
-.lab-scroll{position:relative;height:860svh}
+.lab-scroll{position:relative;height:1450svh}
 .lab-sticky{
   position:sticky;
   top:0;
@@ -176,7 +176,7 @@ button{font:inherit;color:inherit}
 .stage-tab::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
 .stage-tab:hover{color:var(--ink-2);border-color:var(--line-bright)}
 .stage-tab:active{transform:scale(.97)}
-.stage-tab.is-active{color:var(--ink);border-color:rgba(var(--accent-rgb),.48);background:rgba(var(--accent-rgb),.09)}
+.stage-tab.is-active{color:var(--ink);border-color:var(--line-bright);background:rgba(20,20,19,.78)}
 .copy-stack{position:relative;min-height:330px}
 .copy-step{position:absolute;inset:0;will-change:transform,opacity,filter}
 .copy-step h1,.copy-step h2{
@@ -194,7 +194,7 @@ button{font:inherit;color:inherit}
 .stage-foot{display:flex;align-items:center;gap:14px;margin-top:14px;color:var(--quiet)}
 .stage-count{min-width:50px}
 .stage-track{position:relative;width:min(230px,18vw);height:1px;background:var(--line)}
-.stage-track span{display:block;width:100%;height:100%;background:var(--accent);box-shadow:0 0 10px rgba(var(--accent-rgb),.45);transform:scaleX(0);transform-origin:left;will-change:transform}
+.stage-track span{display:block;width:100%;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;will-change:transform}
 
 .visual-field{
   position:absolute;
@@ -335,10 +335,7 @@ button{font:inherit;color:inherit}
   position:relative;
   display:inline;
   color:var(--ink);
-  background-image:linear-gradient(90deg,rgba(var(--accent-rgb),.28),rgba(var(--accent-rgb),.28));
-  background-repeat:no-repeat;
-  background-position:0 92%;
-  background-size:0 38%;
+  background:none;
 }
 .message-state{display:flex;justify-content:flex-end;align-items:center;gap:5px;margin-top:13px;color:rgba(243,241,236,.46)}
 .message-checks{color:var(--accent);font-size:12px;letter-spacing:-.2em;padding-right:3px}
@@ -371,7 +368,7 @@ button{font:inherit;color:inherit}
   background:rgba(14,14,13,.7);
 }
 .editor-top>i{width:7px;height:7px;border-radius:50%;background:var(--quiet)}
-.editor-top i:first-child{background:var(--accent);box-shadow:0 0 12px rgba(var(--accent-rgb),.55)}
+.editor-top i:first-child{background:var(--accent)}
 .editor-app{margin-left:4px;color:var(--quiet)}
 .editor-tabs{align-self:stretch;display:flex;align-items:flex-end;min-width:0;margin-left:8px;overflow:hidden}
 .editor-tab{position:relative;height:31px;display:flex;align-items:center;gap:7px;min-width:0;padding:0 11px;border:1px solid transparent;border-bottom:0;border-radius:6px 6px 0 0;color:var(--quiet);white-space:nowrap}
@@ -439,9 +436,9 @@ button{font:inherit;color:inherit}
 .prop{color:#86c9e8}
 .value{color:#d8bd78}
 .code-target{display:inline-block;color:var(--ink);opacity:0;will-change:opacity,color,text-shadow}
-.code-row.is-active .line-code{text-shadow:0 0 16px rgba(var(--accent-rgb),.28)}
+.code-row.is-active .line-code{text-shadow:none}
 .code-row.is-active .line-no{color:var(--accent)}
-.editor-statusbar{position:absolute;left:0;right:0;bottom:0;height:22px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;background:rgba(var(--accent-rgb),.16);color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase}
+.editor-statusbar{position:absolute;left:0;right:0;bottom:0;height:22px;display:flex;align-items:center;justify-content:space-between;padding:0 10px;border-top:1px solid rgba(255,255,255,.045);background:#171716;color:var(--muted);font-family:var(--mono);font-size:8px;letter-spacing:.08em;text-transform:uppercase}
 
 .browser-content{
   position:absolute;
@@ -467,7 +464,7 @@ button{font:inherit;color:inherit}
 }
 .browser-nav{display:flex;align-items:center;gap:6px}
 .browser-nav span{width:7px;height:7px;border-radius:50%;background:#5f5c56}
-.browser-nav span:first-child{background:var(--accent);box-shadow:0 0 11px rgba(var(--accent-rgb),.5)}
+.browser-nav span:first-child{background:var(--accent)}
 .browser-address{
   min-width:0;
   height:30px;
@@ -641,7 +638,7 @@ button{font:inherit;color:inherit}
   will-change:transform,opacity;
 }
 .page-progress{position:absolute;z-index:50;right:clamp(20px,3vw,44px);bottom:34px;width:1px;height:86px;background:var(--line)}
-.page-progress span{display:block;width:100%;height:100%;background:var(--accent);transform:scaleY(0);transform-origin:top;box-shadow:0 0 8px rgba(var(--accent-rgb),.5);will-change:transform}
+.page-progress span{display:block;width:100%;height:100%;background:var(--accent);transform:scaleY(0);transform-origin:top;will-change:transform}
 
 .scroll-cue{
   position:absolute;
@@ -665,7 +662,7 @@ button{font:inherit;color:inherit}
   transition:opacity .32s ease,transform .42s var(--ease-out),border-color .32s ease,color .32s ease;
 }
 .scroll-cue.is-visible{opacity:1;transform:translate3d(-50%,0,0)}
-.scroll-cue.is-idle{border-color:rgba(var(--accent-rgb),.38);color:var(--ink-2)}
+.scroll-cue.is-idle{border-color:var(--line-bright);color:var(--ink-2)}
 .scroll-cue span{font-family:var(--mono);font-size:9px;letter-spacing:.13em;text-transform:uppercase;white-space:nowrap}
 .scroll-cue i{position:relative;width:10px;height:13px;display:block;overflow:hidden}
 .scroll-cue i::before{content:"";position:absolute;left:4.5px;top:0;width:1px;height:9px;background:currentColor}
@@ -673,16 +670,11 @@ button{font:inherit;color:inherit}
 .scroll-cue.is-nudging i{animation:scrollCueNudge .82s var(--ease-out) 2}
 @keyframes scrollCueNudge{0%,100%{transform:translateY(0)}45%{transform:translateY(2px)}}
 
-.launch-scroll{
-  position:relative;
-  height:650svh;
-  border-top:1px solid var(--line);
-  background:var(--bg);
-}
 .launch-sticky{
-  position:sticky;
-  top:0;
-  height:100svh;
+  position:absolute;
+  z-index:50;
+  inset:0;
+  height:100%;
   min-height:640px;
   overflow:hidden;
   isolation:isolate;
@@ -734,7 +726,7 @@ button{font:inherit;color:inherit}
 .launch-copy-step p strong{color:var(--ink-2);font-weight:600}
 .launch-foot{display:flex;align-items:center;gap:14px;margin-top:18px;color:var(--quiet)}
 .launch-track{position:relative;width:min(230px,18vw);height:1px;background:var(--line)}
-.launch-track span{display:block;width:100%;height:100%;background:var(--accent);box-shadow:0 0 10px rgba(var(--accent-rgb),.45);transform:scaleX(0);transform-origin:left;will-change:transform}
+.launch-track span{display:block;width:100%;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;will-change:transform}
 .launch-visual{
   position:absolute;
   z-index:10;
@@ -976,7 +968,7 @@ button{font:inherit;color:inherit}
   text-transform:none;
 }
 .launch-progress{position:absolute;z-index:35;right:clamp(18px,3vw,42px);bottom:36px;width:1px;height:78px;background:var(--line)}
-.launch-progress span{display:block;width:100%;height:100%;background:var(--accent);transform:scaleY(0);transform-origin:top;box-shadow:0 0 8px rgba(var(--accent-rgb),.5)}
+.launch-progress span{display:block;width:100%;height:100%;background:var(--accent);transform:scaleY(0);transform-origin:top}
 .launch-scroll-cue{position:absolute;z-index:36;left:50%;bottom:22px;display:flex;align-items:center;gap:10px;color:var(--muted);transform:translateX(-50%);opacity:.8}
 .launch-scroll-cue i{width:6px;height:10px;border-right:1px solid currentColor;border-bottom:1px solid currentColor;transform:rotate(45deg) translateY(-2px)}
 .launch-end{
@@ -1034,7 +1026,7 @@ body.fx-enabled .fx-panel{
   .lab-brand img{width:34px;height:34px}
   .lab-brand em{display:none}
   .lab-back{min-height:36px;padding:0 13px;font-size:12px}
-  .lab-scroll{height:920svh}
+  .lab-scroll{height:1580svh}
   .lab-sticky{min-height:620px}
   .stage-layout{grid-template-columns:1fr;align-items:start;padding:91px 18px 28px}
   .stage-copy{justify-content:flex-start;max-width:none;height:36%;padding:0 2px}
@@ -1090,7 +1082,6 @@ body.fx-enabled .fx-panel{
 }
 
 @media (max-width:700px){
-  .launch-scroll{height:720svh}
   .launch-sticky{min-height:620px}
   .launch-grid{inset:68px 0 0;background-size:54px 54px;opacity:.15}
   .launch-copy{left:18px;right:18px;top:91px;width:auto;transform:none}
@@ -1156,8 +1147,13 @@ body.fx-enabled .fx-panel{
   pointer-events:auto;
   transform:translate3d(0,0,0) scale(1);
 }
-/* Keep both sticky scenes stacked briefly so stage 04 dissolves into stage 03 in place. */
-.launch-scroll{height:790svh;margin-top:-200svh;border-top:0;background:transparent;z-index:25}
+/* Stage 04 is another layer of the same pinned process scene. */
+.lab-sticky > .launch-sticky{
+  position:absolute;
+  z-index:50;
+  inset:0;
+  height:100%;
+}
 .launch-sticky{
   min-height:640px;
   opacity:0;
@@ -1301,7 +1297,6 @@ body.fx-enabled .fx-panel{
 }
 
 @media (max-width:900px){
-  .launch-scroll{height:830svh}
   .launch-copy{left:24px;right:24px;top:90px;width:auto;transform:none}
   .launch-label{margin-bottom:13px}
   .launch-stage-tabs{display:block;width:166px;height:36px;margin-bottom:18px}
@@ -1319,7 +1314,6 @@ body.fx-enabled .fx-panel{
 }
 
 @media (max-width:700px){
-  .launch-scroll{height:860svh}
   .launch-copy{left:18px;right:18px;top:82px}
   .launch-stage-tabs{margin-bottom:15px}
   .launch-stage-tabs .stage-tab{font-size:7.2px;padding:0 8px}
@@ -1359,8 +1353,7 @@ body.fx-enabled .fx-panel{
 
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .lab-scroll{height:220svh}
-  .launch-scroll{height:280svh}
+  .lab-scroll{height:400svh}
   .world-grid{opacity:.16}
   .lab-back,.stage-tab{transition:none}
   .scroll-cue{transition:none}.scroll-cue.is-nudging i{animation:none}
@@ -1391,7 +1384,7 @@ body.fx-enabled .fx-panel{
             <button class="stage-tab is-active" type="button" data-jump="0.08">01 Разбор</button>
             <button class="stage-tab" type="button" data-jump="0.58">02 Код</button>
             <button class="stage-tab" type="button" data-jump="1.16">03 Результат</button>
-            <a class="stage-tab" href="#launchExperience">04 Запуск</a>
+            <button class="stage-tab" type="button" data-launch-jump="true">04 Запуск</button>
           </nav>
           <div class="copy-stack">
             <article class="copy-step copy-one" id="copyOne">
@@ -1556,11 +1549,8 @@ body.fx-enabled .fx-panel{
 
       <div class="scroll-cue is-visible" id="scrollCue" aria-hidden="true"><span id="scrollCueText">Листайте, чтобы продолжить</span><i></i></div>
       <div class="page-progress" aria-hidden="true"><span id="pageProgress"></span></div>
-    </div>
-  </section>
 
-  <section class="launch-scroll" id="launchExperience" aria-label="Проверка и запуск готового сайта">
-    <div class="launch-sticky" id="launchSticky">
+      <div class="launch-sticky" id="launchSticky">
       <div class="launch-grid" aria-hidden="true"></div>
 
       <aside class="launch-copy">
@@ -1674,6 +1664,7 @@ body.fx-enabled .fx-panel{
 
       <div class="launch-scroll-cue mono" aria-hidden="true"><span>Листайте</span><i></i></div>
       <div class="launch-progress" aria-hidden="true"><span id="launchProgress"></span></div>
+      </div>
     </div>
   </section>
 
@@ -1728,6 +1719,7 @@ body.fx-enabled .fx-panel{
   var copyTwo=document.getElementById('copyTwo');
   var copyThree=document.getElementById('copyThree');
   var stageTabs=Array.prototype.slice.call(document.querySelectorAll('#labExperience .stage-tab[data-jump]'));
+  var launchJump=document.querySelector('#labExperience .stage-tab[data-launch-jump]');
   var stagePickerTabs=Array.prototype.slice.call(document.querySelectorAll('#labExperience .stage-copy > .stage-tabs .stage-tab'));
   var stageCount=document.getElementById('stageCount');
   var stageTrack=document.getElementById('stageTrack');
@@ -1820,6 +1812,7 @@ body.fx-enabled .fx-panel{
   var nudgeCueTimer=0;
   var cueStarted=false;
   var mobileFinalShellHeight=330;
+  var processCompleted=false;
 
   function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
   function mix(a,b,t){return a+(b-a)*t;}
@@ -1829,6 +1822,7 @@ body.fx-enabled .fx-panel{
   function backOut(value){var c1=1.36,c3=c1+1;return 1+c3*Math.pow(value-1,3)+c1*Math.pow(value-1,2);}
   function setOpacity(element,value){element.style.opacity=clamp(value,0,1).toFixed(3);}
   function setTransform(element,value){element.style.transform=value;}
+  function labPhaseEnd(){return reduced?.60:(window.innerWidth<=700?.555:.563);}
   function syncStagePicker(tabs,active){
     tabs.forEach(function(tab,index){
       tab.style.setProperty('--stage-shift',((index-active)*118)+'%');
@@ -2113,8 +2107,8 @@ body.fx-enabled .fx-panel{
       morphShell.style.bottom='';
       morphShell.style.height='';
     }
-    morphShell.style.borderColor='rgba(var(--accent-rgb),'+mix(.32,.5,scanP*(1-morph)+morph*.35).toFixed(3)+')';
-    morphShell.style.boxShadow=(sideView*24).toFixed(1)+'px '+(44+sideView*12).toFixed(1)+'px '+(110+sideView*34).toFixed(1)+'px rgba(0,0,0,'+(.42+sideView*.08).toFixed(3)+'),inset 0 0 '+(morph*28).toFixed(1)+'px rgba(var(--accent-rgb),'+(morph*.045).toFixed(3)+')';
+    morphShell.style.borderColor='rgba(255,255,255,'+mix(.10,.14,scanP*(1-morph)+morph*.35).toFixed(3)+')';
+    morphShell.style.boxShadow=(sideView*24).toFixed(1)+'px '+(44+sideView*12).toFixed(1)+'px '+(110+sideView*34).toFixed(1)+'px rgba(0,0,0,'+(.42+sideView*.08).toFixed(3)+'),inset 0 1px rgba(255,255,255,.055)';
     var notificationExit=smooth(segment(openMessage,.08,.58));
     var messageReveal=smooth(segment(openMessage,.34,.9));
     setOpacity(notificationContent,arrival*(1-notificationExit));
@@ -2183,7 +2177,7 @@ body.fx-enabled .fx-panel{
       var targetElement=document.querySelector('[data-code-token="'+sourceTokens[index].dataset.token+'"]');
       setOpacity(targetElement,settle);
       targetElement.style.color=settle>.5?'var(--accent)':'var(--ink)';
-      targetElement.style.textShadow=settle>.5?'0 0 14px rgba(var(--accent-rgb),.28)':'none';
+      targetElement.style.textShadow='none';
     });
 
     var editorOut=smooth(segment(buildP,.002,.045));
@@ -2312,6 +2306,8 @@ body.fx-enabled .fx-panel{
       visual+=clamp(visualDelta,-maxVisualStep,maxVisualStep);
     }
     if(Math.abs(gatedTarget-visual)<.00005)visual=gatedTarget;
+    if(visual>=buildEnd-.006)processCompleted=true;
+    window.__labProcessReady=processCompleted;
 
     var cursorDx=cursorTarget.x-cursor.x;
     var cursorDy=cursorTarget.y-cursor.y;
@@ -2422,26 +2418,39 @@ body.fx-enabled .fx-panel{
     }
     var sectionTop=section.getBoundingClientRect().top+window.scrollY;
     var distance=Math.max(1,section.offsetHeight-window.innerHeight);
-    window.scrollTo({top:sectionTop+distance*clamp(progress/storyUnits,0,1),behavior:reduced?'auto':'smooth'});
+    window.scrollTo({top:sectionTop+distance*labPhaseEnd()*clamp(progress/storyUnits,0,1),behavior:reduced?'auto':'smooth'});
   }
   stageTabs.forEach(function(tab){tab.addEventListener('click',function(){scrollToProgress(parseFloat(tab.dataset.jump)||0);});});
+  if(launchJump)launchJump.addEventListener('click',function(){
+    manual=false;
+    var sectionTop=section.getBoundingClientRect().top+window.scrollY;
+    var distance=Math.max(1,section.offsetHeight-window.innerHeight);
+    var split=labPhaseEnd();
+    window.scrollTo({top:sectionTop+distance*(split+(1-split)*.018),behavior:reduced?'auto':'smooth'});
+  });
 
   function fallbackScroll(){
     if(manual)return;
     var rect=section.getBoundingClientRect();
     var distance=Math.max(1,section.offsetHeight-window.innerHeight);
-    target=clamp(-rect.top/distance,0,1)*storyUnits;
+    var overall=clamp(-rect.top/distance,0,1);
+    target=clamp(overall/labPhaseEnd(),0,1)*storyUnits;
   }
 
   function sectionProgress(){
     var sectionTop=section.getBoundingClientRect().top+window.scrollY;
     var distance=Math.max(1,section.offsetHeight-window.innerHeight);
-    var progress=clamp((window.scrollY-sectionTop)/distance,0,1);
+    var overall=clamp((window.scrollY-sectionTop)/distance,0,1);
+    var split=labPhaseEnd();
+    var progress=clamp(overall/split,0,1);
     return {
       progress:progress,
       timeline:progress*storyUnits,
+      overall:overall,
+      split:split,
       top:sectionTop,
-      distance:distance
+      distance:distance,
+      processDistance:distance*split
     };
   }
 
@@ -2450,9 +2459,10 @@ body.fx-enabled .fx-panel{
     var rect=section.getBoundingClientRect();
     if(rect.top>1||rect.bottom<window.innerHeight)return;
     var state=sectionProgress();
+    if(state.overall>=state.split)return;
     if(state.timeline<.42&&visual<.42)return;
     var maxLead=runAction<.96&&state.timeline>.88?.012:(state.timeline>1?.035:.045);
-    var available=Math.max(0,(visual+maxLead-state.timeline)/storyUnits*state.distance);
+    var available=Math.max(0,(visual+maxLead-state.timeline)/storyUnits*state.processDistance);
     var step=Math.min(event.deltaY,28,available);
     if(step+1<event.deltaY){
       event.preventDefault();
@@ -2471,13 +2481,13 @@ body.fx-enabled .fx-panel{
   }
 
   function guardSectionExit(){
-    if(reduced||manual||coarsePointer)return;
+    if(reduced||manual)return;
     var state=sectionProgress();
     var limitTimeline;
     if(runAction<.96)limitTimeline=exitGuardProgress;
     else if(visual<buildEnd-.006)limitTimeline=buildEnd+.025;
     else return;
-    var limit=Math.round(state.top+state.distance*clamp(limitTimeline/storyUnits,0,1));
+    var limit=Math.round(state.top+state.processDistance*clamp(limitTimeline/storyUnits,0,1));
     if(window.scrollY>limit+2&&!exitGuardFrame){
       exitGuardFrame=requestAnimationFrame(function(){
         exitGuardFrame=0;
@@ -2494,7 +2504,7 @@ body.fx-enabled .fx-panel{
       trigger:section,
       start:'top top',
       end:'bottom bottom',
-      onUpdate:function(self){if(!manual)target=self.progress*storyUnits;},
+      onUpdate:function(self){if(!manual)target=clamp(self.progress/labPhaseEnd(),0,1)*storyUnits;},
       onRefresh:measure
     });
   }else{
@@ -2545,7 +2555,7 @@ body.fx-enabled .fx-panel{
     fxDepth.addEventListener('input',function(){depth=parseFloat(this.value)/100;saveFx();});
     fxFollow.addEventListener('input',function(){follow=parseFloat(this.value)/100;saveFx();});
     fxAccent.addEventListener('input',function(){setAccent(this.value);saveFx();});
-    fxResume.addEventListener('click',function(){manual=false;fallbackScroll();if(scrollTrigger)target=scrollTrigger.progress*storyUnits;});
+    fxResume.addEventListener('click',function(){manual=false;fallbackScroll();if(scrollTrigger)target=clamp(scrollTrigger.progress/labPhaseEnd(),0,1)*storyUnits;});
     fxReset.addEventListener('click',function(){
       depth=1;follow=.09;setAccent('#ff4764');fxDepth.value=100;fxFollow.value=9;fxAccent.value='#ff4764';
       try{localStorage.removeItem(fxKey);}catch(error){}
@@ -2589,7 +2599,7 @@ body.fx-enabled .fx-panel{
 (function(){
   'use strict';
 
-  var section=document.getElementById('launchExperience');
+  var section=document.getElementById('labExperience');
   if(!section)return;
 
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
@@ -2625,7 +2635,7 @@ body.fx-enabled .fx-panel{
   var launchTrack=document.getElementById('launchTrack');
   var launchCount=document.getElementById('launchCount');
   var copySteps=Array.prototype.slice.call(document.querySelectorAll('[data-launch-copy]'));
-  var launchPickerTabs=Array.prototype.slice.call(document.querySelectorAll('#launchExperience .launch-stage-tabs .stage-tab'));
+  var launchPickerTabs=Array.prototype.slice.call(document.querySelectorAll('#launchSticky .launch-stage-tabs .stage-tab'));
   var headerStatus=document.querySelector('.lab-status');
   var defaultHeaderStatus=headerStatus?headerStatus.textContent:'';
   var target=0;
@@ -2633,6 +2643,13 @@ body.fx-enabled .fx-panel{
   var lastTime=performance.now();
   var launchTarget={x:0,y:0};
   var targetMeasured=false;
+  var launchGuardFrame=0;
+  var processLayers=[
+    document.querySelector('#labSticky > .stage-layout'),
+    document.querySelector('#labSticky > .visual-field'),
+    document.getElementById('scrollCue'),
+    document.querySelector('#labSticky > .page-progress')
+  ].filter(Boolean);
 
   function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
   function mix(from,to,amount){return from+(to-from)*amount;}
@@ -2641,6 +2658,7 @@ body.fx-enabled .fx-panel{
   function out(value){return 1-Math.pow(1-value,3);}
   function setOpacity(element,value){if(element)element.style.opacity=clamp(value,0,1).toFixed(3);}
   function setTransform(element,value){if(element)element.style.transform=value;}
+  function labPhaseEnd(){return reduced?.60:(window.innerWidth<=700?.555:.563);}
   function phase(value,startIn,endIn,startOut,endOut){
     return smooth(segment(value,startIn,endIn))*(1-smooth(segment(value,startOut,endOut)));
   }
@@ -2672,9 +2690,7 @@ body.fx-enabled .fx-panel{
     launchCount.textContent='04 / 04';
     launchTrack.style.transform='scaleX('+progress.toFixed(4)+')';
     syncLaunchPicker();
-    if(headerStatus){
-      headerStatus.textContent=active===0?'Запуск · Адаптив':active===1?'Запуск · HTTPS':active===2?'Запуск · Заявки':'Запуск · Готово';
-    }
+    if(headerStatus)headerStatus.textContent=progress<=.001?defaultHeaderStatus:(active===0?'Запуск · Адаптив':active===1?'Запуск · HTTPS':active===2?'Запуск · Заявки':'Запуск · Готово');
   }
 
   function elementCenter(element,visualRect){
@@ -2700,8 +2716,14 @@ body.fx-enabled .fx-panel{
   }
 
   function render(progress){
+    if(window.__labProcessReady!==true)progress=0;
     progress=clamp(progress,0,1);
-    var sceneEntry=reduced?1:smooth(segment(progress,0,.032));
+    var processExit=smooth(segment(progress,0,.009));
+    processLayers.forEach(function(layer){
+      layer.style.opacity=progress<=.0001?'':(1-processExit).toFixed(3);
+      layer.style.pointerEvents=progress<=.0001?'':'none';
+    });
+    var sceneEntry=smooth(segment(progress,.008,.021));
     setOpacity(sticky,sceneEntry);
     sticky.style.pointerEvents=sceneEntry>.98?'auto':'none';
     var mobile=window.innerWidth<=700;
@@ -2815,7 +2837,9 @@ body.fx-enabled .fx-panel{
   function sectionProgress(){
     var rect=section.getBoundingClientRect();
     var distance=Math.max(1,section.offsetHeight-window.innerHeight);
-    return clamp(-rect.top/distance,0,1);
+    var overall=clamp(-rect.top/distance,0,1);
+    var split=labPhaseEnd();
+    return clamp((overall-split)/(1-split),0,1);
   }
 
   function fallback(){target=sectionProgress();}
@@ -2823,16 +2847,61 @@ body.fx-enabled .fx-panel{
   function frame(now){
     var delta=clamp((now-lastTime)/1000,0,.05);
     lastTime=now;
+    var gatedTarget=window.__labProcessReady===true?target:0;
     if(reduced){
-      current=target;
+      current=gatedTarget;
     }else{
       var follow=1-Math.pow(.0009,delta);
-      current+=(target-current)*follow;
+      var change=(gatedTarget-current)*follow;
+      if(change>0){
+        var maxRate=current<.30?.19:(current<.82?.145:.18);
+        change=Math.min(change,maxRate*Math.max(delta,1/240));
+      }
+      current+=change;
     }
-    if(Math.abs(target-current)<.00005)current=target;
+    if(Math.abs(gatedTarget-current)<.00005)current=gatedTarget;
     render(current);
     requestAnimationFrame(frame);
   }
+
+  function guardLaunchLead(){
+    if(reduced)return;
+    var rect=section.getBoundingClientRect();
+    var distance=Math.max(1,section.offsetHeight-window.innerHeight);
+    var overall=clamp(-rect.top/distance,0,1);
+    var split=labPhaseEnd();
+    if(overall<=split)return;
+    var allowedLaunch=window.__labProcessReady===true?clamp(current+.020,0,1):0;
+    var allowedOverall=split+(1-split)*allowedLaunch;
+    var sectionTop=rect.top+window.scrollY;
+    var limit=Math.round(sectionTop+distance*allowedOverall);
+    if(window.scrollY>limit+2&&!launchGuardFrame){
+      launchGuardFrame=requestAnimationFrame(function(){
+        launchGuardFrame=0;
+        if(window.scrollY>limit+2)window.scrollTo({top:limit,behavior:'auto'});
+      });
+    }
+  }
+
+  function governLaunchWheel(event){
+    if(reduced||event.defaultPrevented||event.deltaY<=0)return;
+    var rect=section.getBoundingClientRect();
+    if(rect.top>1||rect.bottom<window.innerHeight)return;
+    var distance=Math.max(1,section.offsetHeight-window.innerHeight);
+    var overall=clamp(-rect.top/distance,0,1);
+    var split=labPhaseEnd();
+    if(overall<split-.0002||current>=.998)return;
+    var allowedLaunch=window.__labProcessReady===true?clamp(current+.020,0,1):0;
+    var allowedOverall=split+(1-split)*allowedLaunch;
+    var available=Math.max(0,(allowedOverall-overall)*distance);
+    var step=Math.min(event.deltaY,28,available);
+    if(step+1<event.deltaY){
+      event.preventDefault();
+      if(step>.5)window.scrollBy({top:step,left:0,behavior:'auto'});
+    }
+  }
+  window.addEventListener('wheel',governLaunchWheel,{passive:false});
+  window.addEventListener('scroll',guardLaunchLead,{passive:true});
 
   if(window.gsap&&window.ScrollTrigger){
     window.gsap.registerPlugin(window.ScrollTrigger);
@@ -2840,8 +2909,7 @@ body.fx-enabled .fx-panel{
       trigger:section,
       start:'top top',
       end:'bottom bottom',
-      onUpdate:function(self){target=self.progress;},
-      onEnter:function(){if(headerStatus)headerStatus.textContent='Запуск · Адаптив';},
+      onUpdate:function(self){var split=labPhaseEnd();target=clamp((self.progress-split)/(1-split),0,1);},
       onLeaveBack:function(){if(headerStatus)headerStatus.textContent=defaultHeaderStatus;}
     });
   }else{
