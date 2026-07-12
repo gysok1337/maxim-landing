@@ -802,12 +802,12 @@ body.fx-enabled .fx-panel{
     <span>Максим</span>
     <em>web dev</em>
   </a>
-  <div class="lab-status mono">Лаборатория · Сообщение / Код / Сборка</div>
+  <div class="lab-status mono">Лаборатория · Сообщение / Код / Результат</div>
   <a class="lab-back" href="index.html">Вернуться к сайту</a>
 </header>
 
 <main>
-  <section class="lab-scroll" id="labExperience" aria-label="Разбор задачи, код и сборка сайта">
+  <section class="lab-scroll" id="labExperience" aria-label="Разбор задачи, код и готовый сайт">
     <div class="lab-sticky" id="labSticky">
       <div class="world-grid" id="worldGrid" aria-hidden="true"></div>
 
@@ -817,7 +817,7 @@ body.fx-enabled .fx-panel{
           <nav class="stage-tabs" aria-label="Этапы процесса">
             <button class="stage-tab is-active" type="button" data-jump="0.08">01 Разбор</button>
             <button class="stage-tab" type="button" data-jump="0.58">02 Код</button>
-            <button class="stage-tab" type="button" data-jump="1.16">03 Сборка</button>
+            <button class="stage-tab" type="button" data-jump="1.16">03 Результат</button>
           </nav>
           <div class="copy-stack">
             <article class="copy-step copy-one" id="copyOne">
@@ -829,8 +829,8 @@ body.fx-enabled .fx-panel{
               <p>Перевожу задачу в рабочую страницу: <strong>собираю структуру, добавляю тексты, изображения и нужные функции.</strong></p>
             </article>
             <article class="copy-step copy-three" id="copyThree" aria-hidden="true">
-              <h2>Собираю <em>сайт</em></h2>
-              <p>Код превращается в готовую страницу: <strong>добавляю дизайн, изображения и рабочие формы.</strong></p>
+              <h2>Получается <em>сайт</em></h2>
+              <p>Структура и код становятся готовой страницей: <strong>с дизайном, изображениями и рабочими формами.</strong></p>
             </article>
           </div>
           <div class="stage-foot mono" aria-hidden="true">
@@ -1099,7 +1099,7 @@ body.fx-enabled .fx-panel{
   var runAction=0;
   var lastTypedCount=-1;
   var desktopRibbonPath=ribbonCore.getAttribute('d');
-  var mobileRibbonPath='M430 620 C650 620 790 585 875 530 C945 485 950 390 885 330 C775 235 540 245 340 285 C165 320 78 405 88 495 C98 575 220 620 400 620 C575 620 710 585 800 530';
+  var mobileRibbonPath='M430 642 C650 642 790 607 875 552 C945 507 950 412 885 352 C775 257 540 267 340 307 C165 342 78 427 88 517 C98 597 220 642 400 642 C575 642 710 607 800 552';
   var activeRibbonPath='';
   var ribbonLength=1;
   var ribbonHeadScaleX=1;
@@ -1434,7 +1434,7 @@ body.fx-enabled .fx-panel{
     setOpacity(typingCaret,caretVisible*blink*openMessage*(1-morph));
 
     var ribbonFade=1-smooth(segment(p,.586,.659));
-    var ribbonDrawP=isMobile?smooth(segment(scanP,.075,1)):scanP;
+    var ribbonDrawP=isMobile?clamp(scanP-.085,0,1):scanP;
     var ribbonVisibility=ribbonDrawP*ribbonFade;
     var ribbonHeadVisibility=smooth(segment(scanP,0,.045))*ribbonFade;
     setOpacity(ribbonSvg,Math.max(ribbonVisibility,ribbonHeadVisibility)>0?1:0);
