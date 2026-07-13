@@ -28,11 +28,18 @@
 <link rel="icon" href="assets/favicon.svg?v=20260708-1" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260708-1">
 
-<script>(function(){try{if(localStorage.getItem('theme')!=='light')document.documentElement.classList.add('dark')}catch(e){document.documentElement.classList.add('dark')}})()</script>
+<script>(function(){
+  var root=document.documentElement;
+  try{if(localStorage.getItem('theme')!=='light')root.classList.add('dark')}catch(e){root.classList.add('dark')}
+  var seen=false;
+  try{seen=sessionStorage.getItem('introSeen')==='1'}catch(_){}
+  if(!seen&&!matchMedia('(prefers-reduced-motion:reduce)').matches)root.classList.add('ice-intro-pending','loading');
+})()</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/ice-loader.css?v=20260714-3">
 
 <style>
 :root{
@@ -108,20 +115,6 @@ img{display:block;max-width:100%}
 .wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
 .mono{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .serif{font-family:var(--serif);font-style:italic;font-weight:500;letter-spacing:0}
-
-/* ---------- preloader ---------- */
-.loader{position:fixed;inset:0;z-index:200;pointer-events:none}
-.lp{position:absolute;left:0;right:0;height:50.5%;background:var(--dark)}
-.lp-t{top:0}.lp-b{bottom:0}
-.loader-core{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--dark-text);z-index:2}
-.loader-word{position:relative;font-weight:800;font-size:clamp(44px,8vw,84px);letter-spacing:-.02em;line-height:1.05}
-.loader-word .lw{display:block}
-.loader-word .base{color:rgba(243,241,236,.15)}                 /* незалитые буквы */
-.loader-word .fill{position:absolute;inset:0;color:var(--dark-text);clip-path:inset(0 100% 0 0)} /* заливка слева направо, БЕЗ свечения */
-.loader-sub{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:rgba(243,241,236,.45);overflow:hidden}
-.loader-sub span{display:inline-block;transform:translateY(130%);transition:transform .6s cubic-bezier(.22,1,.36,1)}
-.loader-sub span.in{transform:translateY(0)}
-html.loading{overflow:hidden}
 
 /* ---------- header ---------- */
 header{
@@ -715,11 +708,12 @@ html.fx .about-txt h2.frev{
 .hero-word{display:inline-block;transform:translate3d(0,0,0)}
 .hero-word-up{transform:translate3d(0,-.09em,0)}
 .hero-word-low{transform:translate3d(0,.075em,0)}
+.hero-word-rift-clear{transform:translate3d(0,-.34em,0)}
 .hero-word-small{font-size:.74em;font-weight:600;letter-spacing:-.015em}
 .hero-word-quiet{font-size:.78em;font-weight:600;letter-spacing:-.018em}
 
 .code-rift{
-  position:absolute;right:clamp(-166px,-7vw,-92px);top:0;z-index:1;
+  position:absolute;right:clamp(-166px,-7vw,-92px);top:4.5%;z-index:1;
   width:min(51vw,760px);height:clamp(470px,69dvh,640px);pointer-events:none;
   opacity:1;
 }
@@ -774,8 +768,20 @@ html.fx .code-rift{opacity:0}
   background:linear-gradient(118deg,rgba(255,255,255,.025),transparent 28% 70%,rgba(255,255,255,.018)),#050607;
   box-shadow:inset 38px 31px 58px rgba(0,0,0,.98),inset -22px -19px 42px rgba(0,0,0,.9),inset 0 0 0 1px rgba(255,255,255,.018),-10px -12px 24px rgba(0,0,0,.9);
 }
-.code-rift-well::after{
+.code-rift-well::before{
   content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background-image:
+    url("assets/rift-grain.svg"),
+    repeating-linear-gradient(0deg,rgba(230,235,234,.035) 0 1px,transparent 1px 6px),
+    radial-gradient(ellipse at 24% 34%,rgba(188,199,196,.13),transparent 25%),
+    radial-gradient(ellipse at 73% 69%,rgba(151,163,160,.09),transparent 22%),
+    linear-gradient(128deg,rgba(238,241,238,.05),transparent 29% 68%,rgba(179,187,185,.035));
+  background-size:96px 74px,100% 6px,auto,auto,auto;
+  background-repeat:repeat,repeat,no-repeat,no-repeat,no-repeat;
+  mix-blend-mode:screen;opacity:.48;
+}
+.code-rift-well::after{
+  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
   background:
     radial-gradient(ellipse at 54% 51%,transparent 0 44%,rgba(0,0,0,.15) 62%,rgba(0,0,0,.78) 100%),
     linear-gradient(137deg,rgba(0,0,0,.48),transparent 23% 66%,rgba(0,0,0,.58));
@@ -820,19 +826,21 @@ html.fx .code-rift{opacity:0}
   .code-rift{right:-20vw;top:4%;width:66vw;height:clamp(410px,63dvh,555px)}
   .hero-word-up{transform:translate3d(0,-.065em,0)}
   .hero-word-low{transform:translate3d(0,.055em,0)}
+  .hero-word-rift-clear{transform:translate3d(0,-.13em,0)}
 }
 @media (max-width:760px){
   .hero{min-height:100dvh;padding-bottom:64px}
   .hero h1 .line{padding:.09em 0 .13em;margin:-.09em 0 -.09em}
   .hero-word-up{transform:translate3d(0,-.035em,0)}
   .hero-word-low{transform:translate3d(0,.035em,0)}
+  .hero-word-rift-clear{transform:translate3d(0,-.035em,0)}
   .hero-word-small{font-size:.79em}.hero-word-quiet{font-size:.82em}
   .hero-signature{display:none}
   .code-rift{
     position:relative;right:auto;top:auto;width:calc(100% + 36px);height:clamp(224px,36dvh,300px);
     margin:18px -18px 6px;z-index:1;
   }
-  .code-rift-plane{position:absolute;left:0;top:-42%;width:128%;height:430%}
+  .code-rift-plane{position:fixed}
   .code-rift-stream{grid-template-columns:repeat(2,minmax(0,1fr));font-size:7.1px;line-height:1.48;gap:10px}
   .code-rift-depth{top:3px;right:2px;bottom:4px;left:3px}
   .code-rift-well{top:8px;right:6px;bottom:5px;left:7px}
@@ -858,14 +866,21 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
 </head>
 <body>
 
-<!-- PRELOADER -->
-<div class="loader" id="loader" aria-hidden="true">
-  <div class="lp lp-t"></div>
-  <div class="lp lp-b"></div>
-  <div class="loader-core">
-    <div class="loader-word"><span class="lw base">Максим</span><span class="lw fill" id="lwFill" aria-hidden="true">Максим</span></div>
-    <div class="loader-sub"><span id="loaderSub">сайты под ключ</span></div>
+<!-- ICE INTRO -->
+<div class="ice-loader" id="loader" aria-hidden="true">
+  <div class="ice-glass-base" id="iceGlassBase"></div>
+  <div class="ice-frost" id="iceFrost"></div>
+  <div class="ice-shards" id="iceShards"></div>
+  <svg class="ice-cracks" id="iceCracks" aria-hidden="true"></svg>
+  <div class="ice-loader-core" id="iceLoaderCore">
+    <div class="ice-loader-word" id="iceLoaderWord">
+      <span class="ice-word ice-base">Максим</span>
+      <span class="ice-word ice-fill" id="iceWordFill">Максим</span>
+    </div>
+    <div class="ice-loader-sub"><span id="iceLoaderSub">sites</span></div>
   </div>
+  <span class="ice-impact-streak" id="iceImpactStreak"></span>
+  <span class="ice-impact-spark" id="iceImpactSpark"></span>
 </div>
 
 <header id="header">
@@ -912,7 +927,7 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
   <div class="wrap">
     <div class="hero-status frev"><span class="dot"></span><span class="mono">Свободен для заказа</span></div>
     <h1>
-      <span class="line"><span class="line-in"><span class="hero-word hero-word-up">Сайты,</span> <span class="hero-word hero-word-low hero-word-quiet">которые</span></span></span>
+      <span class="line"><span class="line-in"><span class="hero-word hero-word-up">Сайты,</span> <span class="hero-word hero-word-rift-clear hero-word-quiet">которые</span></span></span>
       <span class="line"><span class="line-in"><span class="hero-word hero-word-low serif">работают</span></span></span>
       <span class="line"><span class="line-in"><span class="hero-word hero-word-up hero-word-small">на</span> <span class="hero-word hero-word-low hero-word-small">ваш</span> <span class="hero-word hero-word-up">бизнес</span></span></span>
     </h1>
@@ -944,12 +959,13 @@ gsap.set(heroLines,{yPercent:120});
 gsap.set(heroRiftStream,{x:-46,opacity:.16});
 
 function lockRiftPlane(){
-  if(!heroRiftWell||!heroRiftPlane||innerWidth&lt;=760)return;
-  var rect=heroRiftWell.getBoundingClientRect(), documentTop=rect.top+scrollY;
+  if(!heroRiftWell||!heroRiftPlane)return;
+  var rect=heroRiftWell.getBoundingClientRect(), mobile=innerWidth&lt;=760;
+  var documentTop=rect.top+scrollY;
   heroRiftPlane.style.setProperty('--rift-plane-left',(rect.left-rect.width*.08)+'px');
-  heroRiftPlane.style.setProperty('--rift-plane-top',(documentTop-rect.height*.58)+'px');
-  heroRiftPlane.style.setProperty('--rift-plane-width',(rect.width*1.2)+'px');
-  heroRiftPlane.style.setProperty('--rift-plane-height',(rect.height*3.25)+'px');
+  heroRiftPlane.style.setProperty('--rift-plane-top',(documentTop-rect.height*(mobile ? .52 : .58))+'px');
+  heroRiftPlane.style.setProperty('--rift-plane-width',(mobile?Math.max(innerWidth*1.12,rect.width*1.18):rect.width*1.2)+'px');
+  heroRiftPlane.style.setProperty('--rift-plane-height',(mobile?innerHeight*1.45:rect.height*3.25)+'px');
 }
 
 function heroIn(delay){
@@ -1326,6 +1342,7 @@ function activateServiceRow(index){
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script src="assets/ice-loader.js?v=20260714-3"></script>
 <script>
 (function(){
   var TG='https://t.me/maksim_site';
@@ -1566,13 +1583,10 @@ function activateServiceRow(index){
     addEventListener('scroll',function(){onScrollDir(scrollY);},{passive:true});
   }
 
-  /* ---------- прелоадер: заливка внутри букв + счётчик + шторки ---------- */
+  /* ---------- production ice intro ---------- */
   var loader=document.getElementById('loader');
-  var lwFill=document.getElementById('lwFill');
-  var seen=false;
-  try{seen=sessionStorage.getItem('introSeen')==='1';}catch(_){}
+  var iceIntroActive=!!window.__iceIntroActive;
   function killLoader(){if(loader){loader.style.display='none';}document.documentElement.classList.remove('loading');}
-  function markSeen(){try{sessionStorage.setItem('introSeen','1');}catch(_){}}
 
   /* Код под разломом фиксируется один раз: на скролле нет ни GSAP, ни layout-пересчётов. */
   var heroRift=document.querySelector('.code-rift');
@@ -1581,13 +1595,15 @@ function activateServiceRow(index){
   var heroRiftStream=document.querySelector('.code-rift-stream');
   var riftResizeFrame=0;
   function lockRiftPlane(){
-    if(!heroRiftWell||!heroRiftPlane||innerWidth<=760)return;
+    if(!heroRiftWell||!heroRiftPlane)return;
+    if(document.documentElement.classList.contains('ice-intro-pending'))return;
     var rect=heroRiftWell.getBoundingClientRect();
     var documentTop=rect.top+window.scrollY;
+    var mobile=innerWidth<=760;
     heroRiftPlane.style.setProperty('--rift-plane-left',(rect.left-rect.width*.08)+'px');
-    heroRiftPlane.style.setProperty('--rift-plane-top',(documentTop-rect.height*.58)+'px');
-    heroRiftPlane.style.setProperty('--rift-plane-width',(rect.width*1.2)+'px');
-    heroRiftPlane.style.setProperty('--rift-plane-height',(rect.height*3.25)+'px');
+    heroRiftPlane.style.setProperty('--rift-plane-top',(documentTop-rect.height*(mobile ? .52 : .58))+'px');
+    heroRiftPlane.style.setProperty('--rift-plane-width',(mobile?Math.max(innerWidth*1.12,rect.width*1.18):rect.width*1.2)+'px');
+    heroRiftPlane.style.setProperty('--rift-plane-height',(mobile?innerHeight*1.45:rect.height*3.25)+'px');
   }
   function scheduleRiftLock(){
     cancelAnimationFrame(riftResizeFrame);
@@ -1596,6 +1612,8 @@ function activateServiceRow(index){
   lockRiftPlane();
   addEventListener('resize',scheduleRiftLock,{passive:true});
   addEventListener('load',scheduleRiftLock,{once:true});
+  addEventListener('iceintro:reveal-layout',lockRiftPlane,{once:true});
+  addEventListener('iceintro:reveal-complete',scheduleRiftLock,{once:true});
 
   /* ---------- анимации ---------- */
   if(hasFX){
@@ -1625,23 +1643,10 @@ function activateServiceRow(index){
         el.style.transform='translate3d(0,0,0)';
       });
       if(heroRift)heroRift.style.opacity='1';
-      if(heroRiftStream){heroRiftStream.style.opacity='1';heroRiftStream.style.transform='rotate(-1.15deg)';}
+      if(heroRiftStream){heroRiftStream.style.opacity='1';heroRiftStream.style.transform='rotate(-.65deg)';}
     }
-    setTimeout(revealHeroFallback,4200);
-
-    if(!seen&&loader){
-      document.documentElement.classList.add('loading');
-      var cnt={v:0};
-      setTimeout(function(){document.getElementById('loaderSub').classList.add('in');},380);
-      var ltl=gsap.timeline({onComplete:function(){killLoader();markSeen();}});
-      ltl.to(cnt,{v:100,duration:1.35,ease:'power2.inOut',onUpdate:function(){
-           if(lwFill)lwFill.style.clipPath='inset(0 '+(100-cnt.v)+'% 0 0)'; // буквы заливаются слева направо
-         }},.1)
-         .to('.loader-core',{opacity:0,duration:.3,ease:'power1.out'},1.55)
-         .to('.lp-t',{yPercent:-100,duration:.8,ease:'power4.inOut'},1.7)
-         .to('.lp-b',{yPercent:100,duration:.8,ease:'power4.inOut'},1.7);
-      heroIn(2.0);
-    }else{
+    if(!iceIntroActive){
+      setTimeout(revealHeroFallback,4200);
       killLoader();
       heroIn(.15);
     }
@@ -1700,8 +1705,8 @@ function activateServiceRow(index){
     var ph=document.querySelector('.about-ph img');
     if(ph)gsap.fromTo(ph,{y:-14},{y:14,ease:'none',
       scrollTrigger:{trigger:'.about-ph',start:'top bottom',end:'bottom top',scrub:true}});
-  }else{
-    killLoader();markSeen();
+  }else if(!iceIntroActive){
+    killLoader();
     document.querySelectorAll('.frev,.line-in').forEach(function(el){el.style.opacity='1';el.style.transform='none';});
   }
 
