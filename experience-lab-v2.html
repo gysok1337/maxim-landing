@@ -2876,10 +2876,9 @@ body.fx-enabled .fx-panel{
   var defaultHeaderStatus=headerStatus?headerStatus.textContent:'';
   var target=0;
   var current=0;
-  var previousTarget=0;
-  var reverseMode=false;
-  var visualProgress=0;
   var lastTime=performance.now();
+  var launchWheelFrame=0;
+  var launchWheelStep=0;
   var launchTarget={x:0,y:0};
   var launchOrigin={x:0,y:0};
   var targetMeasured=false;
@@ -2903,15 +2902,6 @@ body.fx-enabled .fx-panel{
   function phase(value,startIn,endIn,startOut,endOut){
     return smooth(segment(value,startIn,endIn))*(1-smooth(segment(value,startOut,endOut)));
   }
-  function reverseCheckpoint(progress){
-    if(progress<.035)return 0;
-    if(progress<.24)return .17;
-    if(progress<.36)return .34;
-    if(progress<.49)return .47;
-    if(progress<.71)return .55;
-    if(progress<.91)return .80;
-    return .97;
-  }
   function syncLaunchPicker(activeIndex){
     sharedStageTabs.forEach(function(tab,index){
       tab.style.setProperty('--stage-shift',((index-activeIndex)*118)+'%');
@@ -2925,7 +2915,7 @@ body.fx-enabled .fx-panel{
       copySteps.forEach(function(step){setOpacity(step,0);step.setAttribute('aria-hidden','true');});
       return;
     }
-    var copyEntry=smooth(segment(progress,.006,.045));
+    var copyEntry=smooth(segment(progress,.008,.068));
     var values=[
       1-smooth(segment(progress,.47,.52)),
       phase(progress,.47,.52,.66,.71),
@@ -3019,19 +3009,13 @@ body.fx-enabled .fx-panel{
 
   function render(progress){
     var processReady=window.__labProcessReady===true;
-    if(!processReady){progress=0;visualProgress=0;}
+    if(!processReady)progress=0;
     progress=clamp(progress,0,1);
-    if(reduced)visualProgress=progress;
-    else if(reverseMode){
-      if(progress<=.001)visualProgress=0;
-    }else{
-      visualProgress=Math.max(visualProgress,progress);
-    }
-    var motion=visualProgress;
-    var launchEntry=smooth(segment(progress,.002,.035));
-    var adaptiveTakeover=smooth(segment(motion,.205,.225));
+    var motion=progress;
+    var launchEntry=smooth(segment(progress,.002,.055));
+    var adaptiveTakeover=smooth(segment(motion,.17,.25));
     window.__labLaunchActive=processReady&&progress>.006;
-    var processExit=smooth(segment(progress,.012,.08));
+    var processExit=smooth(segment(progress,.012,.105));
     var desktopSettle=smooth(segment(motion,.14,.22));
     if(processVisualLayer){
       processVisualLayer.style.opacity=(1-adaptiveTakeover).toFixed(3);
@@ -3282,24 +3266,60 @@ body.fx-enabled .fx-panel{
     return clamp((overall-split)/(1-split),0,1);
   }
 
+  function launchScrollState(){
+    var sectionTop=section.getBoundingClientRect().top+window.scrollY;
+    var distance=Math.max(1,section.offsetHeight-window.innerHeight);
+    var overall=clamp((window.scrollY-sectionTop)/distance,0,1);
+    var split=labPhaseEnd();
+    return {
+      overall:overall,
+      split:split,
+      progress:clamp((overall-split)/(1-split),0,1),
+      launchDistance:distance*(1-split)
+    };
+  }
+
+  function governLaunchWheel(event){
+    if(reduced||event.deltaY<=0||window.__labProcessReady!==true)return;
+    var rect=section.getBoundingClientRect();
+    if(rect.top>1||rect.bottom<window.innerHeight)return;
+    var state=launchScrollState();
+    if(state.overall<state.split-.0005||state.progress>=.999||current>=.992)return;
+    var maxLead=current<.25?.018:(current<.57?.014:(current<.93?.016:.024));
+    var available=Math.max(0,(current+maxLead-state.progress)*state.launchDistance);
+    var step=Math.min(event.deltaY,28,available);
+    if(step+1<event.deltaY){
+      event.preventDefault();
+      if(step>.5){
+        launchWheelStep=Math.max(launchWheelStep,step);
+        if(!launchWheelFrame){
+          launchWheelFrame=requestAnimationFrame(function(){
+            launchWheelFrame=0;
+            var amount=launchWheelStep;
+            launchWheelStep=0;
+            window.scrollBy({top:amount,behavior:'auto'});
+          });
+        }
+      }
+    }
+  }
+
   function fallback(){target=sectionProgress();}
 
   function frame(now){
     var delta=clamp((now-lastTime)/1000,0,.05);
     lastTime=now;
     var gatedTarget=window.__labProcessReady===true?target:0;
-    if(gatedTarget<previousTarget-.0004){
-      if(!reverseMode)visualProgress=reverseCheckpoint(visualProgress);
-      reverseMode=true;
-    }else if(gatedTarget>previousTarget+.0004){
-      reverseMode=false;
-    }
-    previousTarget=gatedTarget;
     if(reduced){
       current=gatedTarget;
     }else{
-      var follow=1-Math.pow(.0015,delta);
-      var change=(gatedTarget-current)*follow;
+      var difference=gatedTarget-current;
+      var follow=1-Math.pow(difference<0?.00002:.0015,delta);
+      var change=difference*follow;
+      if(difference>0){
+        var maxRate=current<.22?.12:(current<.57?.09:(current<.93?.105:.16));
+        change=Math.min(change,maxRate*Math.max(delta,1/240));
+      }
       current+=change;
     }
     if(Math.abs(gatedTarget-current)<.00005)current=gatedTarget;
@@ -3320,6 +3340,7 @@ body.fx-enabled .fx-panel{
     window.addEventListener('scroll',fallback,{passive:true});
     fallback();
   }
+  window.addEventListener('wheel',governLaunchWheel,{passive:false});
 
   var recordLaunchControl=document.getElementById('recordLaunchControl');
   if(recordLaunchControl&&new URLSearchParams(location.search).get('record')==='1'){
@@ -3327,10 +3348,7 @@ body.fx-enabled .fx-panel{
       var value=parseFloat(this.value);
       if(!Number.isFinite(value))return;
       value=clamp(value,0,1);
-      reverseMode=value<current-.0004;
-      previousTarget=value;
       target=current=value;
-      if(value<=.001)visualProgress=0;
       render(current);
     });
   }
