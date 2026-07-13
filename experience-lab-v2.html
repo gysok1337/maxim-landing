@@ -1165,26 +1165,29 @@ body.fx-enabled .fx-panel{
   pointer-events:none;
   transform:translateZ(0);
   will-change:opacity;
-  background:
-    linear-gradient(180deg,rgba(13,13,12,.76),transparent 18% 82%,rgba(13,13,12,.82)),
-    radial-gradient(circle at 72% 43%,rgba(var(--accent-rgb),.075),transparent 31%),
-    var(--bg);
+  background:transparent;
 }
+.launch-grid{opacity:0}
 .launch-label{margin-bottom:16px}
 .launch-stage-tabs{margin-bottom:30px;pointer-events:auto}
 .launch-stage-tabs .stage-tab{cursor:pointer}
-.launch-copy{top:51%;width:min(35vw,480px);transform:translateY(-48%)}
+.launch-copy{
+  left:calc(clamp(20px,4vw,58px) - clamp(8px,1.25vw,18px));
+  top:calc(51% + 30px);
+  width:min(34vw,470px);
+  transform:translateY(-48%);
+}
 .launch-copy-stack{min-height:330px}
 .launch-copy-step h2{font-size:clamp(48px,5.7vw,88px)}
 .launch-copy-step h2 em{display:block}
-.launch-visual{left:39%;right:2.8%;top:92px;bottom:54px}
+.launch-visual{inset:76px 0 0}
 .launch-camera{transform-origin:50% 14%}
 
 .adaptive-stage{position:absolute;z-index:12;inset:0;pointer-events:none}
 .adaptive-device{
   position:absolute;
-  left:50%;
-  top:50%;
+  left:calc(69% + 18px);
+  top:calc(53% + 2px);
   display:grid;
   justify-items:center;
   gap:12px;
@@ -1205,7 +1208,7 @@ body.fx-enabled .fx-panel{
 .adaptive-frame::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.035);pointer-events:none}
 .adaptive-frame img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top}
 .adaptive-camera{position:absolute;z-index:2;left:50%;top:5px;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.2);transform:translateX(-50%)}
-.adaptive-desktop{width:min(58vw,880px);aspect-ratio:16/10;transform:translate3d(-50%,-48%,0)}
+.adaptive-desktop{width:min(61vw,840px);height:min(75vh,560px);aspect-ratio:auto;transform:translate3d(-50%,-50%,0) scale(.945)}
 .adaptive-desktop .adaptive-frame{border-radius:12px;padding:9px 9px 14px}
 .adaptive-desktop .adaptive-frame img{border-radius:5px}
 .adaptive-tablet{width:min(43vw,620px);aspect-ratio:4/3;transform:translate3d(-50%,-48%,0) scale(.94)}
@@ -1248,10 +1251,13 @@ body.fx-enabled .fx-panel{
 .adaptive-device .device-label{position:static;justify-self:center;padding:6px 10px;border:1px solid rgba(255,255,255,.12);background:rgba(10,10,10,.82);font-size:8px}
 
 .launch-browser{
-  width:min(58vw,890px);
-  aspect-ratio:1.62;
+  left:calc(69% + 18px);
+  top:calc(53% + 2px);
+  width:min(61vw,840px);
+  height:min(75vh,560px);
+  aspect-ratio:auto;
   opacity:0;
-  transform:translate3d(-50%,-47%,0) scale(.86);
+  transform:translate3d(-50%,-50%,0) scale(.86);
   transform-origin:50% 8%;
 }
 .launch-address .protocol{display:inline-flex;align-items:baseline;line-height:1;color:var(--muted);transition:none}
@@ -2723,12 +2729,12 @@ body.fx-enabled .fx-panel{
   function render(progress){
     if(window.__labProcessReady!==true)progress=0;
     progress=clamp(progress,0,1);
-    var processExit=smooth(segment(progress,0,.009));
+    var processExit=smooth(segment(progress,.018,.085));
     processLayers.forEach(function(layer){
       layer.style.opacity=progress<=.0001?'':(1-processExit).toFixed(3);
       layer.style.pointerEvents=progress<=.0001?'':'none';
     });
-    var sceneEntry=smooth(segment(progress,.008,.021));
+    var sceneEntry=smooth(segment(progress,.012,.082));
     setOpacity(sticky,sceneEntry);
     sticky.style.pointerEvents=sceneEntry>.98?'auto':'none';
     var mobile=window.innerWidth<=700;
@@ -2759,15 +2765,15 @@ body.fx-enabled .fx-panel{
     setOpacity(adaptiveDesktop,desktopAmount);
     setOpacity(adaptiveTablet,tabletAmount*(1-finalIn));
     setOpacity(adaptivePhone,phoneAmount*(1-finalIn));
-    setTransform(adaptiveDesktop,'translate3d(-50%,-48%,0) scale('+mix(1,.84,desktopOut).toFixed(3)+') rotateX('+mix(0,4,desktopOut).toFixed(2)+'deg)');
-    setTransform(adaptiveTablet,'translate3d(-50%,-48%,0) scale('+mix(1.08,1,tabletAmount).toFixed(3)+') rotateX('+mix(-3,0,tabletAmount).toFixed(2)+'deg)');
-    setTransform(adaptivePhone,'translate3d(-50%,-48%,0) scale('+mix(1.08,1,phoneAmount).toFixed(3)+') rotateX('+mix(-3,0,phoneAmount).toFixed(2)+'deg)');
+    setTransform(adaptiveDesktop,'translate3d(-50%,-50%,0) scale('+mix(.945,.80,desktopOut).toFixed(3)+') rotateX('+mix(0,4,desktopOut).toFixed(2)+'deg)');
+    setTransform(adaptiveTablet,'translate3d(-50%,-50%,0) scale('+mix(1.08,1,tabletAmount).toFixed(3)+') rotateX('+mix(-3,0,tabletAmount).toFixed(2)+'deg)');
+    setTransform(adaptivePhone,'translate3d(-50%,-50%,0) scale('+mix(1.08,1,phoneAmount).toFixed(3)+') rotateX('+mix(-3,0,phoneAmount).toFixed(2)+'deg)');
 
     var zoomScale=secureZoom*(mobile?.20:.32);
     var browserScale=mix(.86,.93,browserIn)+zoomScale;
     var zoomY=secureZoom*(mobile?58:112);
     setOpacity(browser,browserIn*(1-finalIn));
-    setTransform(browser,'translate3d(-50%,-47%,0) translate3d(0,'+zoomY.toFixed(1)+'px,'+(secureZoom*46).toFixed(1)+'px) scale('+browserScale.toFixed(4)+')');
+    setTransform(browser,'translate3d(-50%,-50%,0) translate3d(0,'+zoomY.toFixed(1)+'px,'+(secureZoom*46).toFixed(1)+'px) scale('+browserScale.toFixed(4)+')');
     browser.style.filter='blur('+(finalIn*2.2).toFixed(2)+'px)';
 
     setOpacity(warning,1-secureChange);
