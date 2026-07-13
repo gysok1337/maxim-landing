@@ -2961,10 +2961,10 @@ body.fx-enabled .fx-panel{
     }
     var copyEntry=smooth(segment(progress,.008,.068));
     var values=[
-      1-smooth(segment(progress,.47,.52)),
-      phase(progress,.47,.52,.66,.71),
-      phase(progress,.66,.71,.88,.925),
-      smooth(segment(progress,.88,.925))
+      1-smooth(segment(progress,.515,.56)),
+      phase(progress,.515,.56,.69,.735),
+      phase(progress,.69,.735,.89,.93),
+      smooth(segment(progress,.89,.93))
     ];
     var active=0;
     values.forEach(function(value,index){
@@ -2973,7 +2973,7 @@ body.fx-enabled .fx-panel{
       if(value>values[active])active=index;
       var step=copySteps[index];
       setOpacity(step,value);
-      var before=progress<[0,.47,.66,.88][index];
+      var before=progress<[0,.515,.69,.89][index];
       setTransform(step,'translate3d(0,'+((before?1:-1)*(1-value)*26).toFixed(1)+'px,0)');
       step.style.filter='blur('+((1-value)*3).toFixed(2)+'px)';
       step.setAttribute('aria-hidden',value>.45?'false':'true');
