@@ -191,6 +191,10 @@ button{font:inherit;color:inherit}
 .copy-step p strong{color:var(--ink-2);font-weight:600}
 .copy-two{opacity:0;transform:translateY(36px);filter:blur(3px)}
 .copy-three{opacity:0;transform:translateY(36px);filter:blur(3px)}
+@media (min-width:701px){
+  .copy-three{left:clamp(-18px,-1.25vw,-8px);right:clamp(8px,1.25vw,18px)}
+  .copy-step.copy-three h2{font-size:clamp(50px,6vw,96px)}
+}
 .stage-foot{display:flex;align-items:center;gap:14px;margin-top:14px;color:var(--quiet)}
 .stage-count{min-width:50px}
 .stage-track{position:relative;width:min(230px,18vw);height:1px;background:var(--line)}
@@ -384,12 +388,12 @@ button{font:inherit;color:inherit}
   display:grid;
   place-items:center;
   margin-left:auto;
-  border:1px solid rgba(var(--accent-rgb),.42);
+  border:1px solid rgba(255,255,255,.14);
   border-radius:7px;
-  background:rgba(var(--accent-rgb),.08);
+  background:rgba(255,255,255,.025);
   opacity:0;
   transform:scale(.94);
-  will-change:opacity,transform,background;
+  will-change:opacity,transform;
   box-shadow:none;
 }
 .top-play::before{content:"";width:0;height:0;margin-left:2px;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:10px solid var(--accent)}
@@ -2210,8 +2214,8 @@ body.fx-enabled .fx-panel{
 
     setOpacity(playControl,playIn*(1-editorOut));
     setTransform(playControl,'scale('+(mix(.94,1,playIn)+runHover*.018-runPress*.09).toFixed(3)+')');
-    playControl.style.background='rgba(var(--accent-rgb),'+(.08+runHover*.08+runPress*.42).toFixed(3)+')';
-playControl.style.boxShadow='none';
+    playControl.style.background='rgba(255,255,255,'+(.025+runPress*.035).toFixed(3)+')';
+    playControl.style.boxShadow='none';
 
     var firstCursorVisible=noticeCursorIn*(1-smooth(segment(noticeAction,.7,1)));
     var secondCursorVisible=runCursorIn*(1-smooth(segment(runAction,.86,1))*.18);
