@@ -2872,6 +2872,8 @@ body.fx-enabled .fx-panel{
   var defaultHeaderStatus=headerStatus?headerStatus.textContent:'';
   var target=0;
   var current=0;
+  var previousTarget=0;
+  var reverseMode=false;
   var lastTime=performance.now();
   var launchTarget={x:0,y:0};
   var launchOrigin={x:0,y:0};
@@ -2894,6 +2896,15 @@ body.fx-enabled .fx-panel{
   function labPhaseEnd(){return reduced?.60:(window.innerWidth<=700?.555:.563);}
   function phase(value,startIn,endIn,startOut,endOut){
     return smooth(segment(value,startIn,endIn))*(1-smooth(segment(value,startOut,endOut)));
+  }
+  function compactReverseVisual(progress){
+    if(progress<.045)return 0;
+    if(progress<.18)return .15;
+    if(progress<.32)return .285;
+    if(progress<.47)return .44;
+    if(progress<.69)return .635;
+    if(progress<.88)return .80;
+    return .97;
   }
   function syncLaunchPicker(activeIndex){
     sharedStageTabs.forEach(function(tab,index){
@@ -2934,7 +2945,7 @@ body.fx-enabled .fx-panel{
     if(sharedStageCount)sharedStageCount.textContent=copyEntry>.5?'04 / 04':'03 / 04';
     if(sharedStageTrack)sharedStageTrack.style.transform='scaleX('+mix(.968,1,progress).toFixed(4)+')';
     syncLaunchPicker(copyEntry>.5?3:2);
-    if(headerStatus)headerStatus.textContent=progress<=.006?defaultHeaderStatus:(active===0?'Запуск · Адаптив':active===1?'Запуск · Сервер':active===2?'Запуск · Заявки':'Запуск · Готово');
+    if(headerStatus)headerStatus.textContent=copyEntry<=.5?defaultHeaderStatus:(active===0?'Запуск · Адаптив':active===1?'Запуск · Сервер':active===2?'Запуск · Заявки':'Запуск · Готово');
   }
 
   function elementCenter(element,visualRect){
@@ -3002,10 +3013,11 @@ body.fx-enabled .fx-panel{
     var processReady=window.__labProcessReady===true;
     if(!processReady)progress=0;
     progress=clamp(progress,0,1);
+    var motion=reduced?progress:(reverseMode?compactReverseVisual(progress):progress);
     window.__labLaunchActive=processReady&&progress>.006;
     var processExit=smooth(segment(progress,.012,.08));
-    var visualSwap=progress>=.075?1:0;
-    var desktopSettle=smooth(segment(progress,.09,.15));
+    var visualSwap=motion>=.075?1:0;
+    var desktopSettle=smooth(segment(motion,.09,.15));
     if(processVisualLayer){
       processVisualLayer.style.opacity=visualSwap?'0':'';
       processVisualLayer.style.pointerEvents=visualSwap?'none':'';
@@ -3019,22 +3031,22 @@ body.fx-enabled .fx-panel{
     var mobile=window.innerWidth<=700;
     var width=Math.max(320,visual.clientWidth);
     var height=Math.max(360,visual.clientHeight);
-    var tabletMorph=smooth(segment(progress,.17,.30));
-    var phoneMorph=smooth(segment(progress,.32,.45));
-    var browserIn=smooth(segment(progress,.46,.52));
-    var secureZoomIn=smooth(segment(progress,.53,.60));
-    var secureZoomOut=smooth(segment(progress,.64,.70));
+    var tabletMorph=smooth(segment(motion,.17,.30));
+    var phoneMorph=smooth(segment(motion,.32,.45));
+    var browserIn=smooth(segment(motion,.46,.52));
+    var secureZoomIn=smooth(segment(motion,.53,.60));
+    var secureZoomOut=smooth(segment(motion,.64,.70));
     var secureZoom=secureZoomIn*(1-secureZoomOut);
-    var secureChange=smooth(segment(progress,.575,.635));
-    var secureMoment=smooth(segment(progress,.595,.655));
+    var secureChange=smooth(segment(motion,.575,.635));
+    var secureMoment=smooth(segment(motion,.595,.655));
     var securePulse=Math.sin(secureMoment*Math.PI);
-    var serverPanel=phase(progress,.515,.55,.655,.70);
-    var leadIn=smooth(segment(progress,.70,.755));
-    var clickPhase=smooth(segment(progress,.81,.855));
-    var routeMail=smooth(segment(progress,.835,.89));
-    var routeTelegram=smooth(segment(progress,.85,.905));
-    var deliveryDone=smooth(segment(progress,.875,.925));
-    var finalIn=smooth(segment(progress,.91,.97));
+    var serverPanel=phase(motion,.515,.55,.655,.70);
+    var leadIn=smooth(segment(motion,.70,.755));
+    var clickPhase=smooth(segment(motion,.81,.855));
+    var routeMail=smooth(segment(motion,.835,.89));
+    var routeTelegram=smooth(segment(motion,.85,.905));
+    var deliveryDone=smooth(segment(motion,.875,.925));
+    var finalIn=smooth(segment(motion,.91,.97));
 
     renderCopy(progress,processReady);
     launchProgress.style.transform='scaleY('+progress.toFixed(4)+')';
@@ -3099,8 +3111,8 @@ body.fx-enabled .fx-panel{
       browser.style.borderRadius=deviceRadius.toFixed(2)+'px';
       setOpacity(adaptiveDesktopChrome,(1-desktopSettle)*(1-browserIn));
 
-      var tabletReveal=smooth(segment(progress,.205,.285));
-      var phoneReveal=smooth(segment(progress,.36,.44));
+      var tabletReveal=smooth(segment(motion,.205,.285));
+      var phoneReveal=smooth(segment(motion,.36,.44));
       adaptiveShots.forEach(function(shot){
         setOpacity(shot,0);
         shot.style.webkitMaskImage='none';
@@ -3111,7 +3123,7 @@ body.fx-enabled .fx-panel{
       setOpacity(adaptiveShots[activeShot],1);
       var tabletShutter=Math.pow(Math.sin(tabletReveal*Math.PI),3);
       var phoneShutter=Math.pow(Math.sin(phoneReveal*Math.PI),3);
-      var takeoverShutter=visualSwap?(1-smooth(segment(progress,.075,.105)))*.45:0;
+      var takeoverShutter=visualSwap?(1-smooth(segment(motion,.075,.105)))*.45:0;
       setOpacity(adaptiveScreenShutter,Math.max(tabletShutter*.96,phoneShutter*.96,takeoverShutter));
       setOpacity(adaptiveCamera,tabletMorph*(1-phoneMorph)*(1-browserIn));
       setOpacity(adaptiveIsland,phoneUi);
@@ -3133,7 +3145,7 @@ body.fx-enabled .fx-panel{
 
     setOpacity(warning,1-secureChange);
     setTransform(warning,'translate3d('+(-8*secureChange).toFixed(1)+'px,-50%,0)');
-    setOpacity(lock,smooth(segment(progress,.55,.59)));
+    setOpacity(lock,smooth(segment(motion,.55,.59)));
     setTransform(lock,'translateY(-50%) scale('+mix(.8,1,secureChange).toFixed(3)+')');
     if(lockShackle)lockShackle.style.transform='rotate('+mix(-38,0,secureChange).toFixed(2)+'deg)';
     protocolS.style.opacity=secureChange.toFixed(3);
@@ -3141,17 +3153,17 @@ body.fx-enabled .fx-panel{
     protocolS.style.transform='none';
     address.classList.toggle('is-secure',secureChange>.96);
 
-    var focusAlpha=phase(progress,.55,.58,.65,.70);
+    var focusAlpha=phase(motion,.55,.58,.65,.70);
     setOpacity(secureFocus,focusAlpha);
     setTransform(secureFocus,'translate(-50%,-50%) scale('+(mix(.58,1,secureZoom)+securePulse*.22).toFixed(3)+')');
-    var captionAlpha=phase(progress,.61,.64,.67,.71);
+    var captionAlpha=phase(motion,.61,.64,.67,.71);
     setOpacity(secureCaption,captionAlpha);
     setTransform(secureCaption,'translate3d('+mix(8,0,captionAlpha).toFixed(1)+'px,-50%,0)');
 
     setOpacity(serverConsole,serverPanel);
     setTransform(serverConsole,'translate3d(0,'+(12*(1-serverPanel)).toFixed(1)+'px,18px) scale('+mix(.96,1,serverPanel).toFixed(3)+')');
     serverChecks.forEach(function(check,index){
-      var checkIn=smooth(segment(progress,.535+index*.035,.57+index*.035))*serverPanel;
+      var checkIn=smooth(segment(motion,.535+index*.035,.57+index*.035))*serverPanel;
       setOpacity(check,checkIn);
       setTransform(check,'translate3d('+(9*(1-checkIn)).toFixed(1)+'px,0,0)');
     });
@@ -3161,23 +3173,23 @@ body.fx-enabled .fx-panel{
     leadSend.textContent=deliveryDone>.7?'Отправлено ✓':'Отправить';
     leadSend.style.background=deliveryDone>.7?'#d9d7d0':'var(--accent)';
     pageShade.style.opacity=(secureZoom*.58+serverPanel*.12+leadIn*.20+finalIn*.34).toFixed(3);
-    if(progress>.72&&!targetMeasured)measureInteractionTargets();
+    if(motion>.72&&!targetMeasured)measureInteractionTargets();
 
     var cursorStartX=targetMeasured?launchOrigin.x:(mobile?width*.58:width*.69);
     var cursorStartY=targetMeasured?launchOrigin.y:(mobile?height*.61:height*.55);
     var cursorTargetX=targetMeasured?launchTarget.x:(mobile?width*.70:width*.77);
     var cursorTargetY=targetMeasured?launchTarget.y:(mobile?height*.76:height*.79);
-    var cursorMove=smooth(segment(progress,.755,.81));
+    var cursorMove=smooth(segment(motion,.755,.81));
     var cursorX=mix(cursorStartX,cursorTargetX,cursorMove);
     var cursorY=mix(cursorStartY,cursorTargetY,cursorMove)-Math.sin(cursorMove*Math.PI)*(mobile?32:54);
-    var cursorAlpha=phase(progress,.73,.76,.88,.92);
+    var cursorAlpha=phase(motion,.73,.76,.88,.92);
     setOpacity(launchCursor,cursorAlpha);
     setTransform(launchCursor,'translate3d('+(cursorX-4).toFixed(1)+'px,'+(cursorY-4).toFixed(1)+'px,0) rotate('+mix(-7,1,cursorMove).toFixed(2)+'deg) scale('+(1-Math.sin(clickPhase*Math.PI)*.1).toFixed(3)+')');
     var clickAlpha=Math.sin(clickPhase*Math.PI);
     setOpacity(launchClick,clickAlpha);
     setTransform(launchClick,'translate3d('+(cursorTargetX-14).toFixed(1)+'px,'+(cursorTargetY-14).toFixed(1)+'px,0) scale('+mix(.55,1.45,out(clickPhase)).toFixed(3)+')');
 
-    var routeAlpha=phase(progress,.81,.835,.91,.94);
+    var routeAlpha=phase(motion,.81,.835,.91,.94);
     setOpacity(deliveryRoute,routeAlpha);
     mailPath.style.strokeDashoffset=(1-routeMail).toFixed(4);
     telegramPath.style.strokeDashoffset=(1-routeTelegram).toFixed(4);
@@ -3193,8 +3205,8 @@ body.fx-enabled .fx-panel{
       telegramPacket.setAttribute('cy',telegramPoint.y.toFixed(2));
       setOpacity(telegramPacket,routeTelegram>0&&routeTelegram<.995?1:0);
     }
-    var mailIn=smooth(segment(progress,.85,.895))*(1-finalIn);
-    var telegramIn=smooth(segment(progress,.87,.915))*(1-finalIn);
+    var mailIn=smooth(segment(motion,.85,.895))*(1-finalIn);
+    var telegramIn=smooth(segment(motion,.87,.915))*(1-finalIn);
     setOpacity(mailTarget,mailIn);
     setOpacity(telegramTarget,telegramIn);
     setTransform(mailTarget,'translateX('+(18*(1-mailIn)).toFixed(1)+'px)');
@@ -3222,6 +3234,9 @@ body.fx-enabled .fx-panel{
     var delta=clamp((now-lastTime)/1000,0,.05);
     lastTime=now;
     var gatedTarget=window.__labProcessReady===true?target:0;
+    if(gatedTarget<previousTarget-.0004)reverseMode=true;
+    else if(gatedTarget>previousTarget+.0004)reverseMode=false;
+    previousTarget=gatedTarget;
     if(reduced){
       current=gatedTarget;
     }else{
@@ -3296,7 +3311,10 @@ body.fx-enabled .fx-panel{
     recordLaunchControl.addEventListener('input',function(){
       var value=parseFloat(this.value);
       if(!Number.isFinite(value))return;
-      target=current=clamp(value,0,1);
+      value=clamp(value,0,1);
+      reverseMode=value<current-.0004;
+      previousTarget=value;
+      target=current=value;
       render(current);
     });
   }
