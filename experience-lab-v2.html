@@ -1249,6 +1249,78 @@ body.fx-enabled .fx-panel{
 .adaptive-phone::before{top:23%;height:10%}
 .adaptive-phone::after{top:36%;height:17%}
 .adaptive-device .device-label{position:static;justify-self:center;padding:6px 10px;border:1px solid rgba(255,255,255,.12);background:rgba(10,10,10,.82);font-size:8px}
+.adaptive-morph{
+  display:block;
+  gap:0;
+  opacity:1;
+  transform:translate3d(-50%,-50%,0);
+  contain:layout paint;
+  will-change:transform,opacity;
+}
+.adaptive-morph .adaptive-frame{
+  --device-inset:9px;
+  --device-radius:12px;
+  --screen-radius:5px;
+  overflow:hidden;
+  padding:0;
+  border-radius:var(--device-radius);
+  border-color:rgba(255,255,255,.18);
+  background:#090909;
+  will-change:border-radius;
+}
+.adaptive-morph .adaptive-shot{
+  position:absolute;
+  z-index:1;
+  left:var(--device-inset);
+  top:var(--device-inset);
+  width:calc(100% - var(--device-inset) * 2);
+  height:calc(100% - var(--device-inset) * 2);
+  border-radius:var(--screen-radius);
+  object-fit:cover;
+  object-position:center top;
+  opacity:0;
+  filter:saturate(.9) brightness(.9);
+  will-change:opacity,transform;
+}
+.adaptive-morph #adaptiveShotDesktop{opacity:1}
+.adaptive-morph #adaptiveShotTablet{z-index:2}
+.adaptive-morph #adaptiveShotPhone{z-index:3}
+.adaptive-morph .adaptive-seam{
+  position:absolute;
+  z-index:4;
+  left:0;
+  top:0;
+  bottom:0;
+  width:2px;
+  background:rgba(230,229,224,.16);
+  opacity:0;
+  transform:translateX(-50%);
+  pointer-events:none;
+  will-change:transform,opacity;
+}
+.adaptive-morph .adaptive-camera{z-index:5;opacity:1;will-change:opacity}
+.adaptive-morph .dynamic-island{
+  position:absolute;
+  z-index:6;
+  left:50%;
+  top:14px;
+  width:30%;
+  height:17px;
+  border-radius:999px;
+  background:#020202;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 1px 3px rgba(0,0,0,.4);
+  opacity:0;
+  transform:translateX(-50%);
+  will-change:opacity;
+}
+.adaptive-morph .device-label{
+  position:absolute;
+  left:50%;
+  top:calc(100% + 12px);
+  transform:translateX(-50%);
+  white-space:nowrap;
+  will-change:opacity;
+}
 
 .launch-browser{
   left:calc(69% + 18px);
@@ -1599,26 +1671,16 @@ body.fx-enabled .fx-panel{
       <div class="launch-visual" id="launchVisual" aria-hidden="true">
         <div class="launch-camera" id="launchCamera">
           <div class="adaptive-stage" id="adaptiveStage">
-            <div class="adaptive-device adaptive-desktop" id="adaptiveDesktop">
-              <div class="adaptive-frame">
-                <span class="adaptive-camera"></span>
-                <img src="assets/screens/lider-responsive-desktop.png?v=20260712-2" alt="" width="1280" height="800" loading="eager" decoding="sync">
+            <div class="adaptive-device adaptive-morph" id="adaptiveDevice">
+              <div class="adaptive-frame" id="adaptiveFrame">
+                <span class="adaptive-camera" id="adaptiveCamera"></span>
+                <span class="dynamic-island" id="adaptiveIsland"></span>
+                <img class="adaptive-shot" id="adaptiveShotDesktop" src="assets/screens/lider-responsive-desktop.png?v=20260712-2" alt="" width="1280" height="800" loading="eager" decoding="sync">
+                <img class="adaptive-shot" id="adaptiveShotTablet" src="assets/screens/lider-responsive-tablet.png?v=20260712-2" alt="" width="1024" height="768" loading="eager" decoding="sync">
+                <img class="adaptive-shot" id="adaptiveShotPhone" src="assets/screens/lider-responsive-phone.png?v=20260712-2" alt="" width="390" height="844" loading="eager" decoding="sync">
+                <span class="adaptive-seam" id="adaptiveSeam"></span>
               </div>
-              <span class="device-label">Компьютер</span>
-            </div>
-            <div class="adaptive-device adaptive-tablet" id="adaptiveTablet">
-              <div class="adaptive-frame">
-                <span class="adaptive-camera"></span>
-                <img src="assets/screens/lider-responsive-tablet.png?v=20260712-2" alt="" width="1024" height="768" loading="eager" decoding="sync">
-              </div>
-              <span class="device-label">Планшет</span>
-            </div>
-            <div class="adaptive-device adaptive-phone" id="adaptivePhone">
-              <div class="adaptive-frame">
-                <span class="dynamic-island"></span>
-                <img src="assets/screens/lider-responsive-phone.png?v=20260712-2" alt="" width="390" height="844" loading="eager" decoding="sync">
-              </div>
-              <span class="device-label">Телефон</span>
+              <span class="device-label" id="adaptiveLabel">Компьютер</span>
             </div>
           </div>
 
@@ -2590,6 +2652,8 @@ body.fx-enabled .fx-panel{
       manual=true;
       target=visual=clamp(value,0,storyUnits);
       render(visual);
+      processCompleted=visual>=buildEnd-.006;
+      window.__labProcessReady=processCompleted;
     });
   }
 
@@ -2619,9 +2683,18 @@ body.fx-enabled .fx-panel{
   var camera=document.getElementById('launchCamera');
   var browser=document.getElementById('launchBrowser');
   var adaptiveStage=document.getElementById('adaptiveStage');
-  var adaptiveDesktop=document.getElementById('adaptiveDesktop');
-  var adaptiveTablet=document.getElementById('adaptiveTablet');
-  var adaptivePhone=document.getElementById('adaptivePhone');
+  var adaptiveDevice=document.getElementById('adaptiveDevice');
+  var adaptiveFrame=document.getElementById('adaptiveFrame');
+  var adaptiveCamera=document.getElementById('adaptiveCamera');
+  var adaptiveIsland=document.getElementById('adaptiveIsland');
+  var adaptiveLabel=document.getElementById('adaptiveLabel');
+  var adaptiveSeam=document.getElementById('adaptiveSeam');
+  var adaptiveShots=[
+    document.getElementById('adaptiveShotDesktop'),
+    document.getElementById('adaptiveShotTablet'),
+    document.getElementById('adaptiveShotPhone')
+  ];
+  var resultObject=document.getElementById('objectWrap');
   var address=document.getElementById('launchAddress');
   var warning=document.getElementById('launchWarning');
   var lock=document.getElementById('secureLock');
@@ -2654,6 +2727,7 @@ body.fx-enabled .fx-panel{
   var lastTime=performance.now();
   var launchTarget={x:0,y:0};
   var targetMeasured=false;
+  var deviceMetrics=null;
   var launchGuardFrame=0;
   var processLayers=[
     document.querySelector('#labSticky > .stage-layout'),
@@ -2709,6 +2783,35 @@ body.fx-enabled .fx-panel{
     return {x:rect.left-visualRect.left+rect.width/2,y:rect.top-visualRect.top+rect.height/2};
   }
 
+  function measureDeviceMetrics(){
+    if(!visual||!resultObject||!adaptiveDevice||!browser)return;
+    var visualRect=visual.getBoundingClientRect();
+    var sourceRect=resultObject.getBoundingClientRect();
+    if(!visualRect.width||!visualRect.height||sourceRect.width<100||sourceRect.height<100)return;
+    var viewportWidth=window.innerWidth;
+    var mobile=viewportWidth<=700;
+    var compact=viewportWidth<=900;
+    var tabletWidth=mobile
+      ?Math.min(viewportWidth*.75,520)
+      :(compact?Math.min(viewportWidth*.72,520):Math.min(viewportWidth*.43,620));
+    var phoneWidth=mobile
+      ?Math.min(viewportWidth*.43,185)
+      :(compact?Math.min(viewportWidth*.32,210):Math.min(viewportWidth*.18,236));
+    deviceMetrics={
+      x:sourceRect.left-visualRect.left+sourceRect.width/2,
+      y:sourceRect.top-visualRect.top+sourceRect.height/2,
+      desktop:{width:sourceRect.width,height:sourceRect.height},
+      tablet:{width:tabletWidth,height:tabletWidth*.75},
+      phone:{width:phoneWidth,height:phoneWidth*844/390}
+    };
+    [adaptiveDevice,browser].forEach(function(element){
+      element.style.left=deviceMetrics.x.toFixed(2)+'px';
+      element.style.top=deviceMetrics.y.toFixed(2)+'px';
+    });
+    browser.style.width=deviceMetrics.desktop.width.toFixed(2)+'px';
+    browser.style.height=deviceMetrics.desktop.height.toFixed(2)+'px';
+  }
+
   function measureInteractionTargets(){
     var visualRect=visual.getBoundingClientRect();
     if(!visualRect.width||!visualRect.height)return;
@@ -2740,10 +2843,9 @@ body.fx-enabled .fx-panel{
     var mobile=window.innerWidth<=700;
     var width=Math.max(320,visual.clientWidth);
     var height=Math.max(360,visual.clientHeight);
-    var desktopOut=smooth(segment(progress,.055,.095));
-    var tabletAmount=phase(progress,.06,.10,.145,.18);
-    var phoneAmount=phase(progress,.15,.19,.235,.285);
-    var browserIn=smooth(segment(progress,.245,.30));
+    var tabletMorph=smooth(segment(progress,.055,.14));
+    var phoneMorph=smooth(segment(progress,.145,.235));
+    var browserIn=smooth(segment(progress,.235,.315));
     var secureZoomIn=smooth(segment(progress,.31,.39));
     var secureZoomOut=smooth(segment(progress,.49,.555));
     var secureZoom=secureZoomIn*(1-secureZoomOut);
@@ -2760,17 +2862,60 @@ body.fx-enabled .fx-panel{
     renderCopy(progress);
     launchProgress.style.transform='scaleY('+progress.toFixed(4)+')';
 
-    var desktopAmount=(1-desktopOut)*(1-finalIn);
+    if(window.__labProcessReady===true&&!deviceMetrics)measureDeviceMetrics();
     setOpacity(adaptiveStage,1-finalIn);
-    setOpacity(adaptiveDesktop,desktopAmount);
-    setOpacity(adaptiveTablet,tabletAmount*(1-finalIn));
-    setOpacity(adaptivePhone,phoneAmount*(1-finalIn));
-    setTransform(adaptiveDesktop,'translate3d(-50%,-50%,0) scale('+mix(.945,.80,desktopOut).toFixed(3)+') rotateX('+mix(0,4,desktopOut).toFixed(2)+'deg)');
-    setTransform(adaptiveTablet,'translate3d(-50%,-50%,0) scale('+mix(1.08,1,tabletAmount).toFixed(3)+') rotateX('+mix(-3,0,tabletAmount).toFixed(2)+'deg)');
-    setTransform(adaptivePhone,'translate3d(-50%,-50%,0) scale('+mix(1.08,1,phoneAmount).toFixed(3)+') rotateX('+mix(-3,0,phoneAmount).toFixed(2)+'deg)');
+    if(deviceMetrics){
+      var tabletWidth=mix(deviceMetrics.desktop.width,deviceMetrics.tablet.width,tabletMorph);
+      var tabletHeight=mix(deviceMetrics.desktop.height,deviceMetrics.tablet.height,tabletMorph);
+      var phoneWidth=mix(tabletWidth,deviceMetrics.phone.width,phoneMorph);
+      var phoneHeight=mix(tabletHeight,deviceMetrics.phone.height,phoneMorph);
+      var deviceWidth=mix(phoneWidth,deviceMetrics.desktop.width,browserIn);
+      var deviceHeight=mix(phoneHeight,deviceMetrics.desktop.height,browserIn);
+      adaptiveDevice.style.width=deviceWidth.toFixed(2)+'px';
+      adaptiveDevice.style.height=deviceHeight.toFixed(2)+'px';
+      browser.style.width=deviceWidth.toFixed(2)+'px';
+      browser.style.height=deviceHeight.toFixed(2)+'px';
+      setOpacity(adaptiveDevice,(1-browserIn)*(1-finalIn));
+      setTransform(adaptiveDevice,'translate3d(-50%,-50%,0) rotateX('+(Math.sin(phoneMorph*Math.PI)*1.4).toFixed(2)+'deg)');
+
+      var tabletRadius=mix(12,20,tabletMorph);
+      var phoneRadius=mix(tabletRadius,34,phoneMorph);
+      var deviceRadius=mix(phoneRadius,12,browserIn);
+      var tabletInset=mix(9,10,tabletMorph);
+      var phoneInset=mix(tabletInset,9,phoneMorph);
+      var deviceInset=mix(phoneInset,0,browserIn);
+      adaptiveFrame.style.setProperty('--device-radius',deviceRadius.toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--screen-radius',Math.max(4,deviceRadius-7).toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--device-inset',deviceInset.toFixed(2)+'px');
+      adaptiveFrame.style.background=phoneMorph>.55?'#050505':'#111';
+      browser.style.borderRadius=deviceRadius.toFixed(2)+'px';
+
+      var tabletReveal=smooth(segment(progress,.075,.13));
+      var phoneReveal=smooth(segment(progress,.16,.225));
+      adaptiveShots.forEach(function(shot){
+        setOpacity(shot,1);
+        shot.style.webkitMaskImage='none';
+        shot.style.maskImage='none';
+        shot.style.clipPath='none';
+      });
+      setTransform(adaptiveShots[0],'translate3d(0,0,0)');
+      setTransform(adaptiveShots[1],'translate3d('+((1-tabletReveal)*100).toFixed(2)+'%,0,0)');
+      setTransform(adaptiveShots[2],'translate3d('+((1-phoneReveal)*100).toFixed(2)+'%,0,0)');
+      var activeReveal=phoneReveal>.001?phoneReveal:tabletReveal;
+      var seamAlpha=(activeReveal>.001&&activeReveal<.999)?Math.sin(activeReveal*Math.PI):0;
+      var seamX=deviceInset+(deviceWidth-deviceInset*2)*(1-activeReveal)-1;
+      setOpacity(adaptiveSeam,seamAlpha*.55);
+      setTransform(adaptiveSeam,'translate3d('+seamX.toFixed(1)+'px,0,0)');
+      setOpacity(adaptiveCamera,(1-phoneMorph)*(1-browserIn));
+      setOpacity(adaptiveIsland,smooth(segment(phoneMorph,.45,.82))*(1-browserIn));
+
+      adaptiveLabel.textContent=phoneMorph>.5?'Телефон':(tabletMorph>.5?'Планшет':'Компьютер');
+      var labelDip=Math.max(Math.sin(tabletMorph*Math.PI),Math.sin(phoneMorph*Math.PI));
+      setOpacity(adaptiveLabel,(1-labelDip*.68)*(1-browserIn)*(1-finalIn));
+    }
 
     var zoomScale=secureZoom*(mobile?.20:.32);
-    var browserScale=mix(.86,.93,browserIn)+zoomScale;
+    var browserScale=1+zoomScale;
     var zoomY=secureZoom*(mobile?58:112);
     setOpacity(browser,browserIn*(1-finalIn));
     setTransform(browser,'translate3d(-50%,-50%,0) translate3d(0,'+zoomY.toFixed(1)+'px,'+(secureZoom*46).toFixed(1)+'px) scale('+browserScale.toFixed(4)+')');
@@ -2938,7 +3083,7 @@ body.fx-enabled .fx-panel{
     });
   }
 
-  window.addEventListener('resize',function(){targetMeasured=false;render(current);},{passive:true});
+  window.addEventListener('resize',function(){targetMeasured=false;deviceMetrics=null;render(current);},{passive:true});
   render(0);
   requestAnimationFrame(frame);
 })();
