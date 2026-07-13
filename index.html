@@ -714,29 +714,43 @@ html.fx .about-txt h2.frev{
 .hero-word-quiet{font-size:.78em;font-weight:600;letter-spacing:-.018em}
 
 .code-rift{
-  position:absolute;right:clamp(-160px,-9vw,-100px);top:7%;z-index:1;
-  width:min(51vw,720px);height:clamp(400px,58dvh,525px);pointer-events:none;
+  position:absolute;right:clamp(-150px,-8vw,-94px);top:3%;z-index:1;
+  width:min(49vw,700px);height:clamp(430px,64dvh,575px);pointer-events:none;
   opacity:1;transform:translate3d(0,0,0) scale(1);transform-origin:68% 51%;
   will-change:transform,opacity;
 }
 html.fx .code-rift{opacity:0;transform:translate3d(42px,18px,0) scale(.93)}
 .code-rift-defs{position:absolute;width:0;height:0;overflow:hidden}
 .code-rift-rim{
-  position:absolute;inset:0;overflow:hidden;
+  position:absolute;inset:0;z-index:1;overflow:hidden;
   -webkit-clip-path:url(#code-rift-cut);clip-path:url(#code-rift-cut);
-  background:linear-gradient(154deg,rgba(245,244,239,.26) 0,rgba(245,244,239,.07) 8%,#1b1d1f 16%,#070809 57%,#151719 84%,rgba(245,244,239,.12) 100%);
-  filter:drop-shadow(-13px 20px 24px rgba(0,0,0,.5));
+  background:linear-gradient(148deg,rgba(245,244,239,.38) 0,#414446 9%,#1a1c1e 27%,#08090a 61%,#292c2e 87%,rgba(245,244,239,.15) 100%);
+  filter:drop-shadow(-14px 21px 25px rgba(0,0,0,.56));
 }
 .code-rift-rim::after{
   content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(128deg,rgba(255,255,255,.16),transparent 16% 74%,rgba(255,255,255,.055));
-  mix-blend-mode:screen;opacity:.36;
+  background:linear-gradient(132deg,rgba(255,255,255,.19),transparent 14% 67%,rgba(255,255,255,.075));
+  mix-blend-mode:screen;opacity:.32;
+}
+.code-rift-depth{
+  position:absolute;top:clamp(8px,.85vw,14px);right:clamp(4px,.48vw,8px);
+  bottom:clamp(10px,1vw,17px);left:clamp(11px,1.05vw,18px);overflow:hidden;
+  transform:translate3d(2px,5px,0);
+  -webkit-clip-path:url(#code-rift-depth-cut);clip-path:url(#code-rift-depth-cut);
+  background:linear-gradient(141deg,#35383a 2%,#242729 17%,#101214 42%,#030405 76%,#191b1d 100%);
+  box-shadow:inset 20px 17px 30px rgba(0,0,0,.92),inset -10px -12px 22px rgba(255,255,255,.035),0 -5px 12px rgba(255,255,255,.055);
+}
+.code-rift-depth::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,.09),transparent 23% 61%,rgba(0,0,0,.52));
+  opacity:.65;
 }
 .code-rift-well{
-  position:absolute;inset:clamp(3px,.32vw,5px);overflow:hidden;transform-origin:69% 51%;
-  -webkit-clip-path:url(#code-rift-cut);clip-path:url(#code-rift-cut);
+  position:absolute;top:clamp(9px,.9vw,15px);right:clamp(8px,.75vw,12px);
+  bottom:clamp(5px,.5vw,9px);left:clamp(6px,.6vw,10px);overflow:hidden;transform-origin:69% 51%;
+  -webkit-clip-path:url(#code-rift-inner-cut);clip-path:url(#code-rift-inner-cut);
   background:linear-gradient(118deg,rgba(255,255,255,.025),transparent 28% 70%,rgba(255,255,255,.018)),#050607;
-  box-shadow:inset 22px 17px 42px rgba(0,0,0,.9),inset -15px -13px 34px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,255,255,.045);
+  box-shadow:inset 28px 22px 48px rgba(0,0,0,.96),inset -16px -14px 34px rgba(0,0,0,.8),inset 0 0 0 1px rgba(255,255,255,.035),-5px -7px 15px rgba(0,0,0,.72);
 }
 .code-rift-plane{
   position:absolute;left:0;top:-56%;width:125%;height:310%;
@@ -777,7 +791,7 @@ html.fx .code-rift{opacity:0;transform:translate3d(42px,18px,0) scale(.93)}
 .tape-item:nth-child(3n+2){transform:translate3d(0,4px,0)}
 
 @media (max-width:920px){
-  .code-rift{right:-20vw;top:10%;width:64vw;height:clamp(360px,53dvh,490px)}
+  .code-rift{right:-20vw;top:7%;width:64vw;height:clamp(380px,58dvh,520px)}
   .hero-word-up{transform:translate3d(0,-.065em,0)}
   .hero-word-low{transform:translate3d(0,.055em,0)}
 }
@@ -794,6 +808,8 @@ html.fx .code-rift{opacity:0;transform:translate3d(42px,18px,0) scale(.93)}
   html.fx .code-rift{transform:translate3d(24px,12px,0) scale(.95)}
   .code-rift-plane{left:0;top:-42%;width:128%;height:430%}
   .code-rift-stream{grid-template-columns:repeat(2,minmax(0,1fr));font-size:7.1px;line-height:1.48;gap:10px}
+  .code-rift-depth{top:7px;right:4px;bottom:9px;left:9px;transform:translate3d(1px,3px,0)}
+  .code-rift-well{top:8px;right:7px;bottom:5px;left:6px}
   .hero-foot{margin-top:20px}
   .tape{width:108vw;margin:20px -4vw;transform:rotate(1.7deg)}
   .tape-track{padding:19px 0}
@@ -880,14 +896,21 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
       <svg class="code-rift-defs" aria-hidden="true">
         <defs>
           <clipPath id="code-rift-cut" clipPathUnits="objectBoundingBox">
-            <path d="M0 .455 C.07 .43 .09 .36 .17 .34 L.195 .348 L.224 .302 C.285 .29 .31 .24 .36 .235 L.39 .255 L.442 .198 L.47 .214 C.5 .19 .51 .14 .53 .13 L.552 .177 L.584 .15 L.612 .19 C.66 .18 .68 .22 .73 .2 L.763 .243 C.81 .23 .83 .27 .885 .244 L.91 .282 C.95 .27 .98 .284 1 .295 L.982 .352 L.997 .397 L.978 .442 L1 .496 L.972 .532 L.991 .576 C.965 .59 .942 .61 .925 .641 L.89 .63 C.878 .655 .867 .676 .855 .691 L.817 .674 C.793 .707 .774 .726 .75 .735 L.722 .708 L.69 .77 C.65 .755 .63 .82 .57 .77 L.532 .85 C.5 .815 .48 .86 .45 .86 C.41 .82 .39 .85 .35 .81 L.294 .822 L.253 .758 C.21 .79 .19 .735 .15 .765 L.113 .7 C.07 .73 .08 .66 .038 .65 L.063 .606 L.02 .589 L.041 .545 L0 .533 Z"/>
+            <path d="M.015 .34 C.05 .34 .07 .36 .095 .35 L.14 .305 L.235 .32 L.28 .275 L.39 .292 L.43 .235 L.515 .255 L.555 .19 L.62 .25 L.74 .22 L.78 .265 L.89 .245 L.93 .275 L1 .265 L.982 .39 L1 .48 L.972 .56 L.99 .62 L.92 .63 L.88 .69 L.8 .675 L.75 .735 L.67 .71 L.62 .78 L.54 .75 L.49 .82 L.41 .78 L.35 .81 L.29 .75 L.21 .785 L.17 .72 L.1 .75 L.08 .69 L.025 .71 L.05 .63 L.005 .6 L.02 .53 L0 .47 L.02 .42 Z"/>
+          </clipPath>
+          <clipPath id="code-rift-depth-cut" clipPathUnits="objectBoundingBox">
+            <path d="M.022 .36 C.055 .36 .075 .378 .1 .368 L.145 .327 L.238 .34 L.286 .298 L.39 .315 L.435 .26 L.517 .28 L.555 .219 L.622 .274 L.738 .245 L.782 .288 L.888 .269 L.93 .297 L.985 .289 L.968 .4 L.991 .48 L.963 .556 L.982 .612 L.914 .618 L.873 .676 L.797 .662 L.748 .72 L.671 .696 L.619 .765 L.542 .736 L.49 .803 L.411 .764 L.352 .795 L.294 .737 L.214 .769 L.173 .706 L.105 .735 L.083 .675 L.035 .696 L.058 .621 L.017 .592 L.032 .526 L.012 .47 L.032 .424 Z"/>
+          </clipPath>
+          <clipPath id="code-rift-inner-cut" clipPathUnits="objectBoundingBox">
+            <path d="M.028 .382 C.06 .383 .08 .398 .105 .39 L.15 .35 L.242 .361 L.29 .32 L.392 .337 L.439 .284 L.52 .303 L.558 .246 L.625 .298 L.736 .27 L.782 .311 L.886 .293 L.928 .319 L.976 .313 L.96 .41 L.983 .482 L.956 .552 L.974 .605 L.91 .611 L.868 .666 L.798 .653 L.746 .708 L.672 .686 L.617 .752 L.544 .724 L.489 .788 L.413 .751 L.354 .78 L.296 .725 L.217 .755 L.174 .694 L.11 .72 L.086 .663 L.044 .681 L.065 .613 L.025 .587 L.04 .522 L.02 .47 L.04 .429 Z"/>
           </clipPath>
         </defs>
       </svg>
       <div class="code-rift-rim">
-        <div class="code-rift-well">
-          <div class="code-rift-plane">
-            <div class="code-rift-stream">
+        <div class="code-rift-depth">
+          <div class="code-rift-well">
+            <div class="code-rift-plane">
+              <div class="code-rift-stream">
               <pre class="code-rift-code"><code>// first screen reveal
 var heroLines=gsap.utils.toArray('.hero .line-in'), heroRift=document.querySelector('.code-rift');
 var heroRiftWell=document.querySelector('.code-rift-well'), heroRiftPlane=document.querySelector('.code-rift-plane');
@@ -970,6 +993,7 @@ function renderLeader(value){
 function activateServiceRow(index){
   serviceRows.forEach(function(row,rowIndex){row.classList.toggle('is-active',rowIndex===index);});
 }</code></pre>
+              </div>
             </div>
           </div>
         </div>
