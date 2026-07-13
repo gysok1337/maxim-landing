@@ -889,6 +889,26 @@ button{font:inherit;color:inherit}
   white-space:nowrap;
   will-change:transform,opacity;
 }
+.server-console{
+  position:absolute;
+  z-index:12;
+  right:5%;
+  top:12%;
+  width:min(286px,42%);
+  padding:14px;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:8px;
+  background:rgba(13,13,12,.93);
+  opacity:0;
+  box-shadow:0 22px 58px rgba(0,0,0,.42);
+  will-change:transform,opacity;
+}
+.server-console-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;color:var(--accent);font-size:8px;letter-spacing:.08em;text-transform:uppercase}
+.server-console-head span:last-child{color:var(--quiet);white-space:nowrap}
+.server-check{height:28px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid rgba(255,255,255,.07);color:var(--muted);font-size:9px;opacity:0;will-change:transform,opacity}
+.server-check::before{content:"";width:5px;height:5px;flex:0 0 auto;border-radius:50%;background:var(--accent);box-shadow:0 0 9px rgba(var(--accent-rgb),.42)}
+.server-check span{margin-right:auto}
+.server-check strong{color:var(--ink-2);font-family:var(--mono);font-size:7px;font-weight:500;letter-spacing:.07em;text-transform:uppercase}
 .lead-form{
   position:absolute;
   z-index:13;
@@ -933,10 +953,10 @@ button{font:inherit;color:inherit}
   opacity:0;
   will-change:transform,opacity;
 }
-.delivery-route{position:absolute;z-index:14;inset:0;opacity:0;overflow:visible}
+.delivery-route{position:absolute;z-index:12;inset:0;opacity:0;overflow:visible}
 .delivery-route path{fill:none;stroke:rgba(var(--accent-rgb),.7);stroke-width:2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;filter:drop-shadow(0 0 6px rgba(var(--accent-rgb),.4))}
 .delivery-packet{fill:var(--accent);filter:drop-shadow(0 0 8px rgba(var(--accent-rgb),.72))}
-.delivery-targets{position:absolute;z-index:16;right:2%;top:20%;display:grid;gap:10px}
+.delivery-targets{position:absolute;z-index:16;right:1%;top:18%;display:grid;gap:10px}
 .delivery-target{
   min-width:142px;
   display:grid;
@@ -1117,6 +1137,9 @@ body.fx-enabled .fx-panel{
   .secure-focus{width:82px;height:82px}
   .secure-focus{left:34%;top:31%}
   .secure-caption{right:6px;top:50%;padding:3px 5px;font-size:6px}
+  .server-console{left:5%;right:auto;top:auto;bottom:6%;width:52%;padding:9px}
+  .server-console-head{margin-bottom:6px;font-size:5.5px}
+  .server-check{height:21px;font-size:7px}.server-check strong{font-size:5.5px}
   .lead-form{right:6%;bottom:7%;width:54%;padding:10px}
   .lead-form-label{margin-bottom:7px;font-size:7px}
   .lead-fields{gap:5px}.lead-fields span{height:21px;padding:0 6px;font-size:8px}
@@ -1605,7 +1628,7 @@ body.fx-enabled .fx-panel{
               <p>Сайт должен одинаково уверенно работать <strong>на компьютере, планшете и телефоне.</strong></p>
             </article>
             <article class="copy-step launch-copy-step" data-launch-copy="1" aria-hidden="true">
-              <h2>Настраиваю <em>сервер</em></h2>
+              <h2>Готовлю <em>сервер</em></h2>
               <p>Подключаю домен и DNS, проверяю сервер, затем включаю <strong>защищённое соединение.</strong></p>
             </article>
             <article class="copy-step launch-copy-step" data-launch-copy="2" aria-hidden="true">
@@ -1813,6 +1836,12 @@ body.fx-enabled .fx-panel{
             <div class="launch-page">
               <img src="assets/screens/lider-responsive-desktop.png?v=20260712-2" alt="" width="1280" height="800" loading="eager" decoding="sync">
               <div class="launch-page-shade" id="launchPageShade"></div>
+              <div class="server-console" id="serverConsole">
+                <div class="server-console-head mono"><span>Подготовка к запуску</span><span>10–20 мин</span></div>
+                <div class="server-check" data-server-check><span>Домен и DNS</span><strong>подключено</strong></div>
+                <div class="server-check" data-server-check><span>Сервер</span><strong>online</strong></div>
+                <div class="server-check" data-server-check><span>SSL / HTTPS</span><strong>защищено</strong></div>
+              </div>
               <div class="lead-form" id="leadForm">
                 <div class="lead-form-label mono">Тестовая заявка</div>
                 <div class="lead-fields"><span>Максим</span><span>+7 900 000-00-00</span></div>
@@ -2819,6 +2848,8 @@ body.fx-enabled .fx-panel{
   var pageShade=document.getElementById('launchPageShade');
   var secureFocus=document.getElementById('secureFocus');
   var secureCaption=document.getElementById('secureCaption');
+  var serverConsole=document.getElementById('serverConsole');
+  var serverChecks=Array.prototype.slice.call(document.querySelectorAll('[data-server-check]'));
   var leadForm=document.getElementById('leadForm');
   var leadSend=document.getElementById('leadSend');
   var launchCursor=document.getElementById('launchCursor');
@@ -2843,6 +2874,7 @@ body.fx-enabled .fx-panel{
   var current=0;
   var lastTime=performance.now();
   var launchTarget={x:0,y:0};
+  var launchOrigin={x:0,y:0};
   var targetMeasured=false;
   var deviceMetrics=null;
   var launchGuardFrame=0;
@@ -2944,18 +2976,25 @@ body.fx-enabled .fx-panel{
 
   function measureInteractionTargets(){
     var visualRect=visual.getBoundingClientRect();
-    if(!visualRect.width||!visualRect.height)return;
+    var routeRect=deliveryRoute.getBoundingClientRect();
+    if(!visualRect.width||!visualRect.height||!routeRect.width||!routeRect.height)return;
     launchTarget=elementCenter(leadSend,visualRect);
-    var mailPoint=elementCenter(mailTarget,visualRect);
-    var telegramPoint=elementCenter(telegramTarget,visualRect);
-    var sx=launchTarget.x/visualRect.width*1000;
-    var sy=launchTarget.y/visualRect.height*700;
-    var mx=mailPoint.x/visualRect.width*1000;
-    var my=mailPoint.y/visualRect.height*700;
-    var tx=telegramPoint.x/visualRect.width*1000;
-    var ty=telegramPoint.y/visualRect.height*700;
-    mailPath.setAttribute('d','M'+sx.toFixed(1)+' '+sy.toFixed(1)+' C'+mix(sx,mx,.38).toFixed(1)+' '+(sy-72).toFixed(1)+' '+mix(sx,mx,.72).toFixed(1)+' '+(my+32).toFixed(1)+' '+mx.toFixed(1)+' '+my.toFixed(1));
-    telegramPath.setAttribute('d','M'+sx.toFixed(1)+' '+sy.toFixed(1)+' C'+mix(sx,tx,.38).toFixed(1)+' '+(sy-28).toFixed(1)+' '+mix(sx,tx,.72).toFixed(1)+' '+(ty+24).toFixed(1)+' '+tx.toFixed(1)+' '+ty.toFixed(1));
+    var formRect=leadForm.getBoundingClientRect();
+    launchOrigin={
+      x:formRect.left-visualRect.left+formRect.width*.30,
+      y:formRect.top-visualRect.top+formRect.height*.42
+    };
+    var sendRect=leadSend.getBoundingClientRect();
+    var mailRect=mailTarget.getBoundingClientRect();
+    var telegramRect=telegramTarget.getBoundingClientRect();
+    var sx=clamp((sendRect.left+sendRect.width*.52-routeRect.left)/routeRect.width*1000,0,1000);
+    var sy=clamp((sendRect.top+sendRect.height/2-routeRect.top)/routeRect.height*700,0,700);
+    var mx=clamp((mailRect.left-routeRect.left+2)/routeRect.width*1000,0,1000);
+    var my=clamp((mailRect.top+mailRect.height/2-routeRect.top)/routeRect.height*700,0,700);
+    var tx=clamp((telegramRect.left-routeRect.left+2)/routeRect.width*1000,0,1000);
+    var ty=clamp((telegramRect.top+telegramRect.height/2-routeRect.top)/routeRect.height*700,0,700);
+    mailPath.setAttribute('d','M'+sx.toFixed(1)+' '+sy.toFixed(1)+' C'+(sx+58).toFixed(1)+' '+(sy-82).toFixed(1)+' '+(mx-28).toFixed(1)+' '+(my+48).toFixed(1)+' '+mx.toFixed(1)+' '+my.toFixed(1));
+    telegramPath.setAttribute('d','M'+sx.toFixed(1)+' '+sy.toFixed(1)+' C'+(sx+76).toFixed(1)+' '+(sy-34).toFixed(1)+' '+(tx-24).toFixed(1)+' '+(ty+34).toFixed(1)+' '+tx.toFixed(1)+' '+ty.toFixed(1));
     targetMeasured=true;
   }
 
@@ -2989,6 +3028,7 @@ body.fx-enabled .fx-panel{
     var secureChange=smooth(segment(progress,.575,.635));
     var secureMoment=smooth(segment(progress,.595,.655));
     var securePulse=Math.sin(secureMoment*Math.PI);
+    var serverPanel=phase(progress,.515,.55,.655,.70);
     var leadIn=smooth(segment(progress,.70,.755));
     var clickPhase=smooth(segment(progress,.81,.855));
     var routeMail=smooth(segment(progress,.835,.89));
@@ -3108,15 +3148,23 @@ body.fx-enabled .fx-panel{
     setOpacity(secureCaption,captionAlpha);
     setTransform(secureCaption,'translate3d('+mix(8,0,captionAlpha).toFixed(1)+'px,-50%,0)');
 
+    setOpacity(serverConsole,serverPanel);
+    setTransform(serverConsole,'translate3d(0,'+(12*(1-serverPanel)).toFixed(1)+'px,18px) scale('+mix(.96,1,serverPanel).toFixed(3)+')');
+    serverChecks.forEach(function(check,index){
+      var checkIn=smooth(segment(progress,.535+index*.035,.57+index*.035))*serverPanel;
+      setOpacity(check,checkIn);
+      setTransform(check,'translate3d('+(9*(1-checkIn)).toFixed(1)+'px,0,0)');
+    });
+
     setOpacity(leadForm,leadIn*(1-finalIn));
     setTransform(leadForm,'translate3d('+(18*(1-leadIn)).toFixed(1)+'px,'+(18*(1-leadIn)).toFixed(1)+'px,20px) scale('+mix(.94,1,leadIn).toFixed(3)+')');
     leadSend.textContent=deliveryDone>.7?'Отправлено ✓':'Отправить';
     leadSend.style.background=deliveryDone>.7?'#d9d7d0':'var(--accent)';
-    pageShade.style.opacity=(secureZoom*.68+leadIn*.20+finalIn*.34).toFixed(3);
-    if(progress>.755&&!targetMeasured)measureInteractionTargets();
+    pageShade.style.opacity=(secureZoom*.58+serverPanel*.12+leadIn*.20+finalIn*.34).toFixed(3);
+    if(progress>.72&&!targetMeasured)measureInteractionTargets();
 
-    var cursorStartX=mobile?width*.30:width*.39;
-    var cursorStartY=mobile?height*.22:height*.20;
+    var cursorStartX=targetMeasured?launchOrigin.x:(mobile?width*.58:width*.69);
+    var cursorStartY=targetMeasured?launchOrigin.y:(mobile?height*.61:height*.55);
     var cursorTargetX=targetMeasured?launchTarget.x:(mobile?width*.70:width*.77);
     var cursorTargetY=targetMeasured?launchTarget.y:(mobile?height*.76:height*.79);
     var cursorMove=smooth(segment(progress,.755,.81));
