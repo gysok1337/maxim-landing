@@ -1268,6 +1268,7 @@ body.fx-enabled .fx-panel{
   --device-inset:9px;
   --device-radius:12px;
   --screen-radius:5px;
+  --chrome-h:50px;
   overflow:hidden;
   padding:0;
   border-radius:var(--device-radius);
@@ -1279,9 +1280,9 @@ body.fx-enabled .fx-panel{
   position:absolute;
   z-index:1;
   left:var(--device-inset);
-  top:var(--device-inset);
+  top:calc(var(--device-inset) + var(--chrome-h));
   width:calc(100% - var(--device-inset) * 2);
-  height:calc(100% - var(--device-inset) * 2);
+  height:calc(100% - var(--device-inset) * 2 - var(--chrome-h));
   border-radius:var(--screen-radius);
   object-fit:cover;
   object-position:center top;
@@ -1290,25 +1291,56 @@ body.fx-enabled .fx-panel{
   will-change:opacity,transform;
 }
 .adaptive-morph #adaptiveShotDesktop{opacity:1}
-.adaptive-morph #adaptiveShotTablet{z-index:2}
-.adaptive-morph #adaptiveShotPhone{z-index:3}
-.adaptive-morph .adaptive-seam{
+.adaptive-morph #adaptiveShotDesktop{filter:none}
+.adaptive-morph .adaptive-desktop-chrome{
   position:absolute;
   z-index:4;
-  left:0;
-  top:0;
-  bottom:0;
-  width:2px;
-  background:rgba(230,229,224,.16);
-  opacity:0;
-  transform:translateX(-50%);
-  pointer-events:none;
-  will-change:transform,opacity;
+  left:var(--device-inset);
+  right:var(--device-inset);
+  top:var(--device-inset);
+  height:var(--chrome-h);
+  display:grid;
+  grid-template-columns:auto minmax(120px,1fr);
+  align-items:center;
+  gap:10px;
+  overflow:hidden;
+  padding:0 12px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  border-radius:var(--screen-radius) var(--screen-radius) 0 0;
+  background:#191918;
+  color:#8d8982;
+  will-change:opacity;
 }
-.adaptive-morph .adaptive-camera{z-index:5;opacity:1;will-change:opacity}
+.adaptive-chrome-traffic{display:flex;gap:6px}
+.adaptive-chrome-traffic i{width:7px;height:7px;border-radius:50%;background:#55524d}
+.adaptive-chrome-traffic i:first-child{background:var(--accent)}
+.adaptive-chrome-address{
+  min-width:0;
+  overflow:hidden;
+  padding:8px 10px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:7px;
+  background:#11110f;
+  font-size:9px;
+  letter-spacing:.04em;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.adaptive-morph #adaptiveShotTablet{transform:scale(1.105);transform-origin:50% 0}
+.adaptive-morph .adaptive-screen-shutter{
+  position:absolute;
+  z-index:5;
+  inset:var(--device-inset);
+  border-radius:var(--screen-radius);
+  background:radial-gradient(circle at 50% 42%,rgba(20,20,19,.88),rgba(5,5,5,.98));
+  opacity:0;
+  pointer-events:none;
+  will-change:opacity;
+}
+.adaptive-morph .adaptive-camera{z-index:6;opacity:1;will-change:opacity}
 .adaptive-morph .dynamic-island{
   position:absolute;
-  z-index:6;
+  z-index:7;
   left:50%;
   top:14px;
   width:30%;
@@ -1682,10 +1714,14 @@ body.fx-enabled .fx-panel{
               <div class="adaptive-frame" id="adaptiveFrame">
                 <span class="adaptive-camera" id="adaptiveCamera"></span>
                 <span class="dynamic-island" id="adaptiveIsland"></span>
-                <img class="adaptive-shot" id="adaptiveShotDesktop" src="assets/screens/lider-responsive-desktop.png?v=20260712-2" alt="" width="1280" height="800" loading="eager" decoding="sync">
+                <div class="adaptive-desktop-chrome" id="adaptiveDesktopChrome">
+                  <span class="adaptive-chrome-traffic"><i></i><i></i><i></i></span>
+                  <span class="adaptive-chrome-address mono">preview.local / lider-vino</span>
+                </div>
+                <img class="adaptive-shot" id="adaptiveShotDesktop" src="assets/screens/lider-hero-lab.png?v=20260712-1" alt="" width="1280" height="800" loading="eager" decoding="sync">
                 <img class="adaptive-shot" id="adaptiveShotTablet" src="assets/screens/lider-responsive-tablet.png?v=20260712-2" alt="" width="1024" height="768" loading="eager" decoding="sync">
                 <img class="adaptive-shot" id="adaptiveShotPhone" src="assets/screens/lider-responsive-phone.png?v=20260712-2" alt="" width="390" height="844" loading="eager" decoding="sync">
-                <span class="adaptive-seam" id="adaptiveSeam"></span>
+                <span class="adaptive-screen-shutter" id="adaptiveScreenShutter"></span>
               </div>
               <span class="device-label" id="adaptiveLabel">Компьютер</span>
             </div>
@@ -2694,8 +2730,9 @@ body.fx-enabled .fx-panel{
   var adaptiveFrame=document.getElementById('adaptiveFrame');
   var adaptiveCamera=document.getElementById('adaptiveCamera');
   var adaptiveIsland=document.getElementById('adaptiveIsland');
+  var adaptiveDesktopChrome=document.getElementById('adaptiveDesktopChrome');
   var adaptiveLabel=document.getElementById('adaptiveLabel');
-  var adaptiveSeam=document.getElementById('adaptiveSeam');
+  var adaptiveScreenShutter=document.getElementById('adaptiveScreenShutter');
   var adaptiveShots=[
     document.getElementById('adaptiveShotDesktop'),
     document.getElementById('adaptiveShotTablet'),
@@ -2765,17 +2802,17 @@ body.fx-enabled .fx-panel{
 
   function renderCopy(progress){
     var values=[
-      1-smooth(segment(progress,.37,.42)),
-      phase(progress,.37,.42,.62,.68),
-      phase(progress,.62,.68,.87,.925),
-      smooth(segment(progress,.87,.925))
+      1-smooth(segment(progress,.47,.52)),
+      phase(progress,.47,.52,.66,.71),
+      phase(progress,.66,.71,.88,.925),
+      smooth(segment(progress,.88,.925))
     ];
     var active=0;
     values.forEach(function(value,index){
       if(value>values[active])active=index;
       var step=copySteps[index];
       setOpacity(step,value);
-      var before=progress<[0,.37,.62,.87][index];
+      var before=progress<[0,.47,.66,.88][index];
       setTransform(step,'translate3d(0,'+((before?1:-1)*(1-value)*26).toFixed(1)+'px,0)');
       step.style.filter='blur('+((1-value)*3).toFixed(2)+'px)';
       step.setAttribute('aria-hidden',value>.45?'false':'true');
@@ -2799,23 +2836,26 @@ body.fx-enabled .fx-panel{
     var viewportWidth=window.innerWidth;
     var mobile=viewportWidth<=700;
     var compact=viewportWidth<=900;
+    var desktopWidth=mobile
+      ?Math.min(sourceRect.width,viewportWidth-28)
+      :(compact?Math.min(sourceRect.width,visualRect.width-28):Math.min(sourceRect.width,viewportWidth*.50,860));
+    var desktopHeight=desktopWidth/1.6;
     var tabletWidth=mobile
-      ?Math.min(viewportWidth*.75,520)
-      :(compact?Math.min(viewportWidth*.72,520):Math.min(viewportWidth*.43,620));
+      ?Math.min(viewportWidth*.72,500)
+      :(compact?Math.min(viewportWidth*.68,500):Math.min(viewportWidth*.36,540));
     var phoneWidth=mobile
-      ?Math.min(viewportWidth*.43,185)
-      :(compact?Math.min(viewportWidth*.32,210):Math.min(viewportWidth*.18,236));
+      ?Math.min(viewportWidth*.42,180)
+      :(compact?Math.min(viewportWidth*.30,190):Math.min(viewportWidth*.16,216));
     var sourceX=sourceRect.left-visualRect.left+sourceRect.width/2;
     var sourceY=sourceRect.top-visualRect.top+sourceRect.height/2;
     var stageX=compact?visualRect.width/2:sourceX;
     var stageY=compact?visualRect.height/2:sourceY;
-    var browserWidth=compact?Math.min(visualRect.width-28,840):sourceRect.width;
-    var browserHeight=compact?browserWidth/1.56:sourceRect.height;
     deviceMetrics={
       desktop:{x:sourceX,y:sourceY,width:sourceRect.width,height:sourceRect.height},
+      desktopTarget:{x:stageX,y:stageY,width:desktopWidth,height:desktopHeight},
       tablet:{x:stageX,y:stageY,width:tabletWidth,height:tabletWidth*.75},
       phone:{x:stageX,y:stageY,width:phoneWidth,height:phoneWidth*844/390},
-      browser:{x:stageX,y:stageY,width:browserWidth,height:browserHeight}
+      browser:{x:stageX,y:stageY,width:desktopWidth,height:desktopHeight}
     };
   }
 
@@ -2839,10 +2879,11 @@ body.fx-enabled .fx-panel{
   function render(progress){
     if(window.__labProcessReady!==true)progress=0;
     progress=clamp(progress,0,1);
-    var processExit=smooth(segment(progress,.018,.085));
-    var resultCopyExit=smooth(segment(progress,.012,.05));
-    var launchCopyEntry=smooth(segment(progress,.045,.09));
-    var visualSwap=progress>=.05?1:0;
+    var processExit=smooth(segment(progress,.012,.08));
+    var resultCopyExit=smooth(segment(progress,.004,.035));
+    var launchCopyEntry=smooth(segment(progress,.035,.075));
+    var visualSwap=progress>=.075?1:0;
+    var desktopSettle=smooth(segment(progress,.09,.15));
     if(processCopyLayer){
       processCopyLayer.style.opacity=progress<=.0001?'':(1-resultCopyExit).toFixed(3);
       processCopyLayer.style.pointerEvents=progress<=.0001?'':'none';
@@ -2861,21 +2902,21 @@ body.fx-enabled .fx-panel{
     var mobile=window.innerWidth<=700;
     var width=Math.max(320,visual.clientWidth);
     var height=Math.max(360,visual.clientHeight);
-    var tabletMorph=smooth(segment(progress,.055,.155));
-    var phoneMorph=smooth(segment(progress,.165,.27));
-    var browserIn=smooth(segment(progress,.27,.355));
-    var secureZoomIn=smooth(segment(progress,.365,.455));
-    var secureZoomOut=smooth(segment(progress,.545,.625));
+    var tabletMorph=smooth(segment(progress,.17,.30));
+    var phoneMorph=smooth(segment(progress,.32,.45));
+    var browserIn=smooth(segment(progress,.46,.52));
+    var secureZoomIn=smooth(segment(progress,.53,.60));
+    var secureZoomOut=smooth(segment(progress,.64,.70));
     var secureZoom=secureZoomIn*(1-secureZoomOut);
-    var secureChange=smooth(segment(progress,.435,.515));
-    var secureMoment=smooth(segment(progress,.455,.535));
+    var secureChange=smooth(segment(progress,.575,.635));
+    var secureMoment=smooth(segment(progress,.595,.655));
     var securePulse=Math.sin(secureMoment*Math.PI);
-    var leadIn=smooth(segment(progress,.64,.705));
-    var clickPhase=smooth(segment(progress,.775,.825));
-    var routeMail=smooth(segment(progress,.805,.87));
-    var routeTelegram=smooth(segment(progress,.825,.89));
-    var deliveryDone=smooth(segment(progress,.85,.91));
-    var finalIn=smooth(segment(progress,.89,.955));
+    var leadIn=smooth(segment(progress,.70,.755));
+    var clickPhase=smooth(segment(progress,.81,.855));
+    var routeMail=smooth(segment(progress,.835,.89));
+    var routeTelegram=smooth(segment(progress,.85,.905));
+    var deliveryDone=smooth(segment(progress,.875,.925));
+    var finalIn=smooth(segment(progress,.91,.97));
 
     renderCopy(progress);
     launchProgress.style.transform='scaleY('+progress.toFixed(4)+')';
@@ -2883,14 +2924,18 @@ body.fx-enabled .fx-panel{
     if(window.__labProcessReady===true&&!deviceMetrics)measureDeviceMetrics();
     setOpacity(adaptiveStage,1-finalIn);
     if(deviceMetrics){
-      var tabletWidth=mix(deviceMetrics.desktop.width,deviceMetrics.tablet.width,tabletMorph);
-      var tabletHeight=mix(deviceMetrics.desktop.height,deviceMetrics.tablet.height,tabletMorph);
+      var settledWidth=mix(deviceMetrics.desktop.width,deviceMetrics.desktopTarget.width,desktopSettle);
+      var settledHeight=mix(deviceMetrics.desktop.height,deviceMetrics.desktopTarget.height,desktopSettle);
+      var tabletWidth=mix(settledWidth,deviceMetrics.tablet.width,tabletMorph);
+      var tabletHeight=mix(settledHeight,deviceMetrics.tablet.height,tabletMorph);
       var phoneWidth=mix(tabletWidth,deviceMetrics.phone.width,phoneMorph);
       var phoneHeight=mix(tabletHeight,deviceMetrics.phone.height,phoneMorph);
       var deviceWidth=mix(phoneWidth,deviceMetrics.browser.width,browserIn);
       var deviceHeight=mix(phoneHeight,deviceMetrics.browser.height,browserIn);
-      var tabletX=mix(deviceMetrics.desktop.x,deviceMetrics.tablet.x,tabletMorph);
-      var tabletY=mix(deviceMetrics.desktop.y,deviceMetrics.tablet.y,tabletMorph);
+      var settledX=mix(deviceMetrics.desktop.x,deviceMetrics.desktopTarget.x,desktopSettle);
+      var settledY=mix(deviceMetrics.desktop.y,deviceMetrics.desktopTarget.y,desktopSettle);
+      var tabletX=mix(settledX,deviceMetrics.tablet.x,tabletMorph);
+      var tabletY=mix(settledY,deviceMetrics.tablet.y,tabletMorph);
       var phoneX=mix(tabletX,deviceMetrics.phone.x,phoneMorph);
       var phoneY=mix(tabletY,deviceMetrics.phone.y,phoneMorph);
       var deviceX=mix(phoneX,deviceMetrics.browser.x,browserIn);
@@ -2906,40 +2951,42 @@ body.fx-enabled .fx-panel{
       setOpacity(adaptiveDevice,visualSwap*(1-browserIn)*(1-finalIn));
       setTransform(adaptiveDevice,'translate3d(-50%,-50%,0) rotateX('+(Math.sin(phoneMorph*Math.PI)*1.4).toFixed(2)+'deg)');
 
-      var tabletRadius=mix(12,20,tabletMorph);
+      var desktopRadius=mix(16,12,desktopSettle);
+      var tabletRadius=mix(desktopRadius,20,tabletMorph);
       var phoneRadius=mix(tabletRadius,34,phoneMorph);
       var deviceRadius=mix(phoneRadius,12,browserIn);
-      var tabletInset=mix(9,10,tabletMorph);
+      var desktopInset=mix(0,7,desktopSettle);
+      var tabletInset=mix(desktopInset,10,tabletMorph);
       var phoneInset=mix(tabletInset,9,phoneMorph);
       var deviceInset=mix(phoneInset,0,browserIn);
       adaptiveFrame.style.setProperty('--device-radius',deviceRadius.toFixed(2)+'px');
       adaptiveFrame.style.setProperty('--screen-radius',Math.max(4,deviceRadius-7).toFixed(2)+'px');
       adaptiveFrame.style.setProperty('--device-inset',deviceInset.toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--chrome-h',mix(50,0,desktopSettle).toFixed(2)+'px');
       adaptiveFrame.style.background=phoneMorph>.55?'#050505':'#111';
       browser.style.borderRadius=deviceRadius.toFixed(2)+'px';
+      setOpacity(adaptiveDesktopChrome,(1-desktopSettle)*(1-browserIn));
 
-      var tabletReveal=smooth(segment(progress,.085,.15));
-      var phoneReveal=smooth(segment(progress,.18,.26));
+      var tabletReveal=smooth(segment(progress,.205,.285));
+      var phoneReveal=smooth(segment(progress,.36,.44));
       adaptiveShots.forEach(function(shot){
-        setOpacity(shot,1);
+        setOpacity(shot,0);
         shot.style.webkitMaskImage='none';
         shot.style.maskImage='none';
         shot.style.clipPath='none';
       });
-      setTransform(adaptiveShots[0],'translate3d(0,0,0)');
-      setTransform(adaptiveShots[1],'translate3d('+((1-tabletReveal)*100).toFixed(2)+'%,0,0)');
-      setTransform(adaptiveShots[2],'translate3d('+((1-phoneReveal)*100).toFixed(2)+'%,0,0)');
-      var activeReveal=phoneReveal>.001?phoneReveal:tabletReveal;
-      var seamAlpha=(activeReveal>.001&&activeReveal<.999)?Math.sin(activeReveal*Math.PI):0;
-      var seamX=deviceInset+(deviceWidth-deviceInset*2)*(1-activeReveal)-1;
-      setOpacity(adaptiveSeam,seamAlpha*.55);
-      setTransform(adaptiveSeam,'translate3d('+seamX.toFixed(1)+'px,0,0)');
-      setOpacity(adaptiveCamera,(1-phoneMorph)*(1-browserIn));
+      var activeShot=phoneReveal>=.5?2:(tabletReveal>=.5?1:0);
+      setOpacity(adaptiveShots[activeShot],1);
+      var tabletShutter=Math.pow(Math.sin(tabletReveal*Math.PI),3);
+      var phoneShutter=Math.pow(Math.sin(phoneReveal*Math.PI),3);
+      var takeoverShutter=visualSwap?(1-smooth(segment(progress,.075,.105)))*.45:0;
+      setOpacity(adaptiveScreenShutter,Math.max(tabletShutter*.96,phoneShutter*.96,takeoverShutter));
+      setOpacity(adaptiveCamera,tabletMorph*(1-phoneMorph)*(1-browserIn));
       setOpacity(adaptiveIsland,smooth(segment(phoneMorph,.45,.82))*(1-browserIn));
 
       adaptiveLabel.textContent=phoneMorph>.5?'Телефон':(tabletMorph>.5?'Планшет':'Компьютер');
       var labelDip=Math.max(Math.sin(tabletMorph*Math.PI),Math.sin(phoneMorph*Math.PI));
-      setOpacity(adaptiveLabel,(1-labelDip*.68)*(1-browserIn)*(1-finalIn));
+      setOpacity(adaptiveLabel,visualSwap*(1-labelDip*.68)*(1-browserIn)*(1-finalIn));
     }
 
     var compact=window.innerWidth<=900;
@@ -2952,7 +2999,7 @@ body.fx-enabled .fx-panel{
 
     setOpacity(warning,1-secureChange);
     setTransform(warning,'translate3d('+(-8*secureChange).toFixed(1)+'px,-50%,0)');
-    setOpacity(lock,smooth(segment(progress,.40,.445)));
+    setOpacity(lock,smooth(segment(progress,.55,.59)));
     setTransform(lock,'translateY(-50%) scale('+mix(.8,1,secureChange).toFixed(3)+')');
     if(lockShackle)lockShackle.style.transform='rotate('+mix(-38,0,secureChange).toFixed(2)+'deg)';
     protocolS.style.opacity=secureChange.toFixed(3);
@@ -2960,10 +3007,10 @@ body.fx-enabled .fx-panel{
     protocolS.style.transform='none';
     address.classList.toggle('is-secure',secureChange>.96);
 
-    var focusAlpha=phase(progress,.39,.43,.58,.625);
+    var focusAlpha=phase(progress,.55,.58,.65,.70);
     setOpacity(secureFocus,focusAlpha);
     setTransform(secureFocus,'translate(-50%,-50%) scale('+(mix(.58,1,secureZoom)+securePulse*.22).toFixed(3)+')');
-    var captionAlpha=phase(progress,.505,.54,.59,.63);
+    var captionAlpha=phase(progress,.61,.64,.67,.71);
     setOpacity(secureCaption,captionAlpha);
     setTransform(secureCaption,'translate3d('+mix(8,0,captionAlpha).toFixed(1)+'px,-50%,0)');
 
@@ -2972,23 +3019,23 @@ body.fx-enabled .fx-panel{
     leadSend.textContent=deliveryDone>.7?'Отправлено ✓':'Отправить';
     leadSend.style.background=deliveryDone>.7?'#d9d7d0':'var(--accent)';
     pageShade.style.opacity=(secureZoom*.68+leadIn*.20+finalIn*.34).toFixed(3);
-    if(progress>.70&&!targetMeasured)measureInteractionTargets();
+    if(progress>.755&&!targetMeasured)measureInteractionTargets();
 
     var cursorStartX=mobile?width*.30:width*.39;
     var cursorStartY=mobile?height*.22:height*.20;
     var cursorTargetX=targetMeasured?launchTarget.x:(mobile?width*.70:width*.77);
     var cursorTargetY=targetMeasured?launchTarget.y:(mobile?height*.76:height*.79);
-    var cursorMove=smooth(segment(progress,.705,.765));
+    var cursorMove=smooth(segment(progress,.755,.81));
     var cursorX=mix(cursorStartX,cursorTargetX,cursorMove);
     var cursorY=mix(cursorStartY,cursorTargetY,cursorMove)-Math.sin(cursorMove*Math.PI)*(mobile?32:54);
-    var cursorAlpha=phase(progress,.675,.71,.85,.89);
+    var cursorAlpha=phase(progress,.73,.76,.88,.92);
     setOpacity(launchCursor,cursorAlpha);
     setTransform(launchCursor,'translate3d('+(cursorX-4).toFixed(1)+'px,'+(cursorY-4).toFixed(1)+'px,0) rotate('+mix(-7,1,cursorMove).toFixed(2)+'deg) scale('+(1-Math.sin(clickPhase*Math.PI)*.1).toFixed(3)+')');
     var clickAlpha=Math.sin(clickPhase*Math.PI);
     setOpacity(launchClick,clickAlpha);
     setTransform(launchClick,'translate3d('+(cursorTargetX-14).toFixed(1)+'px,'+(cursorTargetY-14).toFixed(1)+'px,0) scale('+mix(.55,1.45,out(clickPhase)).toFixed(3)+')');
 
-    var routeAlpha=phase(progress,.77,.80,.89,.925);
+    var routeAlpha=phase(progress,.81,.835,.91,.94);
     setOpacity(deliveryRoute,routeAlpha);
     mailPath.style.strokeDashoffset=(1-routeMail).toFixed(4);
     telegramPath.style.strokeDashoffset=(1-routeTelegram).toFixed(4);
@@ -3004,8 +3051,8 @@ body.fx-enabled .fx-panel{
       telegramPacket.setAttribute('cy',telegramPoint.y.toFixed(2));
       setOpacity(telegramPacket,routeTelegram>0&&routeTelegram<.995?1:0);
     }
-    var mailIn=smooth(segment(progress,.83,.875))*(1-finalIn);
-    var telegramIn=smooth(segment(progress,.85,.895))*(1-finalIn);
+    var mailIn=smooth(segment(progress,.85,.895))*(1-finalIn);
+    var telegramIn=smooth(segment(progress,.87,.915))*(1-finalIn);
     setOpacity(mailTarget,mailIn);
     setOpacity(telegramTarget,telegramIn);
     setTransform(mailTarget,'translateX('+(18*(1-mailIn)).toFixed(1)+'px)');
@@ -3039,7 +3086,7 @@ body.fx-enabled .fx-panel{
       var follow=1-Math.pow(.0009,delta);
       var change=(gatedTarget-current)*follow;
       if(change>0){
-        var maxRate=current<.37?.12:(current<.89?.10:.12);
+        var maxRate=current<.47?.11:(current<.91?.095:.11);
         change=Math.min(change,maxRate*Math.max(delta,1/240));
       }
       current+=change;
