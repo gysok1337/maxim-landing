@@ -893,10 +893,11 @@ button{font:inherit;color:inherit}
 .server-console{
   position:absolute;
   z-index:12;
-  right:5%;
-  top:12%;
-  width:min(286px,42%);
-  padding:14px;
+  right:4%;
+  top:10%;
+  width:min(310px,44%);
+  box-sizing:border-box;
+  padding:14px 16px;
   border:1px solid rgba(255,255,255,.16);
   border-radius:8px;
   background:rgba(13,13,12,.93);
@@ -904,12 +905,13 @@ button{font:inherit;color:inherit}
   box-shadow:0 22px 58px rgba(0,0,0,.42);
   will-change:transform,opacity;
 }
-.server-console-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;color:var(--accent);font-size:8px;letter-spacing:.08em;text-transform:uppercase}
+.server-console-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;margin-bottom:10px;color:var(--accent);font-size:8px;letter-spacing:.08em;text-transform:uppercase}
+.server-console-head span:first-child{min-width:0}
 .server-console-head span:last-child{color:var(--quiet);white-space:nowrap}
-.server-check{height:28px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid rgba(255,255,255,.07);color:var(--muted);font-size:9px;opacity:0;will-change:transform,opacity}
+.server-check{height:28px;display:grid;grid-template-columns:5px minmax(0,1fr) auto;align-items:center;gap:12px;border-top:1px solid rgba(255,255,255,.07);color:var(--muted);font-size:9px;opacity:0;will-change:transform,opacity}
 .server-check::before{content:"";width:5px;height:5px;flex:0 0 auto;border-radius:50%;background:var(--accent);box-shadow:0 0 9px rgba(var(--accent-rgb),.42)}
-.server-check span{margin-right:auto}
-.server-check strong{color:var(--ink-2);font-family:var(--mono);font-size:7px;font-weight:500;letter-spacing:.07em;text-transform:uppercase}
+.server-check span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.server-check strong{color:var(--ink-2);font-family:var(--mono);font-size:7px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}
 .lead-form{
   position:absolute;
   z-index:13;
@@ -1479,6 +1481,26 @@ body.fx-enabled .fx-panel{
   transform-origin:50% 50%;
 }
 .launch-address .protocol{display:inline-flex;align-items:baseline;line-height:1;color:var(--muted);transition:none}
+.launch-url{
+  position:absolute;
+  left:50%;
+  top:50%;
+  display:inline-flex;
+  align-items:baseline;
+  transform:translate(-50%,-50%);
+  line-height:1;
+}
+.launch-security{
+  position:absolute;
+  z-index:2;
+  left:10px;
+  top:50%;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  transform:translateY(-50%);
+  white-space:nowrap;
+}
 .launch-address .protocol-s{
   display:inline-block;
   width:0;
@@ -1489,9 +1511,10 @@ body.fx-enabled .fx-panel{
   vertical-align:baseline;
 }
 .secure-lock{
-  position:absolute;
-  left:calc(50% - 112px);
-  top:50%;
+  position:relative;
+  left:auto;
+  top:auto;
+  flex:0 0 auto;
   width:18px;
   height:18px;
   overflow:visible;
@@ -1499,7 +1522,7 @@ body.fx-enabled .fx-panel{
   border-radius:0;
   color:var(--accent);
   opacity:0;
-  transform:translateY(-50%) scale(.8);
+  transform:scale(.8);
 }
 .secure-lock .lock-body,.secure-lock .lock-shackle,.secure-lock .lock-key{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
 .secure-lock .lock-key{fill:currentColor;stroke:none}
@@ -1507,7 +1530,17 @@ body.fx-enabled .fx-panel{
 .launch-address.is-secure .secure-lock,.launch-address.is-secure .protocol,.launch-address.is-secure .protocol-s{color:var(--ink-2)}
 .launch-address.is-secure .lock-shackle{transform:rotate(0deg)}
 .secure-focus{display:none}
-.secure-caption{right:10px;top:50%;font-size:7px}
+.secure-caption{
+  position:static;
+  right:auto;
+  top:auto;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  font-size:7px;
+  transform:translate3d(6px,0,0);
+}
 .launch-page img{object-position:center top}
 .lead-form{right:6%;bottom:8%;width:min(300px,36%)}
 .delivery-target i{border:0}
@@ -1559,9 +1592,11 @@ body.fx-enabled .fx-panel{
   .adaptive-phone .adaptive-frame img{border-radius:22px}
   .adaptive-phone .dynamic-island{top:11px;height:13px}
   .launch-browser{width:calc(100vw - 26px);aspect-ratio:1.56;top:48%}
-  .launch-address{padding:0 25px}
-  .secure-lock{left:calc(50% - 78px);width:15px;height:15px}
-  .secure-caption{right:5px;left:auto;top:50%;padding:3px 4px;font-size:5.5px;letter-spacing:.06em}
+  .launch-address{padding:0 8px}
+  .launch-security{left:6px;gap:3px}
+  .launch-url{left:63%}
+  .secure-lock{left:auto;width:14px;height:14px}
+  .secure-caption{max-width:68px;padding:0;font-size:4.6px;line-height:1;letter-spacing:.04em;white-space:nowrap}
   .lead-form{right:5%;bottom:6%;width:55%;padding:9px}
   .delivery-targets{right:3%;top:14%}
   .delivery-target{min-width:102px}
@@ -1832,13 +1867,15 @@ body.fx-enabled .fx-panel{
               <span class="launch-traffic"><i></i><i></i><i></i></span>
               <div class="launch-address" id="launchAddress">
                 <span class="launch-warning" id="launchWarning">Небезопасно</span>
-                <svg class="secure-lock" id="secureLock" viewBox="0 0 24 24" aria-hidden="true">
-                  <rect class="lock-body" x="4.5" y="10" width="15" height="11" rx="2.5"></rect>
-                  <path class="lock-shackle" id="lockShackle" d="M7.5 10V7.5a4.5 4.5 0 0 1 9 0V10"></path>
-                  <circle class="lock-key" cx="12" cy="15.5" r="1.2"></circle>
-                </svg>
-                <span class="protocol">http<span class="protocol-s" id="protocolS">s</span>://</span><span>lider-vino.ru</span>
-                <span class="secure-caption mono" id="secureCaption">Соединение защищено</span>
+                <span class="launch-security">
+                  <svg class="secure-lock" id="secureLock" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect class="lock-body" x="4.5" y="10" width="15" height="11" rx="2.5"></rect>
+                    <path class="lock-shackle" id="lockShackle" d="M7.5 10V7.5a4.5 4.5 0 0 1 9 0V10"></path>
+                    <circle class="lock-key" cx="12" cy="15.5" r="1.2"></circle>
+                  </svg>
+                  <span class="secure-caption mono" id="secureCaption">Соединение защищено</span>
+                </span>
+                <span class="launch-url"><span class="protocol">http<span class="protocol-s" id="protocolS">s</span>://</span><span>lider-vino.ru</span></span>
               </div>
               <span></span>
             </div>
@@ -3050,13 +3087,14 @@ body.fx-enabled .fx-panel{
     var browserIn=smooth(segment(motion,.51,.59));
     var browserLayerIn=smooth(segment(browserIn,.18,.82));
     var deviceLayerOut=1-browserLayerIn;
-    var secureZoomIn=smooth(segment(motion,.55,.62));
-    var secureZoomOut=smooth(segment(motion,.65,.71));
+    var secureZoomIn=smooth(segment(motion,.62,.66));
+    var secureZoomOut=smooth(segment(motion,.69,.73));
     var secureZoom=secureZoomIn*(1-secureZoomOut);
-    var secureChange=smooth(segment(motion,.59,.65));
-    var secureMoment=smooth(segment(motion,.61,.67));
+    var warningOut=smooth(segment(motion,.59,.625));
+    var secureChange=smooth(segment(motion,.63,.69));
+    var secureMoment=smooth(segment(motion,.63,.70));
     var securePulse=Math.sin(secureMoment*Math.PI);
-    var serverPanel=phase(motion,.54,.57,.67,.71);
+    var serverPanel=phase(motion,.56,.60,.68,.72);
     var leadIn=smooth(segment(motion,.71,.76));
     var clickPhase=smooth(segment(motion,.81,.855));
     var routeMail=smooth(segment(motion,.835,.89));
@@ -3186,18 +3224,14 @@ body.fx-enabled .fx-panel{
       setOpacity(adaptiveLabel,adaptiveTakeover*labelEntry*(1-labelDip*.68)*labelBrowserOut*(1-finalIn));
     }
 
-    var compact=window.innerWidth<=900;
-    var zoomScale=secureZoom*(compact?.10:.32);
-    var browserScale=1+zoomScale;
-    var zoomY=secureZoom*(compact?20:112);
     setOpacity(browser,browserLayerIn*(1-finalIn));
-    setTransform(browser,'translate3d(-50%,-50%,0) translate3d('+browserShiftX.toFixed(2)+'px,'+(browserShiftY+zoomY).toFixed(2)+'px,'+(secureZoom*(compact?18:46)).toFixed(1)+'px) scaleX('+(browserBoxScaleX*browserScale).toFixed(5)+') scaleY('+(browserBoxScaleY*browserScale).toFixed(5)+')');
+    setTransform(browser,'translate3d(-50%,-50%,0) translate3d('+browserShiftX.toFixed(2)+'px,'+browserShiftY.toFixed(2)+'px,'+(secureZoom*4).toFixed(1)+'px) scaleX('+browserBoxScaleX.toFixed(5)+') scaleY('+browserBoxScaleY.toFixed(5)+')');
     browser.style.filter='blur('+(finalIn*2.2).toFixed(2)+'px)';
 
-    setOpacity(warning,1-secureChange);
-    setTransform(warning,'translate3d('+(-8*secureChange).toFixed(1)+'px,-50%,0)');
-    setOpacity(lock,smooth(segment(motion,.55,.59)));
-    setTransform(lock,'translateY(-50%) scale('+mix(.8,1,secureChange).toFixed(3)+')');
+    setOpacity(warning,1-warningOut);
+    setTransform(warning,'translate3d('+(-8*warningOut).toFixed(1)+'px,-50%,0)');
+    setOpacity(lock,smooth(segment(motion,.62,.66)));
+    setTransform(lock,'scale('+mix(.8,1,secureChange).toFixed(3)+')');
     if(lockShackle)lockShackle.style.transform='rotate('+mix(-38,0,secureChange).toFixed(2)+'deg)';
     protocolS.style.opacity=secureChange.toFixed(3);
     protocolS.style.width=secureChange.toFixed(4)+'ch';
@@ -3207,14 +3241,14 @@ body.fx-enabled .fx-panel{
     var focusAlpha=phase(motion,.55,.58,.65,.70);
     setOpacity(secureFocus,focusAlpha);
     setTransform(secureFocus,'translate(-50%,-50%) scale('+(mix(.58,1,secureZoom)+securePulse*.22).toFixed(3)+')');
-    var captionAlpha=phase(motion,.61,.64,.67,.71);
+    var captionAlpha=smooth(segment(motion,.64,.69));
     setOpacity(secureCaption,captionAlpha);
-    setTransform(secureCaption,'translate3d('+mix(8,0,captionAlpha).toFixed(1)+'px,-50%,0)');
+    setTransform(secureCaption,'translate3d('+mix(6,0,captionAlpha).toFixed(1)+'px,0,0)');
 
     setOpacity(serverConsole,serverPanel);
     setTransform(serverConsole,'translate3d(0,'+(12*(1-serverPanel)).toFixed(1)+'px,18px) scale('+mix(.96,1,serverPanel).toFixed(3)+')');
     serverChecks.forEach(function(check,index){
-      var checkIn=smooth(segment(motion,.535+index*.035,.57+index*.035))*serverPanel;
+      var checkIn=smooth(segment(motion,.575+index*.035,.61+index*.035))*serverPanel;
       setOpacity(check,checkIn);
       setTransform(check,'translate3d('+(9*(1-checkIn)).toFixed(1)+'px,0,0)');
     });
@@ -3223,7 +3257,7 @@ body.fx-enabled .fx-panel{
     setTransform(leadForm,'translate3d('+(18*(1-leadIn)).toFixed(1)+'px,'+(18*(1-leadIn)).toFixed(1)+'px,20px) scale('+mix(.94,1,leadIn).toFixed(3)+')');
     leadSend.textContent=deliveryDone>.7?'Отправлено ✓':'Отправить';
     leadSend.style.background=deliveryDone>.7?'#d9d7d0':'var(--accent)';
-    pageShade.style.opacity=(secureZoom*.58+serverPanel*.12+leadIn*.20+finalIn*.34).toFixed(3);
+    pageShade.style.opacity=(secureZoom*.18+serverPanel*.12+leadIn*.20+finalIn*.34).toFixed(3);
     if(motion>.72&&!targetMeasured)measureInteractionTargets();
 
     var cursorStartX=targetMeasured?launchOrigin.x:(mobile?width*.58:width*.69);
