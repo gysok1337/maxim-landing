@@ -6,13 +6,15 @@
 `/Users/makaroshckamail.ru/Downloads/claude/main`
 
 ## Перед работой прочитай
-- `../main/AGENTS.md` — канонические правила воркспейса
-- `../main/projects/portfolio-landing/PROJECT_CONTEXT.md`
-- `../main/projects/portfolio-landing/HANDOFF.md`
+1. `../main/AGENTS.md` — канонические правила воркспейса.
+2. `../main/projects/portfolio-landing/CURRENT_STATE.md` — единственная текущая точка продолжения.
+
+`PROJECT_CONTEXT.md`, `HANDOFF.md` и старую переписку открывай только для точечного поиска исторического факта. Не перечитывай их перед обычным продолжением работы.
 
 ## Ключевые правила
 - Спрашивай перед `git push`, деплоем и изменением настроек GitHub.
 - Главный файл — `index.html` (одностраничный сайт, чистый HTML/CSS/JS, без сборки).
 - Не удаляй `backups/` без явного разрешения.
 - Не храни секреты, токены, `.env`.
-- После изменений обнови память в `../main` (session log + HANDOFF).
+- Если контекст был сжат, продолжай с раздела `Next Action` в `CURRENT_STATE.md`, не начинай исследование заново.
+- После значимого контрольного коммита обнови `CURRENT_STATE.md`; подробный session log нужен только для действительно новой ветки работы.
