@@ -1264,11 +1264,28 @@ body.fx-enabled .fx-panel{
   contain:layout;
   will-change:transform,opacity;
 }
+.adaptive-morph::before,
+.adaptive-morph::after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  width:3px;
+  border-radius:3px;
+  background:#3b3b3a;
+  opacity:var(--phone-ui-alpha,0);
+  transition:opacity .12s linear;
+}
+.adaptive-morph::before{left:-3px;top:24%;height:44px;box-shadow:0 62px 0 #3b3b3a}
+.adaptive-morph::after{right:-3px;top:33%;height:72px}
 .adaptive-morph .adaptive-frame{
-  --device-inset:9px;
+  --device-inset-x:9px;
+  --device-inset-top:9px;
+  --device-inset-bottom:9px;
   --device-radius:12px;
   --screen-radius:5px;
   --chrome-h:50px;
+  --phone-top-h:0px;
+  --phone-bottom-h:0px;
   overflow:hidden;
   padding:0;
   border-radius:var(--device-radius);
@@ -1279,10 +1296,10 @@ body.fx-enabled .fx-panel{
 .adaptive-morph .adaptive-shot{
   position:absolute;
   z-index:1;
-  left:var(--device-inset);
-  top:calc(var(--device-inset) + var(--chrome-h));
-  width:calc(100% - var(--device-inset) * 2);
-  height:calc(100% - var(--device-inset) * 2 - var(--chrome-h));
+  left:var(--device-inset-x);
+  top:calc(var(--device-inset-top) + var(--chrome-h) + var(--phone-top-h));
+  width:calc(100% - var(--device-inset-x) * 2);
+  height:calc(100% - var(--device-inset-top) - var(--device-inset-bottom) - var(--chrome-h) - var(--phone-top-h) - var(--phone-bottom-h));
   border-radius:var(--screen-radius);
   object-fit:cover;
   object-position:center top;
@@ -1292,12 +1309,13 @@ body.fx-enabled .fx-panel{
 }
 .adaptive-morph #adaptiveShotDesktop{opacity:1}
 .adaptive-morph #adaptiveShotDesktop{filter:none}
+.adaptive-morph #adaptiveShotPhone{object-fit:fill}
 .adaptive-morph .adaptive-desktop-chrome{
   position:absolute;
   z-index:4;
-  left:var(--device-inset);
-  right:var(--device-inset);
-  top:var(--device-inset);
+  left:var(--device-inset-x);
+  right:var(--device-inset-x);
+  top:var(--device-inset-top);
   height:var(--chrome-h);
   display:grid;
   grid-template-columns:auto minmax(120px,1fr);
@@ -1326,25 +1344,71 @@ body.fx-enabled .fx-panel{
   text-overflow:ellipsis;
   white-space:nowrap;
 }
-.adaptive-morph #adaptiveShotTablet{transform:scale(1.105);transform-origin:50% 0}
+.adaptive-morph #adaptiveShotTablet{transform:none}
+.phone-system-bar{
+  position:absolute;
+  z-index:7;
+  left:var(--device-inset-x);
+  right:var(--device-inset-x);
+  top:var(--device-inset-top);
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  overflow:hidden;
+  padding:0 12px;
+  border-radius:var(--screen-radius) var(--screen-radius) 0 0;
+  background:#f3efe6;
+  color:#080808;
+  font:700 11px/1 Arial,sans-serif;
+  opacity:0;
+  pointer-events:none;
+  will-change:opacity;
+}
+.phone-status-icons{display:flex;align-items:center;gap:6px}
+.phone-signal{width:15px;height:10px;background:linear-gradient(to top,transparent 0),linear-gradient(90deg,#080808 0 18%,transparent 18% 27%,#080808 27% 47%,transparent 47% 56%,#080808 56% 78%,transparent 78% 87%,#080808 87%);clip-path:polygon(0 100%,0 72%,18% 72%,18% 50%,45% 50%,45% 26%,72% 26%,72% 0,100% 0,100% 100%)}
+.phone-wifi{width:14px;height:10px;border-top:2px solid #080808;border-radius:50% 50% 0 0;transform:translateY(2px)}
+.phone-battery{position:relative;width:18px;height:9px;border:1.5px solid #080808;border-radius:3px}
+.phone-battery::before{content:"";position:absolute;inset:1.5px 4px 1.5px 1.5px;border-radius:1px;background:#080808}
+.phone-battery::after{content:"";position:absolute;right:-3px;top:2px;width:2px;height:4px;border-radius:0 2px 2px 0;background:#080808}
+.phone-browser-bar{
+  position:absolute;
+  z-index:7;
+  left:var(--device-inset-x);
+  right:var(--device-inset-x);
+  bottom:var(--device-inset-bottom);
+  height:46px;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  border-radius:0 0 var(--screen-radius) var(--screen-radius);
+  background:#f3efe6;
+  opacity:0;
+  pointer-events:none;
+  will-change:opacity;
+}
+.phone-browser-bar span{max-width:82%;overflow:hidden;padding:8px 13px;border-radius:999px;background:rgba(255,255,255,.82);color:#111;font:700 8px/1 Arial,sans-serif;text-overflow:ellipsis;white-space:nowrap}
 .adaptive-morph .adaptive-screen-shutter{
   position:absolute;
-  z-index:5;
-  inset:var(--device-inset);
+  z-index:11;
+  left:var(--device-inset-x);
+  right:var(--device-inset-x);
+  top:var(--device-inset-top);
+  bottom:var(--device-inset-bottom);
   border-radius:var(--screen-radius);
   background:radial-gradient(circle at 50% 42%,rgba(20,20,19,.88),rgba(5,5,5,.98));
   opacity:0;
   pointer-events:none;
   will-change:opacity;
 }
-.adaptive-morph .adaptive-camera{z-index:6;opacity:1;will-change:opacity}
+.adaptive-morph .adaptive-camera{z-index:12;opacity:1;will-change:opacity}
 .adaptive-morph .dynamic-island{
   position:absolute;
-  z-index:7;
+  z-index:9;
   left:50%;
-  top:14px;
-  width:30%;
-  height:17px;
+  top:calc(var(--device-inset-top) + 8px);
+  width:34%;
+  height:18px;
   border-radius:999px;
   background:#020202;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 1px 3px rgba(0,0,0,.4);
@@ -1355,11 +1419,26 @@ body.fx-enabled .fx-panel{
 .adaptive-morph .device-label{
   position:absolute;
   left:50%;
-  top:calc(100% + 12px);
+  top:calc(100% + 9px);
+  min-width:118px;
+  min-height:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  overflow:visible;
+  padding:0 8px;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  font-size:8px;
+  line-height:1;
   transform:translateX(-50%);
   white-space:nowrap;
   will-change:opacity;
 }
+.adaptive-morph .device-label::before,
+.adaptive-morph .device-label::after{content:"";width:18px;height:1px;background:rgba(255,255,255,.18)}
 
 .launch-browser{
   left:calc(69% + 18px);
@@ -1698,6 +1777,10 @@ body.fx-enabled .fx-panel{
               <div class="adaptive-frame" id="adaptiveFrame">
                 <span class="adaptive-camera" id="adaptiveCamera"></span>
                 <span class="dynamic-island" id="adaptiveIsland"></span>
+                <div class="phone-system-bar" id="phoneSystemBar">
+                  <span class="phone-time">16:42</span>
+                  <span class="phone-status-icons" aria-hidden="true"><i class="phone-signal"></i><i class="phone-wifi"></i><i class="phone-battery"></i></span>
+                </div>
                 <div class="adaptive-desktop-chrome" id="adaptiveDesktopChrome">
                   <span class="adaptive-chrome-traffic"><i></i><i></i><i></i></span>
                   <span class="adaptive-chrome-address mono">preview.local / lider-vino</span>
@@ -1705,6 +1788,7 @@ body.fx-enabled .fx-panel{
                 <img class="adaptive-shot" id="adaptiveShotDesktop" src="assets/screens/lider-hero-lab.png?v=20260712-1" alt="" width="1280" height="800" loading="eager" decoding="sync">
                 <img class="adaptive-shot" id="adaptiveShotTablet" src="assets/screens/lider-responsive-tablet.png?v=20260712-2" alt="" width="1024" height="768" loading="eager" decoding="sync">
                 <img class="adaptive-shot" id="adaptiveShotPhone" src="assets/screens/lider-responsive-phone.png?v=20260712-2" alt="" width="390" height="844" loading="eager" decoding="sync">
+                <div class="phone-browser-bar" id="phoneBrowserBar"><span>maksim-site.github.io</span></div>
                 <span class="adaptive-screen-shutter" id="adaptiveScreenShutter"></span>
               </div>
               <span class="device-label" id="adaptiveLabel">Компьютер</span>
@@ -2716,6 +2800,8 @@ body.fx-enabled .fx-panel{
   var adaptiveFrame=document.getElementById('adaptiveFrame');
   var adaptiveCamera=document.getElementById('adaptiveCamera');
   var adaptiveIsland=document.getElementById('adaptiveIsland');
+  var phoneSystemBar=document.getElementById('phoneSystemBar');
+  var phoneBrowserBar=document.getElementById('phoneBrowserBar');
   var adaptiveDesktopChrome=document.getElementById('adaptiveDesktopChrome');
   var adaptiveLabel=document.getElementById('adaptiveLabel');
   var adaptiveScreenShutter=document.getElementById('adaptiveScreenShutter');
@@ -2840,8 +2926,9 @@ body.fx-enabled .fx-panel{
       ?Math.min(viewportWidth*.72,500)
       :(compact?Math.min(viewportWidth*.68,500):Math.min(viewportWidth*.36,540));
     var phoneWidth=mobile
-      ?Math.min(viewportWidth*.42,180)
-      :(compact?Math.min(viewportWidth*.30,190):Math.min(viewportWidth*.16,216));
+      ?Math.min(viewportWidth*.45,190)
+      :(compact?Math.min(viewportWidth*.32,205):Math.min(viewportWidth*.175,236));
+    var browserChromeHeight=mobile?42:54;
     var sourceX=sourceRect.left-visualRect.left+sourceRect.width/2;
     var sourceY=sourceRect.top-visualRect.top+sourceRect.height/2;
     var stageX=compact?visualRect.width/2:sourceX;
@@ -2849,9 +2936,9 @@ body.fx-enabled .fx-panel{
     deviceMetrics={
       desktop:{x:sourceX,y:sourceY,width:sourceRect.width,height:sourceRect.height},
       desktopTarget:{x:stageX,y:stageY,width:desktopWidth,height:desktopHeight},
-      tablet:{x:stageX,y:stageY,width:tabletWidth,height:tabletWidth*.75},
-      phone:{x:stageX,y:stageY,width:phoneWidth,height:phoneWidth*844/390},
-      browser:{x:stageX,y:stageY,width:desktopWidth,height:desktopHeight}
+      tablet:{x:stageX,y:stageY,width:tabletWidth,height:tabletWidth*.724},
+      phone:{x:stageX,y:stageY,width:phoneWidth,height:phoneWidth*2.08},
+      browser:{x:stageX,y:stageY,width:desktopWidth,height:desktopHeight+browserChromeHeight}
     };
   }
 
@@ -2943,17 +3030,31 @@ body.fx-enabled .fx-panel{
       setTransform(adaptiveDevice,'translate3d(-50%,-50%,0) rotateX('+(Math.sin(phoneMorph*Math.PI)*1.4).toFixed(2)+'deg)');
 
       var desktopRadius=mix(16,12,desktopSettle);
-      var tabletRadius=mix(desktopRadius,20,tabletMorph);
-      var phoneRadius=mix(tabletRadius,34,phoneMorph);
+      var tabletRadius=mix(desktopRadius,22,tabletMorph);
+      var phoneRadius=mix(tabletRadius,42,phoneMorph);
       var deviceRadius=mix(phoneRadius,12,browserIn);
-      var desktopInset=mix(0,7,desktopSettle);
-      var tabletInset=mix(desktopInset,10,tabletMorph);
-      var phoneInset=mix(tabletInset,9,phoneMorph);
-      var deviceInset=mix(phoneInset,0,browserIn);
+      var desktopInsetX=mix(0,7,desktopSettle);
+      var desktopInsetTop=mix(0,7,desktopSettle);
+      var desktopInsetBottom=mix(0,7,desktopSettle);
+      var tabletInsetX=mix(desktopInsetX,13,tabletMorph);
+      var tabletInsetTop=mix(desktopInsetTop,11,tabletMorph);
+      var tabletInsetBottom=mix(desktopInsetBottom,26,tabletMorph);
+      var phoneInsetX=mix(tabletInsetX,8,phoneMorph);
+      var phoneInsetTop=mix(tabletInsetTop,8,phoneMorph);
+      var phoneInsetBottom=mix(tabletInsetBottom,8,phoneMorph);
+      var deviceInsetX=mix(phoneInsetX,0,browserIn);
+      var deviceInsetTop=mix(phoneInsetTop,0,browserIn);
+      var deviceInsetBottom=mix(phoneInsetBottom,0,browserIn);
+      var phoneUi=smooth(segment(phoneMorph,.45,.82))*(1-browserIn);
       adaptiveFrame.style.setProperty('--device-radius',deviceRadius.toFixed(2)+'px');
       adaptiveFrame.style.setProperty('--screen-radius',Math.max(4,deviceRadius-7).toFixed(2)+'px');
-      adaptiveFrame.style.setProperty('--device-inset',deviceInset.toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--device-inset-x',deviceInsetX.toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--device-inset-top',deviceInsetTop.toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--device-inset-bottom',deviceInsetBottom.toFixed(2)+'px');
       adaptiveFrame.style.setProperty('--chrome-h',mix(50,0,desktopSettle).toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--phone-top-h',(44*phoneUi).toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--phone-bottom-h',(46*phoneUi).toFixed(2)+'px');
+      adaptiveDevice.style.setProperty('--phone-ui-alpha',phoneUi.toFixed(3));
       adaptiveFrame.style.background=phoneMorph>.55?'#050505':'#111';
       browser.style.borderRadius=deviceRadius.toFixed(2)+'px';
       setOpacity(adaptiveDesktopChrome,(1-desktopSettle)*(1-browserIn));
@@ -2973,7 +3074,9 @@ body.fx-enabled .fx-panel{
       var takeoverShutter=visualSwap?(1-smooth(segment(progress,.075,.105)))*.45:0;
       setOpacity(adaptiveScreenShutter,Math.max(tabletShutter*.96,phoneShutter*.96,takeoverShutter));
       setOpacity(adaptiveCamera,tabletMorph*(1-phoneMorph)*(1-browserIn));
-      setOpacity(adaptiveIsland,smooth(segment(phoneMorph,.45,.82))*(1-browserIn));
+      setOpacity(adaptiveIsland,phoneUi);
+      setOpacity(phoneSystemBar,phoneUi);
+      setOpacity(phoneBrowserBar,phoneUi);
 
       adaptiveLabel.textContent=phoneMorph>.5?'Телефон':(tabletMorph>.5?'Планшет':'Компьютер');
       var labelDip=Math.max(Math.sin(tabletMorph*Math.PI),Math.sin(phoneMorph*Math.PI));
