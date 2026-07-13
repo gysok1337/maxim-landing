@@ -1333,7 +1333,12 @@ body.fx-enabled .fx-panel{
   will-change:opacity,transform;
 }
 .adaptive-morph #adaptiveShotDesktop{opacity:1;filter:none;transform:scale(var(--desktop-shot-scale,1));transform-origin:64% 42%}
-.adaptive-morph #adaptiveShotPhone{object-fit:fill}
+.adaptive-morph #adaptiveShotTablet{
+  object-position:center top;
+  transform:scale(1.11);
+  transform-origin:50% 0;
+}
+.adaptive-morph #adaptiveShotPhone{object-fit:cover;object-position:center top}
 .adaptive-morph .adaptive-desktop-chrome{
   position:absolute;
   z-index:4;
@@ -1368,40 +1373,38 @@ body.fx-enabled .fx-panel{
   text-overflow:ellipsis;
   white-space:nowrap;
 }
-.adaptive-morph #adaptiveShotTablet{transform:none}
 .phone-system-bar{
   position:absolute;
   z-index:7;
   left:var(--device-inset-x);
   right:var(--device-inset-x);
   top:var(--device-inset-top);
-  height:44px;
+  height:40px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   overflow:hidden;
-  padding:0 12px;
+  padding:0 14px;
   border-radius:var(--screen-radius) var(--screen-radius) 0 0;
   background:#f3efe6;
   color:#080808;
-  font:700 11px/1 Arial,sans-serif;
+  font:700 10px/1 Arial,sans-serif;
   opacity:0;
   pointer-events:none;
   will-change:opacity;
 }
-.phone-status-icons{display:flex;align-items:center;gap:6px}
-.phone-signal{width:15px;height:10px;background:linear-gradient(to top,transparent 0),linear-gradient(90deg,#080808 0 18%,transparent 18% 27%,#080808 27% 47%,transparent 47% 56%,#080808 56% 78%,transparent 78% 87%,#080808 87%);clip-path:polygon(0 100%,0 72%,18% 72%,18% 50%,45% 50%,45% 26%,72% 26%,72% 0,100% 0,100% 100%)}
-.phone-wifi{width:14px;height:10px;border-top:2px solid #080808;border-radius:50% 50% 0 0;transform:translateY(2px)}
-.phone-battery{position:relative;width:18px;height:9px;border:1.5px solid #080808;border-radius:3px}
-.phone-battery::before{content:"";position:absolute;inset:1.5px 4px 1.5px 1.5px;border-radius:1px;background:#080808}
-.phone-battery::after{content:"";position:absolute;right:-3px;top:2px;width:2px;height:4px;border-radius:0 2px 2px 0;background:#080808}
+.phone-status-icons{display:flex;align-items:center;gap:4px}
+.phone-status-icons svg{display:block;overflow:visible;color:#080808}
+.phone-status-icons .phone-signal{width:14px;height:10px}
+.phone-status-icons .phone-wifi{width:14px;height:10px}
+.phone-status-icons .phone-battery{width:20px;height:10px}
 .phone-browser-bar{
   position:absolute;
   z-index:7;
   left:var(--device-inset-x);
   right:var(--device-inset-x);
   bottom:var(--device-inset-bottom);
-  height:46px;
+  height:42px;
   display:grid;
   place-items:center;
   overflow:hidden;
@@ -1411,7 +1414,7 @@ body.fx-enabled .fx-panel{
   pointer-events:none;
   will-change:opacity;
 }
-.phone-browser-bar span{max-width:82%;overflow:hidden;padding:8px 13px;border-radius:999px;background:rgba(255,255,255,.82);color:#111;font:700 8px/1 Arial,sans-serif;text-overflow:ellipsis;white-space:nowrap}
+.phone-browser-bar span{max-width:82%;overflow:hidden;padding:8px 13px;border-radius:999px;background:rgba(255,255,255,.82);color:#111;font:700 7.5px/1 Arial,sans-serif;text-overflow:ellipsis;white-space:nowrap}
 .adaptive-morph .adaptive-screen-shutter{
   position:absolute;
   z-index:11;
@@ -1430,9 +1433,9 @@ body.fx-enabled .fx-panel{
   position:absolute;
   z-index:9;
   left:50%;
-  top:calc(var(--device-inset-top) + 8px);
-  width:34%;
-  height:18px;
+  top:calc(var(--device-inset-top) + 7px);
+  width:27%;
+  height:17px;
   border-radius:999px;
   background:#020202;
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.035),0 1px 3px rgba(0,0,0,.4);
@@ -1804,7 +1807,11 @@ body.fx-enabled .fx-panel{
                 <span class="dynamic-island" id="adaptiveIsland"></span>
                 <div class="phone-system-bar" id="phoneSystemBar">
                   <span class="phone-time">16:42</span>
-                  <span class="phone-status-icons" aria-hidden="true"><i class="phone-signal"></i><i class="phone-wifi"></i><i class="phone-battery"></i></span>
+                  <span class="phone-status-icons" aria-hidden="true">
+                    <svg class="phone-signal" viewBox="0 0 16 11"><rect x="0" y="7" width="2.5" height="4" rx=".7" fill="currentColor"></rect><rect x="4.3" y="5" width="2.5" height="6" rx=".7" fill="currentColor"></rect><rect x="8.6" y="2.7" width="2.5" height="8.3" rx=".7" fill="currentColor"></rect><rect x="12.9" y="0" width="2.5" height="11" rx=".7" fill="currentColor"></rect></svg>
+                    <svg class="phone-wifi" viewBox="0 0 16 11"><path d="M1 3.2C4.9-.1 11.1-.1 15 3.2M3.5 6c2.5-2.1 6.5-2.1 9 0M6.2 8.6c1-.8 2.6-.8 3.6 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path><circle cx="8" cy="10" r="1" fill="currentColor"></circle></svg>
+                    <svg class="phone-battery" viewBox="0 0 22 11"><rect x=".8" y=".8" width="18" height="9.4" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.5"></rect><rect x="2.6" y="2.6" width="12.3" height="5.8" rx="1.2" fill="currentColor"></rect><path d="M20.2 3.5v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>
+                  </span>
                 </div>
                 <div class="adaptive-desktop-chrome" id="adaptiveDesktopChrome">
                   <span class="adaptive-chrome-traffic"><i></i><i></i><i></i></span>
@@ -2965,8 +2972,14 @@ body.fx-enabled .fx-panel{
       ?Math.min(viewportWidth*.72,500)
       :(compact?Math.min(viewportWidth*.68,500):Math.min(viewportWidth*.36,540));
     var phoneWidth=mobile
-      ?Math.min(viewportWidth*.45,190)
-      :(compact?Math.min(viewportWidth*.32,205):Math.min(viewportWidth*.175,236));
+      ?Math.min(viewportWidth*.48,200)
+      :(compact?Math.min(viewportWidth*.34,220):Math.min(viewportWidth*.185,250));
+    var tabletHeight=tabletWidth*.75;
+    var phoneHeight=phoneWidth*2.32;
+    if(!mobile){
+      phoneHeight=Math.min(phoneHeight,tabletHeight*1.28);
+      phoneWidth=phoneHeight/2.32;
+    }
     var browserChromeHeight=mobile?42:54;
     var sourceX=sourceRect.left-visualRect.left+sourceRect.width/2;
     var sourceY=sourceRect.top-visualRect.top+sourceRect.height/2;
@@ -2975,8 +2988,8 @@ body.fx-enabled .fx-panel{
     deviceMetrics={
       desktop:{x:sourceX,y:sourceY,width:sourceRect.width,height:sourceRect.height},
       desktopTarget:{x:stageX,y:stageY,width:desktopWidth,height:desktopHeight},
-      tablet:{x:stageX,y:stageY,width:tabletWidth,height:tabletWidth*.724},
-      phone:{x:stageX,y:stageY,width:phoneWidth,height:phoneWidth*2.08},
+      tablet:{x:stageX,y:stageY,width:tabletWidth,height:tabletHeight},
+      phone:{x:stageX,y:stageY,width:phoneWidth,height:phoneHeight},
       browser:{x:stageX,y:stageY,width:desktopWidth,height:desktopHeight+browserChromeHeight}
     };
     deviceBaseKey='';
@@ -3032,9 +3045,9 @@ body.fx-enabled .fx-panel{
     var mobile=window.innerWidth<=700;
     var width=Math.max(320,visual.clientWidth);
     var height=Math.max(360,visual.clientHeight);
-    var tabletMorph=smooth(segment(motion,.24,.34));
-    var phoneMorph=smooth(segment(motion,.36,.47));
-    var browserIn=smooth(segment(motion,.49,.55));
+    var tabletMorph=smooth(segment(motion,.225,.36));
+    var phoneMorph=smooth(segment(motion,.35,.50));
+    var browserIn=smooth(segment(motion,.51,.59));
     var browserLayerIn=smooth(segment(browserIn,.18,.82));
     var deviceLayerOut=1-browserLayerIn;
     var secureZoomIn=smooth(segment(motion,.55,.62));
@@ -3050,8 +3063,8 @@ body.fx-enabled .fx-panel{
     var routeTelegram=smooth(segment(motion,.85,.905));
     var deliveryDone=smooth(segment(motion,.875,.925));
     var finalIn=smooth(segment(motion,.91,.97));
-    var tabletReveal=smooth(segment(motion,.255,.33));
-    var phoneReveal=smooth(segment(motion,.385,.46));
+    var tabletReveal=smooth(segment(motion,.235,.365));
+    var phoneReveal=smooth(segment(motion,.36,.505));
     var activeShot=phoneReveal>=.5?2:(tabletReveal>=.5?1:0);
 
     renderCopy(progress,processReady);
@@ -3118,7 +3131,7 @@ body.fx-enabled .fx-panel{
       browserShiftY=deviceY-deviceMetrics.browser.y;
 
       setOpacity(adaptiveDevice,adaptiveTakeover*deviceLayerOut*(1-finalIn));
-      setTransform(adaptiveDevice,'translate3d(-50%,-50%,0) translate3d('+deviceShiftX.toFixed(2)+'px,'+deviceShiftY.toFixed(2)+'px,0) scaleX('+deviceScaleX.toFixed(5)+') scaleY('+deviceScaleY.toFixed(5)+') rotateX('+(Math.sin(phoneMorph*Math.PI)*1.4).toFixed(2)+'deg)');
+      setTransform(adaptiveDevice,'translate3d(-50%,-50%,0) translate3d('+deviceShiftX.toFixed(2)+'px,'+deviceShiftY.toFixed(2)+'px,0) scaleX('+deviceScaleX.toFixed(5)+') scaleY('+deviceScaleY.toFixed(5)+') rotateX('+(Math.sin(phoneMorph*Math.PI)*.45).toFixed(2)+'deg)');
 
       var desktopRadius=mix(16,12,desktopSettle);
       var tabletRadius=mix(desktopRadius,22,tabletMorph);
@@ -3127,12 +3140,12 @@ body.fx-enabled .fx-panel{
       var desktopInsetX=mix(0,7,desktopSettle);
       var desktopInsetTop=mix(0,7,desktopSettle);
       var desktopInsetBottom=mix(0,7,desktopSettle);
-      var tabletInsetX=mix(desktopInsetX,13,tabletMorph);
-      var tabletInsetTop=mix(desktopInsetTop,11,tabletMorph);
-      var tabletInsetBottom=mix(desktopInsetBottom,26,tabletMorph);
-      var phoneInsetX=mix(tabletInsetX,8,phoneMorph);
-      var phoneInsetTop=mix(tabletInsetTop,8,phoneMorph);
-      var phoneInsetBottom=mix(tabletInsetBottom,8,phoneMorph);
+      var tabletInsetX=mix(desktopInsetX,10,tabletMorph);
+      var tabletInsetTop=mix(desktopInsetTop,10,tabletMorph);
+      var tabletInsetBottom=mix(desktopInsetBottom,10,tabletMorph);
+      var phoneInsetX=mix(tabletInsetX,6,phoneMorph);
+      var phoneInsetTop=mix(tabletInsetTop,6,phoneMorph);
+      var phoneInsetBottom=mix(tabletInsetBottom,6,phoneMorph);
       var deviceInsetX=mix(phoneInsetX,0,browserIn);
       var deviceInsetTop=mix(phoneInsetTop,0,browserIn);
       var deviceInsetBottom=mix(phoneInsetBottom,0,browserIn);
@@ -3144,8 +3157,8 @@ body.fx-enabled .fx-panel{
       adaptiveFrame.style.setProperty('--device-inset-bottom',deviceInsetBottom.toFixed(2)+'px');
       adaptiveFrame.style.setProperty('--chrome-h',mix(40.2,0,desktopSettle).toFixed(2)+'px');
       adaptiveFrame.style.setProperty('--desktop-shot-scale',mix(1.013,1,desktopSettle).toFixed(4));
-      adaptiveFrame.style.setProperty('--phone-top-h',(44*phoneUi).toFixed(2)+'px');
-      adaptiveFrame.style.setProperty('--phone-bottom-h',(46*phoneUi).toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--phone-top-h',(40*phoneUi).toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--phone-bottom-h',(42*phoneUi).toFixed(2)+'px');
       adaptiveDevice.style.setProperty('--phone-ui-alpha',phoneUi.toFixed(3));
       adaptiveFrame.style.background=phoneMorph>.55?'#050505':'#111';
       browser.style.borderRadius=deviceRadius.toFixed(2)+'px';
