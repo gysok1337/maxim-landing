@@ -246,10 +246,6 @@ html.dark .tswitch .moon{display:block}
 .hero h1 .serif{font-weight:600;font-size:.96em;letter-spacing:-.01em}
 .line{display:block;overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em}
 .line-in{display:block;will-change:transform}
-.hero-foot{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:end;margin-top:clamp(34px,6vh,64px)}
-.hero-sub{font-size:clamp(17px,1.6vw,21px);line-height:1.55;color:var(--ink-2);max-width:30em}
-.hero-sub b{font-weight:600}
-.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-end}
 .hero-scroll{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted-2)}
 .hero-scroll svg{width:16px;height:16px;animation:bob 2s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(6px)}}
@@ -481,8 +477,6 @@ html.fx .about-txt h2.frev{
 }
 
 @media (max-width:920px){
-  .hero-foot{grid-template-columns:1fr;gap:26px}
-  .hero-ctas{justify-content:flex-start}
   .iso-scene{opacity:calc(var(--iso-opacity)*.78)}
   .iso-canvas{inset:6% -44% auto -18%;width:138%;height:72svh}
   .works-grid{grid-template-columns:1fr}
@@ -530,17 +524,15 @@ html.fx .about-txt h2.frev{
 .hero>.wrap{z-index:4}
 .hero::after{
   content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
-  background:linear-gradient(90deg,color-mix(in srgb,var(--bg) 86%,transparent) 0 24%,color-mix(in srgb,var(--bg) 62%,transparent) 44%,transparent 70%);
+  background:linear-gradient(90deg,color-mix(in srgb,var(--bg) 24%,transparent) 0 10%,color-mix(in srgb,var(--bg) 14%,transparent) 34%,color-mix(in srgb,var(--bg) 58%,transparent) 72%,color-mix(in srgb,var(--bg) 94%,transparent) 100%);
 }
 .hero h1{max-width:13.4ch;position:relative;text-wrap:balance}
 .hero h1 .line:nth-child(2){transform:translateX(clamp(0px,5vw,72px))}
-.hero-foot{position:relative;z-index:5;margin-top:clamp(44px,7vh,82px)}
-.hero-sub{max-width:31em;text-wrap:pretty}
-.iso-scene{z-index:0;opacity:calc(var(--iso-opacity)*.8)}
+.iso-scene{z-index:0;opacity:calc(var(--iso-opacity)*.95)}
 .iso-vignette{
   background:
-    radial-gradient(ellipse at 52% 47%,transparent 0 38%,var(--bg) 92%),
-    linear-gradient(90deg,var(--bg) 0 6%,transparent 30%,transparent 76%,var(--bg) 100%),
+    radial-gradient(ellipse at 36% 47%,transparent 0 47%,var(--bg) 94%),
+    linear-gradient(90deg,color-mix(in srgb,var(--bg) 16%,transparent) 0 4%,transparent 20% 57%,color-mix(in srgb,var(--bg) 64%,transparent) 83%,var(--bg) 100%),
     linear-gradient(180deg,var(--bg) 0 3%,transparent 24%,transparent 78%,var(--bg) 100%);
 }
 
@@ -703,8 +695,21 @@ html.fx .about-txt h2.frev{
 
 /* ---------- hero V4: разлом поверхности вместо мини-сайтов ---------- */
 .hero{min-height:100dvh}
-.hero>.wrap{isolation:isolate}
-.hero-status,.hero h1,.hero-foot{position:relative;z-index:3}
+.hero>.wrap{width:100%;max-width:none;isolation:isolate}
+.hero-status,.hero h1{position:relative;z-index:3}
+.hero .iso-canvas{
+  -webkit-mask-image:linear-gradient(90deg,#000 0 58%,rgba(0,0,0,.42) 76%,transparent 98%);
+  mask-image:linear-gradient(90deg,#000 0 58%,rgba(0,0,0,.42) 76%,transparent 98%);
+}
+.hero-signature{
+  position:absolute;left:var(--pad);bottom:clamp(48px,7.5vh,72px);z-index:5;
+  display:flex;align-items:center;gap:14px;color:var(--muted-2);pointer-events:none;
+}
+.hero-signature::before{
+  content:"";width:clamp(76px,10vw,156px);height:1px;
+  background:linear-gradient(90deg,rgb(var(--accent-rgb) / .58),rgb(var(--iso-rgb) / .16));
+}
+.hero-signature .mono{font-size:9.5px;letter-spacing:.18em;color:inherit}
 .hero h1 .line-in{white-space:nowrap}
 .hero h1 .line{padding:.13em 0 .16em;margin:-.13em 0 -.12em}
 .hero-word{display:inline-block;transform:translate3d(0,0,0)}
@@ -714,71 +719,92 @@ html.fx .about-txt h2.frev{
 .hero-word-quiet{font-size:.78em;font-weight:600;letter-spacing:-.018em}
 
 .code-rift{
-  position:absolute;right:clamp(-150px,-8vw,-94px);top:3%;z-index:1;
-  width:min(49vw,700px);height:clamp(430px,64dvh,575px);pointer-events:none;
-  opacity:1;transform:translate3d(0,0,0) scale(1);transform-origin:68% 51%;
-  will-change:transform,opacity;
+  position:absolute;right:clamp(-166px,-7vw,-92px);top:0;z-index:1;
+  width:min(51vw,760px);height:clamp(470px,69dvh,640px);pointer-events:none;
+  opacity:1;
 }
-html.fx .code-rift{opacity:0;transform:translate3d(42px,18px,0) scale(.93)}
+html.fx .code-rift{opacity:0}
 .code-rift-defs{position:absolute;width:0;height:0;overflow:hidden}
 .code-rift-rim{
   position:absolute;inset:0;z-index:1;overflow:hidden;
   -webkit-clip-path:url(#code-rift-cut);clip-path:url(#code-rift-cut);
-  background:linear-gradient(148deg,rgba(245,244,239,.38) 0,#414446 9%,#1a1c1e 27%,#08090a 61%,#292c2e 87%,rgba(245,244,239,.15) 100%);
-  filter:drop-shadow(-14px 21px 25px rgba(0,0,0,.56));
+  background:
+    radial-gradient(ellipse at 27% 18%,rgb(var(--iso-rgb) / .11),transparent 25%),
+    radial-gradient(ellipse at 76% 83%,rgb(var(--iso-rgb) / .035),transparent 23%),
+    linear-gradient(148deg,color-mix(in srgb,var(--bg) 83%,var(--ink)) 0,color-mix(in srgb,var(--bg) 91%,var(--ink)) 18%,var(--bg) 68%,color-mix(in srgb,var(--bg) 94%,var(--ink)) 100%);
+  box-shadow:inset 0 1px 0 rgb(var(--iso-rgb) / .055),inset 0 -2px 0 rgba(0,0,0,.72);
+}
+.code-rift-rim::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:
+    url("assets/rift-grain.svg"),
+    radial-gradient(ellipse at 17% 27%,rgba(255,255,255,.18),transparent 13%),
+    radial-gradient(ellipse at 48% 15%,rgba(255,255,255,.12),transparent 11%),
+    radial-gradient(ellipse at 74% 83%,rgba(255,255,255,.09),transparent 13%),
+    radial-gradient(ellipse at 93% 46%,rgba(0,0,0,.48),transparent 12%);
+  background-size:180px 140px,auto,auto,auto,auto;
+  background-repeat:repeat,no-repeat,no-repeat,no-repeat,no-repeat;
+  mix-blend-mode:soft-light;opacity:.54;
 }
 .code-rift-rim::after{
   content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(132deg,rgba(255,255,255,.19),transparent 14% 67%,rgba(255,255,255,.075));
+  background:
+    radial-gradient(ellipse at 19% 28%,rgb(var(--iso-rgb) / .11),transparent 9%),
+    radial-gradient(ellipse at 52% 16%,rgb(var(--iso-rgb) / .08),transparent 8%),
+    radial-gradient(ellipse at 81% 76%,rgb(var(--iso-rgb) / .045),transparent 10%);
   mix-blend-mode:screen;opacity:.32;
 }
 .code-rift-depth{
-  position:absolute;top:clamp(8px,.85vw,14px);right:clamp(4px,.48vw,8px);
-  bottom:clamp(10px,1vw,17px);left:clamp(11px,1.05vw,18px);overflow:hidden;
-  transform:translate3d(2px,5px,0);
+  position:absolute;top:clamp(4px,.36vw,7px);right:clamp(2px,.24vw,4px);
+  bottom:clamp(6px,.48vw,9px);left:clamp(5px,.42vw,8px);overflow:hidden;
   -webkit-clip-path:url(#code-rift-depth-cut);clip-path:url(#code-rift-depth-cut);
-  background:linear-gradient(141deg,#35383a 2%,#242729 17%,#101214 42%,#030405 76%,#191b1d 100%);
-  box-shadow:inset 20px 17px 30px rgba(0,0,0,.92),inset -10px -12px 22px rgba(255,255,255,.035),0 -5px 12px rgba(255,255,255,.055);
+  background:linear-gradient(139deg,#252829 0,#111315 22%,#040506 55%,#010202 79%,#101213 100%);
+  box-shadow:inset 29px 25px 44px rgba(0,0,0,.98),inset -12px -14px 23px rgba(255,255,255,.018),0 -2px 5px rgb(var(--iso-rgb) / .025);
 }
 .code-rift-depth::before{
   content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(115deg,rgba(255,255,255,.09),transparent 23% 61%,rgba(0,0,0,.52));
-  opacity:.65;
+  background-image:url("assets/rift-grain.svg"),linear-gradient(115deg,rgba(255,255,255,.065),transparent 23% 61%,rgba(0,0,0,.58));
+  background-size:150px 116px,auto;background-repeat:repeat,no-repeat;
+  mix-blend-mode:soft-light;opacity:.45;
 }
 .code-rift-well{
-  position:absolute;top:clamp(9px,.9vw,15px);right:clamp(8px,.75vw,12px);
-  bottom:clamp(5px,.5vw,9px);left:clamp(6px,.6vw,10px);overflow:hidden;transform-origin:69% 51%;
+  position:absolute;top:clamp(14px,1.25vw,22px);right:clamp(10px,.9vw,15px);
+  bottom:clamp(9px,.8vw,14px);left:clamp(13px,1.1vw,19px);overflow:hidden;
   -webkit-clip-path:url(#code-rift-inner-cut);clip-path:url(#code-rift-inner-cut);
   background:linear-gradient(118deg,rgba(255,255,255,.025),transparent 28% 70%,rgba(255,255,255,.018)),#050607;
-  box-shadow:inset 28px 22px 48px rgba(0,0,0,.96),inset -16px -14px 34px rgba(0,0,0,.8),inset 0 0 0 1px rgba(255,255,255,.035),-5px -7px 15px rgba(0,0,0,.72);
+  box-shadow:inset 38px 31px 58px rgba(0,0,0,.98),inset -22px -19px 42px rgba(0,0,0,.9),inset 0 0 0 1px rgba(255,255,255,.018),-10px -12px 24px rgba(0,0,0,.9);
+}
+.code-rift-well::after{
+  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 54% 51%,transparent 0 44%,rgba(0,0,0,.15) 62%,rgba(0,0,0,.78) 100%),
+    linear-gradient(137deg,rgba(0,0,0,.48),transparent 23% 66%,rgba(0,0,0,.58));
 }
 .code-rift-plane{
-  position:absolute;left:0;top:-56%;width:125%;height:310%;
-  transform:translate3d(0,0,0);will-change:transform;
+  position:fixed;left:var(--rift-plane-left,54vw);top:var(--rift-plane-top,-24vh);
+  width:var(--rift-plane-width,52vw);height:var(--rift-plane-height,220vh);z-index:1;
 }
 .code-rift-stream{
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
   width:100%;min-height:100%;align-items:start;
-  color:rgba(226,230,232,.88);font-family:var(--mono);font-size:clamp(9.2px,.82vw,12.2px);
+  color:rgba(207,210,212,.76);font-family:var(--mono);font-size:clamp(9.2px,.82vw,12.2px);
   line-height:1.48;letter-spacing:-.022em;white-space:pre;tab-size:2;
   transform:translate3d(0,0,0) rotate(-.65deg);transform-origin:center;
   text-shadow:0 1px 0 rgba(0,0,0,.8);will-change:transform,opacity;
 }
 .code-rift-code{position:relative;width:100%;margin:0;overflow:hidden;font:inherit;color:inherit;white-space:inherit;tab-size:inherit}
 .code-rift-code:nth-child(2){transform:translateY(12px)}
-.code-keyword{color:rgb(var(--accent-rgb) / .98)}
-.code-function{color:rgba(139,184,218,1)}
-.code-property{color:rgba(121,188,176,.98)}
-.code-string{color:rgba(164,198,139,1)}
-.code-number{color:rgba(218,174,111,1)}
-.code-comment{color:rgba(143,151,158,.78);font-style:italic}
-.code-rift-fractures{position:absolute;inset:-8%;width:116%;height:116%;overflow:visible;color:rgba(224,225,221,.35)}
-.code-rift-fractures path{fill:none;stroke:currentColor;stroke-linecap:butt;stroke-linejoin:miter;vector-effect:non-scaling-stroke}
-.rift-fracture-main path{stroke-width:.76}
-.rift-fracture-main path:nth-child(4n+2){opacity:.55;stroke-width:.54}
-.rift-fracture-main path:nth-child(4n+3){opacity:.72;stroke-width:.64}
-.rift-fracture-branches{opacity:.52}.rift-fracture-branches path{stroke-width:.48}
-.rift-fracture-chips{opacity:.4}.rift-fracture-chips path{stroke-width:.44}
+.code-keyword{color:rgba(183,85,101,.82)}
+.code-function{color:rgba(124,151,171,.84)}
+.code-property{color:rgba(111,153,146,.82)}
+.code-string{color:rgba(143,164,127,.84)}
+.code-number{color:rgba(179,148,105,.82)}
+.code-comment{color:rgba(119,126,132,.64);font-style:italic}
+.code-rift-fractures{position:absolute;inset:0;width:100%;height:100%;overflow:visible;color:rgba(211,212,208,.16)}
+.code-rift-fractures path{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.rift-fracture-main path{stroke-width:.62}
+.rift-fracture-branches{opacity:.48}.rift-fracture-branches path{stroke-width:.44}
+.rift-fracture-chips{opacity:.3}.rift-fracture-chips path{stroke-width:.4}
 
 /* Лента движется справа снизу к левому верхнему краю. Сами слова не наклонены. */
 .tape{
@@ -791,7 +817,7 @@ html.fx .code-rift{opacity:0;transform:translate3d(42px,18px,0) scale(.93)}
 .tape-item:nth-child(3n+2){transform:translate3d(0,4px,0)}
 
 @media (max-width:920px){
-  .code-rift{right:-20vw;top:7%;width:64vw;height:clamp(380px,58dvh,520px)}
+  .code-rift{right:-20vw;top:4%;width:66vw;height:clamp(410px,63dvh,555px)}
   .hero-word-up{transform:translate3d(0,-.065em,0)}
   .hero-word-low{transform:translate3d(0,.055em,0)}
 }
@@ -801,24 +827,22 @@ html.fx .code-rift{opacity:0;transform:translate3d(42px,18px,0) scale(.93)}
   .hero-word-up{transform:translate3d(0,-.035em,0)}
   .hero-word-low{transform:translate3d(0,.035em,0)}
   .hero-word-small{font-size:.79em}.hero-word-quiet{font-size:.82em}
+  .hero-signature{display:none}
   .code-rift{
     position:relative;right:auto;top:auto;width:calc(100% + 36px);height:clamp(224px,36dvh,300px);
     margin:18px -18px 6px;z-index:1;
   }
-  html.fx .code-rift{transform:translate3d(24px,12px,0) scale(.95)}
-  .code-rift-plane{left:0;top:-42%;width:128%;height:430%}
+  .code-rift-plane{position:absolute;left:0;top:-42%;width:128%;height:430%}
   .code-rift-stream{grid-template-columns:repeat(2,minmax(0,1fr));font-size:7.1px;line-height:1.48;gap:10px}
-  .code-rift-depth{top:7px;right:4px;bottom:9px;left:9px;transform:translate3d(1px,3px,0)}
-  .code-rift-well{top:8px;right:7px;bottom:5px;left:6px}
-  .hero-foot{margin-top:20px}
+  .code-rift-depth{top:3px;right:2px;bottom:4px;left:3px}
+  .code-rift-well{top:8px;right:6px;bottom:5px;left:7px}
   .tape{width:108vw;margin:20px -4vw;transform:rotate(1.7deg)}
   .tape-track{padding:19px 0}
   .tape-item:nth-child(3n+1){transform:translate3d(0,-3px,0)}
   .tape-item:nth-child(3n+2){transform:translate3d(0,2px,0)}
 }
 @media (prefers-reduced-motion:reduce){
-  .code-rift,html.fx .code-rift{opacity:1!important;transform:none!important}
-  .code-rift-plane{transform:none!important}
+  .code-rift,html.fx .code-rift{opacity:1!important}
   .code-rift-stream{transform:rotate(-.65deg)!important}
 }
 
@@ -896,13 +920,13 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
       <svg class="code-rift-defs" aria-hidden="true">
         <defs>
           <clipPath id="code-rift-cut" clipPathUnits="objectBoundingBox">
-            <path d="M.015 .34 C.05 .34 .07 .36 .095 .35 L.14 .305 L.235 .32 L.28 .275 L.39 .292 L.43 .235 L.515 .255 L.555 .19 L.62 .25 L.74 .22 L.78 .265 L.89 .245 L.93 .275 L1 .265 L.982 .39 L1 .48 L.972 .56 L.99 .62 L.92 .63 L.88 .69 L.8 .675 L.75 .735 L.67 .71 L.62 .78 L.54 .75 L.49 .82 L.41 .78 L.35 .81 L.29 .75 L.21 .785 L.17 .72 L.1 .75 L.08 .69 L.025 .71 L.05 .63 L.005 .6 L.02 .53 L0 .47 L.02 .42 Z"/>
+            <path d="M0.025 0.1998 L0.0529 0.216 L0.0829 0.2118 L0.0959 0.2201 L0.1226 0.2257 L0.1394 0.2399 L0.1668 0.2241 L0.1825 0.2073 L0.1944 0.1972 L0.2071 0.1868 L0.2257 0.1816 L0.2441 0.1831 L0.2672 0.1832 L0.2964 0.1931 L0.3143 0.213 L0.3321 0.2291 L0.3463 0.2352 L0.3635 0.2353 L0.3857 0.2245 L0.4032 0.2072 L0.4277 0.1996 L0.4419 0.1689 L0.4707 0.1486 L0.4828 0.1544 L0.4984 0.172 L0.5274 0.2052 L0.5528 0.2112 L0.5809 0.2277 L0.6056 0.2344 L0.6267 0.2323 L0.6561 0.2145 L0.6712 0.1996 L0.6942 0.1919 L0.7107 0.1761 L0.7337 0.1689 L0.7564 0.1811 L0.7701 0.1927 L0.7838 0.2038 L0.7977 0.2104 L0.8154 0.2232 L0.8414 0.2257 L0.8665 0.2263 L0.8777 0.2256 L0.9029 0.1957 L0.9289 0.1792 L0.9529 0.1966 L0.9648 0.2097 L0.985 0.2078 L0.9851 0.2198 L0.9854 0.2473 L0.9902 0.2746 L0.9957 0.2983 L0.9974 0.3244 L0.9969 0.3409 L0.9975 0.3692 L0.9939 0.3847 L0.9971 0.4002 L0.9845 0.4185 L0.9793 0.4374 L0.972 0.464 L0.9752 0.493 L0.9784 0.5144 L0.9796 0.5295 L0.9696 0.5466 L0.9727 0.5683 L0.9874 0.602 L0.9937 0.6335 L0.9994 0.6638 L0.9985 0.677 L1.0047 0.7016 L0.9998 0.7327 L0.9881 0.766 L0.9795 0.7969 L0.979 0.7984 L0.979 0.8005 L0.9637 0.7958 L0.9345 0.7976 L0.9055 0.8204 L0.884 0.8294 L0.8576 0.8366 L0.8302 0.8372 L0.8046 0.8094 L0.7883 0.7912 L0.7654 0.7769 L0.7475 0.7775 L0.7219 0.7964 L0.6992 0.8023 L0.6804 0.8053 L0.6595 0.8236 L0.6322 0.843 L0.6212 0.8424 L0.5973 0.8356 L0.5742 0.8094 L0.5508 0.8121 L0.5329 0.8006 L0.5067 0.7871 L0.4868 0.7801 L0.4737 0.7835 L0.4606 0.7902 L0.439 0.8065 L0.4166 0.8125 L0.3937 0.8303 L0.3775 0.8341 L0.3593 0.8465 L0.3343 0.848 L0.3083 0.8289 L0.2855 0.8034 L0.2741 0.7983 L0.2584 0.785 L0.2361 0.7848 L0.2078 0.8011 L0.1798 0.7952 L0.1578 0.8161 L0.1409 0.8293 L0.1268 0.8277 L0.0979 0.825 L0.0706 0.8018 L0.0434 0.8059 L0.025 0.8123 L0.0175 0.8003 L0.0243 0.7805 L0.0267 0.7524 L0.0155 0.7332 L0.015 0.7072 L0.0143 0.6923 L0.0178 0.6685 L0.0242 0.6447 L0.0317 0.619 L0.025 0.5921 L0.0292 0.5632 L0.0331 0.5468 L0.0471 0.5144 L0.0433 0.4991 L0.0401 0.4764 L0.0295 0.4464 L0.0347 0.4154 L0.0272 0.3829 L0.0153 0.3493 L0.0126 0.3156 L0.0163 0.2953 L0.0166 0.2694 L0.0205 0.2563 L0.0184 0.2377 L0.0226 0.2162 Z"/>
           </clipPath>
           <clipPath id="code-rift-depth-cut" clipPathUnits="objectBoundingBox">
-            <path d="M.022 .36 C.055 .36 .075 .378 .1 .368 L.145 .327 L.238 .34 L.286 .298 L.39 .315 L.435 .26 L.517 .28 L.555 .219 L.622 .274 L.738 .245 L.782 .288 L.888 .269 L.93 .297 L.985 .289 L.968 .4 L.991 .48 L.963 .556 L.982 .612 L.914 .618 L.873 .676 L.797 .662 L.748 .72 L.671 .696 L.619 .765 L.542 .736 L.49 .803 L.411 .764 L.352 .795 L.294 .737 L.214 .769 L.173 .706 L.105 .735 L.083 .675 L.035 .696 L.058 .621 L.017 .592 L.032 .526 L.012 .47 L.032 .424 Z"/>
+            <path d="M0.035 0.2109 L0.0486 0.2179 L0.0708 0.2178 L0.0974 0.2285 L0.1166 0.2303 L0.1357 0.2319 L0.1615 0.2273 L0.1777 0.2196 L0.2047 0.2053 L0.2342 0.1897 L0.2521 0.1904 L0.2665 0.2045 L0.2876 0.2054 L0.3127 0.2185 L0.3328 0.238 L0.361 0.2519 L0.3797 0.2351 L0.4005 0.2212 L0.4117 0.2084 L0.4279 0.2051 L0.4555 0.1825 L0.4758 0.1697 L0.5048 0.1959 L0.5338 0.2218 L0.5494 0.2187 L0.5766 0.2266 L0.5948 0.2294 L0.6214 0.2362 L0.6458 0.2248 L0.6669 0.2164 L0.6963 0.1967 L0.7167 0.189 L0.7447 0.1915 L0.773 0.2016 L0.7853 0.2132 L0.8114 0.2296 L0.8226 0.2332 L0.8458 0.2363 L0.8634 0.2284 L0.882 0.2293 L0.9018 0.2172 L0.923 0.2051 L0.934 0.2039 L0.9536 0.2045 L0.9673 0.2112 L0.975 0.2165 L0.9767 0.2285 L0.9724 0.2621 L0.9754 0.2822 L0.9882 0.3115 L0.9928 0.3393 L0.9847 0.3565 L0.9781 0.3811 L0.9804 0.4081 L0.9731 0.437 L0.9708 0.4679 L0.9678 0.483 L0.9686 0.5164 L0.9684 0.5413 L0.9709 0.5738 L0.9714 0.6072 L0.9827 0.6373 L0.9884 0.6678 L0.9885 0.6954 L0.9876 0.7166 L0.9816 0.7352 L0.9804 0.7532 L0.9839 0.7686 L0.969 0.791 L0.969 0.7871 L0.9415 0.7901 L0.9168 0.7986 L0.905 0.7988 L0.8769 0.8235 L0.8525 0.8251 L0.8349 0.8255 L0.8212 0.8106 L0.7918 0.7913 L0.7696 0.7776 L0.7409 0.7843 L0.715 0.7827 L0.6963 0.7895 L0.6689 0.8024 L0.64 0.8211 L0.6104 0.8187 L0.5904 0.8098 L0.5645 0.8035 L0.5394 0.7929 L0.5166 0.7911 L0.4942 0.778 L0.4799 0.7797 L0.4583 0.791 L0.4314 0.8029 L0.4125 0.7988 L0.3999 0.8081 L0.37 0.8327 L0.3491 0.8421 L0.3336 0.8363 L0.3117 0.8116 L0.2986 0.8004 L0.272 0.7832 L0.2565 0.7828 L0.236 0.7853 L0.2235 0.777 L0.1985 0.7866 L0.1856 0.7901 L0.1669 0.7976 L0.1491 0.8144 L0.1227 0.8204 L0.1072 0.8087 L0.0872 0.8023 L0.067 0.8014 L0.0404 0.798 L0.035 0.7974 L0.0372 0.7854 L0.0358 0.7718 L0.0335 0.7558 L0.0226 0.7296 L0.0282 0.6962 L0.0284 0.6772 L0.0358 0.6504 L0.033 0.6326 L0.0308 0.6122 L0.0358 0.5815 L0.0429 0.5679 L0.0449 0.5524 L0.0478 0.5204 L0.041 0.4881 L0.0457 0.4653 L0.0446 0.451 L0.0425 0.4298 L0.0389 0.4006 L0.0257 0.3689 L0.0259 0.3535 L0.0236 0.335 L0.03 0.3073 L0.0259 0.2738 L0.0272 0.2417 Z"/>
           </clipPath>
           <clipPath id="code-rift-inner-cut" clipPathUnits="objectBoundingBox">
-            <path d="M.028 .382 C.06 .383 .08 .398 .105 .39 L.15 .35 L.242 .361 L.29 .32 L.392 .337 L.439 .284 L.52 .303 L.558 .246 L.625 .298 L.736 .27 L.782 .311 L.886 .293 L.928 .319 L.976 .313 L.96 .41 L.983 .482 L.956 .552 L.974 .605 L.91 .611 L.868 .666 L.798 .653 L.746 .708 L.672 .686 L.617 .752 L.544 .724 L.489 .788 L.413 .751 L.354 .78 L.296 .725 L.217 .755 L.174 .694 L.11 .72 L.086 .663 L.044 .681 L.065 .613 L.025 .587 L.04 .522 L.02 .47 L.04 .429 Z"/>
+            <path d="M0.048 0.2278 L0.0611 0.2302 L0.0811 0.2427 L0.102 0.2402 L0.1199 0.2434 L0.1311 0.2424 L0.1454 0.2499 L0.1737 0.2362 L0.1917 0.2311 L0.2214 0.2139 L0.2402 0.2083 L0.2603 0.2141 L0.2902 0.2257 L0.3024 0.2276 L0.3273 0.2434 L0.3457 0.2552 L0.3735 0.2513 L0.3951 0.2327 L0.4215 0.2209 L0.4473 0.2037 L0.4624 0.1947 L0.4908 0.1979 L0.5097 0.2159 L0.5365 0.2308 L0.5509 0.2349 L0.5732 0.2411 L0.6008 0.2487 L0.6308 0.2501 L0.6603 0.2319 L0.6723 0.2302 L0.6857 0.2209 L0.7013 0.2199 L0.7199 0.2109 L0.7461 0.2068 L0.7635 0.2155 L0.781 0.2235 L0.811 0.2439 L0.8308 0.247 L0.8432 0.248 L0.8596 0.2477 L0.885 0.2348 L0.9143 0.2221 L0.9258 0.2171 L0.95 0.222 L0.962 0.2245 L0.9634 0.2365 L0.9596 0.2544 L0.963 0.2803 L0.9688 0.304 L0.9769 0.3358 L0.9691 0.3593 L0.966 0.3923 L0.9625 0.4216 L0.9607 0.4356 L0.9583 0.456 L0.955 0.4756 L0.9533 0.4973 L0.9583 0.5234 L0.956 0.5419 L0.9588 0.5716 L0.9583 0.5881 L0.9625 0.6176 L0.9691 0.6305 L0.9704 0.6523 L0.9754 0.6749 L0.9746 0.6981 L0.9715 0.7239 L0.9676 0.7574 L0.956 0.7779 L0.956 0.7793 L0.9392 0.7688 L0.9184 0.7774 L0.8969 0.7959 L0.8694 0.8085 L0.8428 0.8071 L0.8142 0.7859 L0.7913 0.7787 L0.78 0.7764 L0.7606 0.7688 L0.7343 0.7699 L0.7217 0.7721 L0.7104 0.7775 L0.6914 0.7828 L0.672 0.7886 L0.6446 0.8026 L0.6301 0.8002 L0.616 0.8004 L0.5958 0.8022 L0.5748 0.7963 L0.5526 0.7864 L0.5391 0.7763 L0.5201 0.7739 L0.5012 0.7696 L0.4879 0.7703 L0.4612 0.7748 L0.4378 0.7836 L0.4097 0.7869 L0.3978 0.7965 L0.3714 0.8159 L0.3594 0.8183 L0.3344 0.8143 L0.3207 0.8064 L0.2943 0.7862 L0.2794 0.7818 L0.2612 0.7738 L0.2421 0.7649 L0.2147 0.7709 L0.2018 0.7727 L0.1818 0.7825 L0.1631 0.7864 L0.1415 0.791 L0.1223 0.7955 L0.1048 0.7958 L0.0767 0.7938 L0.0598 0.7857 L0.048 0.7794 L0.0459 0.7674 L0.0416 0.7468 L0.0414 0.7189 L0.0424 0.6983 L0.044 0.6797 L0.0435 0.6458 L0.0467 0.6248 L0.0487 0.6077 L0.0484 0.5912 L0.0573 0.5682 L0.059 0.5368 L0.0534 0.5051 L0.058 0.4846 L0.0596 0.4603 L0.056 0.4297 L0.0488 0.3968 L0.0453 0.3677 L0.0446 0.3343 L0.0417 0.3174 L0.0372 0.2968 L0.0401 0.2785 L0.0398 0.2638 L0.0476 0.2344 Z"/>
           </clipPath>
         </defs>
       </svg>
@@ -914,30 +938,30 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
               <pre class="code-rift-code"><code>// first screen reveal
 var heroLines=gsap.utils.toArray('.hero .line-in'), heroRift=document.querySelector('.code-rift');
 var heroRiftWell=document.querySelector('.code-rift-well'), heroRiftPlane=document.querySelector('.code-rift-plane');
-var heroRiftStream=document.querySelector('.code-rift-stream'), heroSection=document.querySelector('.hero');
+var heroRiftStream=document.querySelector('.code-rift-stream');
 
 gsap.set(heroLines,{yPercent:120});
-gsap.set(heroRiftWell,{scaleX:.08});
 gsap.set(heroRiftStream,{x:-46,opacity:.16});
+
+function lockRiftPlane(){
+  if(!heroRiftWell||!heroRiftPlane||innerWidth&lt;=760)return;
+  var rect=heroRiftWell.getBoundingClientRect(), documentTop=rect.top+scrollY;
+  heroRiftPlane.style.setProperty('--rift-plane-left',(rect.left-rect.width*.08)+'px');
+  heroRiftPlane.style.setProperty('--rift-plane-top',(documentTop-rect.height*.58)+'px');
+  heroRiftPlane.style.setProperty('--rift-plane-width',(rect.width*1.2)+'px');
+  heroRiftPlane.style.setProperty('--rift-plane-height',(rect.height*3.25)+'px');
+}
 
 function heroIn(delay){
   var timeline=gsap.timeline({delay:delay||0});
   timeline.to(heroLines,{yPercent:0,duration:1.15,ease:'power4.out',stagger:.09})
-    .to(heroRift,{opacity:1,x:0,y:0,scale:1,duration:1.08,ease:'power4.out'},'-=.94')
-    .to(heroRiftWell,{scaleX:1,duration:1.02,ease:'power4.inOut'},'&lt;')
+    .to(heroRift,{opacity:1,duration:.88,ease:'power2.out'},'-=.94')
     .to(heroRiftStream,{x:0,opacity:1,duration:1.1,ease:'power3.out'},'&lt;.18');
   return timeline;
 }
 
-// the lower layer stays fixed while the surface moves
-var riftMedia=gsap.matchMedia();
-riftMedia.add('(min-width: 761px)',function(){
-  if(!heroSection||!heroRiftPlane)return;
-  gsap.fromTo(heroRiftPlane,{y:0},{
-    y:function(){return heroSection.offsetHeight;},ease:'none',
-    scrollTrigger:{trigger:heroSection,start:'top top',end:'bottom top',scrub:true,invalidateOnRefresh:true}
-  });
-});
+lockRiftPlane();
+addEventListener('resize',lockRiftPlane,{passive:true});
 
 var serviceRows=gsap.utils.toArray('.svc-row');
 serviceRows.forEach(function(row,index){
@@ -952,9 +976,10 @@ function moveTape(time){
   track.style.transform='translate3d('+x+'px,0,0)';
   requestAnimationFrame(moveTape);
 }</code></pre>
-              <pre class="code-rift-code"><code>// isometric surface
+              <pre class="code-rift-code"><code>// isometric surface — 30 FPS on desktop, static on touch screens
+var lastGridFrame=0, gridInterval=1000/30;
 function point(i,j,time,mouseX,mouseY){
-  var cell=clamp(canvasWidth/19,42,78), originX=canvasWidth*.61, originY=canvasHeight*.34;
+  var cell=clamp(canvasWidth/19,42,78), originX=canvasWidth*.49, originY=canvasHeight*.34;
   var x=originX+(i-j)*cell*.92, y=originY+(i+j)*cell*.43;
   var wave=Math.sin(i*.72+j*.54+time*.00105)*cell*.18+Math.sin((i-j)*.48+time*.00072)*cell*.1;
   var distance=Math.hypot(x-mouseX,y-mouseY)||1;
@@ -964,6 +989,8 @@ function point(i,j,time,mouseX,mouseY){
 }
 
 function draw(time){
+  if(time-lastGridFrame&lt;gridInterval){requestAnimationFrame(draw);return;}
+  lastGridFrame=time;
   context.clearRect(0,0,canvasWidth,canvasHeight);context.lineWidth=.72;
   for(var row=-8;row&lt;14;row++){
     context.beginPath();
@@ -1000,50 +1027,36 @@ function activateServiceRow(index){
       </div>
       <svg class="code-rift-fractures" viewBox="0 0 720 510" preserveAspectRatio="none">
         <g class="rift-fracture-main">
-          <path d="M118 191 L108 186 L103 176 L91 179 L86 167 L74 164 L76 153 L63 149 L59 136 L47 137 L40 124 L25 118 L20 104"/>
-          <path d="M292 115 L283 104 L286 94 L275 87 L279 74 L271 65 L278 55 L273 42 L281 31 L275 18 L279 4 L271 -9"/>
-          <path d="M505 111 L514 100 L526 103 L532 91 L543 94 L551 82 L564 86 L573 73 L587 78 L595 65 L610 70 L620 57 L637 61 L649 49 L664 53 L675 42 L692 45 L708 33 L729 34"/>
-          <path d="M648 238 L660 233 L670 238 L678 227 L691 231 L699 220 L711 225 L720 214 L736 216"/>
-          <path d="M620 362 L632 369 L636 382 L649 383 L655 396 L666 394 L676 408 L689 409 L696 423 L711 427 L716 442 L734 451"/>
-          <path d="M444 415 L437 428 L443 439 L434 451 L439 464 L430 475 L435 488 L426 501 L430 517"/>
-          <path d="M259 415 L248 425 L251 436 L239 443 L242 455 L228 460 L225 473 L211 477 L205 491 L188 496 L181 512"/>
-          <path d="M91 314 L80 319 L75 313 L66 322 L56 318 L48 327 L38 323 L30 332 L18 328 L8 337 L-8 333"/>
+          <path d="M121 131 C116 123 120 117 113 110 C108 104 112 98 105 91"/>
+          <path d="M291 103 C286 96 291 89 284 83 C280 78 284 73 278 67"/>
+          <path d="M467 101 C472 94 468 87 475 81 C480 77 476 70 482 64"/>
+          <path d="M677 183 C684 178 687 170 696 168 C704 166 704 158 713 154"/>
+          <path d="M661 354 C668 361 666 369 675 374 C682 378 679 387 688 392"/>
+          <path d="M530 420 C525 428 529 435 522 442 C517 447 521 454 515 461"/>
+          <path d="M331 424 C326 431 330 438 323 444 C318 449 321 456 315 462"/>
+          <path d="M57 331 C49 336 47 344 38 346 C30 348 31 357 22 360"/>
         </g>
         <g class="rift-fracture-branches">
-          <path d="M86 167 L80 173 L72 171 L64 178 L53 176"/>
-          <path d="M59 136 L65 126 L61 118 L67 109"/>
-          <path d="M275 87 L263 84 L257 76 L247 78 L239 70"/>
-          <path d="M278 55 L289 49 L292 39 L302 34"/>
-          <path d="M573 73 L568 62 L573 54 L569 44"/>
-          <path d="M620 57 L624 45 L619 37 L624 27"/>
-          <path d="M678 227 L674 216 L680 207 L677 196"/>
-          <path d="M655 396 L648 404 L650 415 L643 423"/>
-          <path d="M696 423 L703 414 L714 412 L720 404"/>
-          <path d="M439 464 L451 468 L458 477 L470 476"/>
-          <path d="M239 443 L228 438 L219 442 L210 436"/>
-          <path d="M225 473 L235 481 L236 492 L245 500"/>
-          <path d="M66 322 L62 311 L53 306 L52 297"/>
-          <path d="M30 332 L27 343 L18 349 L16 359"/>
+          <path d="M113 110 C105 111 101 106 94 108"/>
+          <path d="M284 83 C276 84 273 78 266 80"/>
+          <path d="M475 81 C482 83 486 78 492 81"/>
+          <path d="M696 168 C696 160 702 157 701 150"/>
+          <path d="M675 374 C668 378 669 384 663 388"/>
+          <path d="M522 442 C529 444 531 450 538 451"/>
+          <path d="M323 444 C315 443 312 448 305 446"/>
+          <path d="M38 346 C38 354 32 357 33 364"/>
         </g>
         <g class="rift-fracture-chips">
-          <path d="M153 153 L148 143 L141 150 M180 132 L176 123 L168 128"/>
-          <path d="M337 93 L333 82 L325 88 M363 83 L369 74 L364 66"/>
-          <path d="M465 112 L471 102 L478 107 M603 111 L611 103 L618 108"/>
-          <path d="M677 281 L687 277 L693 282 M657 318 L668 315 L674 321"/>
-          <path d="M570 410 L578 418 L575 428 M518 430 L524 440 L519 449"/>
-          <path d="M357 442 L351 452 L355 461 M307 432 L300 441 L303 450"/>
-          <path d="M151 365 L142 370 L136 365 M114 277 L105 272 L99 278"/>
+          <path d="M171 123 C166 118 161 121 157 116 M223 106 C218 101 214 104 210 99"/>
+          <path d="M392 92 C388 86 383 89 380 84 M578 105 C583 99 588 102 592 97"/>
+          <path d="M686 271 C693 268 697 272 702 267 M654 319 C661 318 664 323 670 320"/>
+          <path d="M583 397 C589 402 587 408 593 412 M431 431 C427 437 431 442 426 447"/>
+          <path d="M231 411 C225 416 228 422 221 426 M84 274 C77 272 74 277 68 274"/>
         </g>
       </svg>
     </div>
-    <div class="hero-foot">
-      <p class="hero-sub frev">Изучаю вашу нишу, показываю <b>бесплатный макет до старта</b> и делаю сайт под ключ: от структуры и текстов до домена и заявок в Telegram.</p>
-      <div class="hero-ctas frev">
-        <a href="https://t.me/maksim_site" target="_blank" rel="noopener" class="btn magnetic">Обсудить проект</a>
-        <a href="#works" class="btn btn-o magnetic">Смотреть кейсы</a>
-      </div>
-    </div>
   </div>
+  <div class="hero-signature frev" aria-hidden="true"><span class="mono">DESIGN / CODE / LAUNCH</span></div>
   <div class="hero-scroll" aria-hidden="true">
     <span class="mono">скролл</span>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
@@ -1372,7 +1385,8 @@ function activateServiceRow(index){
     if(!canvas)return;
     var ctx=canvas.getContext('2d',{alpha:true});
     if(!ctx)return;
-    var dpr=1,cw=0,ch=0,raf=0;
+    var dpr=1,cw=0,ch=0,raf=0,lastGridFrame=0;
+    var gridInterval=1000/30,animateGrid=fine&&!reduce&&innerWidth>760;
     var mouse={x:.68,y:.48,tx:.68,ty:.48,active:false};
     var ripples=[];
     function css(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
@@ -1380,15 +1394,18 @@ function activateServiceRow(index){
     function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
     function resize(){
       var r=canvas.getBoundingClientRect();
-      dpr=Math.min(2,window.devicePixelRatio||1);
+      animateGrid=fine&&!reduce&&innerWidth>760;
+      dpr=Math.min(1.5,window.devicePixelRatio||1);
       cw=Math.max(1,r.width);ch=Math.max(1,r.height);
       canvas.width=Math.round(cw*dpr);canvas.height=Math.round(ch*dpr);
       ctx.setTransform(dpr,0,0,dpr,0,0);
+      cancelAnimationFrame(raf);
       draw(performance.now(),true);
+      if(animateGrid)raf=requestAnimationFrame(draw);
     }
     function point(i,j,t,mx,my,lineRgb){
       var cell=clamp(cw/19,42,78);
-      var ox=cw*.61,oy=ch*.34;
+      var ox=cw*.49,oy=ch*.34;
       var x=ox+(i-j)*cell*.92;
       var y=oy+(i+j)*cell*.43;
       var wave=Math.sin((i*.72+j*.54)+t*.00105)*cell*.18+
@@ -1425,6 +1442,11 @@ function activateServiceRow(index){
       ctx.fill();
     }
     function draw(t,once){
+      if(!once&&t-lastGridFrame<gridInterval){
+        if(animateGrid)raf=requestAnimationFrame(draw);
+        return;
+      }
+      lastGridFrame=t;
       ctx.clearRect(0,0,cw,ch);
       mouse.x+=(mouse.tx-mouse.x)*.055;
       mouse.y+=(mouse.ty-mouse.y)*.055;
@@ -1453,7 +1475,7 @@ function activateServiceRow(index){
         }
       }
       ripples=ripples.filter(function(r){return t-r.t<1300;});
-      if(!reduce&&!once)raf=requestAnimationFrame(draw);
+      if(animateGrid&&!once)raf=requestAnimationFrame(draw);
     }
     resize();
     addEventListener('resize',resize,{passive:true});
@@ -1469,7 +1491,6 @@ function activateServiceRow(index){
         if(ripples.length>4)ripples.shift();
       },{passive:true});
     }
-    if(!reduce)raf=requestAnimationFrame(draw);
     addEventListener('beforeunload',function(){cancelAnimationFrame(raf);});
   })();
 
@@ -1523,7 +1544,7 @@ function activateServiceRow(index){
 
   /* ---------- Lenis ---------- */
   var lenis=null;
-  if(window.Lenis&&!reduce){
+  if(window.Lenis&&!reduce&&fine&&innerWidth>760){
     lenis=new Lenis({duration:1.15,easing:function(t){return Math.min(1,1.001-Math.pow(2,-10*t));}});
     document.documentElement.classList.add('lenis');
     lenis.on('scroll',function(e){onScrollDir(e.scroll);});
@@ -1553,25 +1574,42 @@ function activateServiceRow(index){
   function killLoader(){if(loader){loader.style.display='none';}document.documentElement.classList.remove('loading');}
   function markSeen(){try{sessionStorage.setItem('introSeen','1');}catch(_){}}
 
+  /* Код под разломом фиксируется один раз: на скролле нет ни GSAP, ни layout-пересчётов. */
+  var heroRift=document.querySelector('.code-rift');
+  var heroRiftWell=document.querySelector('.code-rift-well');
+  var heroRiftPlane=document.querySelector('.code-rift-plane');
+  var heroRiftStream=document.querySelector('.code-rift-stream');
+  var riftResizeFrame=0;
+  function lockRiftPlane(){
+    if(!heroRiftWell||!heroRiftPlane||innerWidth<=760)return;
+    var rect=heroRiftWell.getBoundingClientRect();
+    var documentTop=rect.top+window.scrollY;
+    heroRiftPlane.style.setProperty('--rift-plane-left',(rect.left-rect.width*.08)+'px');
+    heroRiftPlane.style.setProperty('--rift-plane-top',(documentTop-rect.height*.58)+'px');
+    heroRiftPlane.style.setProperty('--rift-plane-width',(rect.width*1.2)+'px');
+    heroRiftPlane.style.setProperty('--rift-plane-height',(rect.height*3.25)+'px');
+  }
+  function scheduleRiftLock(){
+    cancelAnimationFrame(riftResizeFrame);
+    riftResizeFrame=requestAnimationFrame(lockRiftPlane);
+  }
+  lockRiftPlane();
+  addEventListener('resize',scheduleRiftLock,{passive:true});
+  addEventListener('load',scheduleRiftLock,{once:true});
+
   /* ---------- анимации ---------- */
   if(hasFX){
     document.documentElement.classList.add('fx');
     gsap.registerPlugin(ScrollTrigger);
 
     var heroLines=gsap.utils.toArray('.hero .line-in');
-    var heroRift=document.querySelector('.code-rift');
-    var heroRiftWell=document.querySelector('.code-rift-well');
-    var heroRiftPlane=document.querySelector('.code-rift-plane');
-    var heroRiftStream=document.querySelector('.code-rift-stream');
     gsap.set(heroLines,{yPercent:120});
-    if(heroRiftWell)gsap.set(heroRiftWell,{scaleX:.08});
     if(heroRiftStream)gsap.set(heroRiftStream,{x:-46,opacity:.16});
 
     function heroIn(delay){
       var tl=gsap.timeline({delay:delay||0});
       tl.to(heroLines,{yPercent:0,duration:1.15,ease:'power4.out',stagger:.09})
-        .to(heroRift,{opacity:1,x:0,y:0,scale:1,duration:1.08,ease:'power4.out'},'-=.94')
-        .to(heroRiftWell,{scaleX:1,duration:1.02,ease:'power4.inOut'},'<')
+        .to(heroRift,{opacity:1,duration:.88,ease:'power2.out'},'-=.94')
         .to(heroRiftStream,{x:0,opacity:1,duration:1.1,ease:'power3.out'},'<.18')
         .to('.hero .frev',{opacity:1,y:0,duration:.9,ease:'power3.out',stagger:.1},'-=.72');
       return tl;
@@ -1586,8 +1624,7 @@ function activateServiceRow(index){
         el.style.opacity='1';
         el.style.transform='translate3d(0,0,0)';
       });
-      if(heroRift){heroRift.style.opacity='1';heroRift.style.transform='translate3d(0,0,0) scale(1)';}
-      if(heroRiftWell)heroRiftWell.style.transform='scaleX(1)';
+      if(heroRift)heroRift.style.opacity='1';
       if(heroRiftStream){heroRiftStream.style.opacity='1';heroRiftStream.style.transform='rotate(-1.15deg)';}
     }
     setTimeout(revealHeroFallback,4200);
@@ -1607,22 +1644,6 @@ function activateServiceRow(index){
     }else{
       killLoader();
       heroIn(.15);
-    }
-
-    /* Контур уезжает с поверхностью, кодовая плоскость остаётся в координатах viewport. */
-    if(heroRiftPlane){
-      var riftScrollMedia=gsap.matchMedia();
-      riftScrollMedia.add('(min-width: 761px)',function(){
-        var heroSection=document.querySelector('.hero');
-        if(!heroSection)return;
-        gsap.fromTo(heroRiftPlane,{y:0},{
-          y:function(){return heroSection.offsetHeight;},
-          ease:'none',
-          scrollTrigger:{
-            trigger:heroSection,start:'top top',end:'bottom top',scrub:true,invalidateOnRefresh:true
-          }
-        });
-      });
     }
 
     /* ---------- смысловой ритм строк процесса и услуг ---------- */
