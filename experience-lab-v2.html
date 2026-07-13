@@ -873,12 +873,19 @@ button{font:inherit;color:inherit}
 }
 .secure-caption{
   position:absolute;
-  z-index:21;
-  left:50%;
-  top:calc(30% + 76px);
+  z-index:2;
+  right:10px;
+  top:50%;
+  padding:4px 7px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:999px;
+  background:rgba(255,255,255,.035);
   color:var(--ink-2);
+  font-size:7px;
+  letter-spacing:.09em;
+  text-transform:uppercase;
   opacity:0;
-  transform:translate(-50%,10px);
+  transform:translate3d(8px,-50%,0);
   white-space:nowrap;
   will-change:transform,opacity;
 }
@@ -1109,7 +1116,7 @@ body.fx-enabled .fx-panel{
   .device-label{left:7px;bottom:6px;padding:4px 6px;font-size:6px}
   .secure-focus{width:82px;height:82px}
   .secure-focus{left:34%;top:31%}
-  .secure-caption{top:calc(31% + 55px);font-size:7px}
+  .secure-caption{right:6px;top:50%;padding:3px 5px;font-size:6px}
   .lead-form{right:6%;bottom:7%;width:54%;padding:10px}
   .lead-form-label{margin-bottom:7px;font-size:7px}
   .lead-fields{gap:5px}.lead-fields span{height:21px;padding:0 6px;font-size:8px}
@@ -1361,7 +1368,7 @@ body.fx-enabled .fx-panel{
 .launch-address.is-secure .secure-lock,.launch-address.is-secure .protocol,.launch-address.is-secure .protocol-s{color:var(--ink-2)}
 .launch-address.is-secure .lock-shackle{transform:rotate(0deg)}
 .secure-focus{display:none}
-.secure-caption{left:calc(50% - 103px);top:68px;font-size:8px}
+.secure-caption{right:10px;top:50%;font-size:7px}
 .launch-page img{object-position:center top}
 .lead-form{right:6%;bottom:8%;width:min(300px,36%)}
 .delivery-target i{border:0}
@@ -1415,7 +1422,7 @@ body.fx-enabled .fx-panel{
   .launch-browser{width:calc(100vw - 26px);aspect-ratio:1.56;top:48%}
   .launch-address{padding:0 25px}
   .secure-lock{left:calc(50% - 78px);width:15px;height:15px}
-  .secure-caption{left:calc(50% - 70px);top:54px;font-size:6px}
+  .secure-caption{right:5px;left:auto;top:50%;padding:3px 4px;font-size:5.5px;letter-spacing:.06em}
   .lead-form{right:5%;bottom:6%;width:55%;padding:9px}
   .delivery-targets{right:3%;top:14%}
   .delivery-target{min-width:102px}
@@ -1695,6 +1702,7 @@ body.fx-enabled .fx-panel{
                   <circle class="lock-key" cx="12" cy="15.5" r="1.2"></circle>
                 </svg>
                 <span class="protocol">http<span class="protocol-s" id="protocolS">s</span>://</span><span>lider-vino.ru</span>
+                <span class="secure-caption mono" id="secureCaption">Соединение защищено</span>
               </div>
               <span></span>
             </div>
@@ -1708,7 +1716,6 @@ body.fx-enabled .fx-panel{
               </div>
             </div>
             <div class="secure-focus" id="secureFocus"></div>
-            <div class="secure-caption mono" id="secureCaption">Соединение защищено</div>
           </div>
 
           <svg class="delivery-route" id="deliveryRoute" viewBox="0 0 1000 700" preserveAspectRatio="none">
@@ -2936,7 +2943,7 @@ body.fx-enabled .fx-panel{
     setTransform(secureFocus,'translate(-50%,-50%) scale('+(mix(.58,1,secureZoom)+securePulse*.22).toFixed(3)+')');
     var captionAlpha=phase(progress,.455,.49,.515,.555);
     setOpacity(secureCaption,captionAlpha);
-    setTransform(secureCaption,'translate(-50%,'+mix(10,0,captionAlpha).toFixed(1)+'px)');
+    setTransform(secureCaption,'translate3d('+mix(8,0,captionAlpha).toFixed(1)+'px,-50%,0)');
 
     setOpacity(leadForm,leadIn*(1-finalIn));
     setTransform(leadForm,'translate3d('+(18*(1-leadIn)).toFixed(1)+'px,'+(18*(1-leadIn)).toFixed(1)+'px,20px) scale('+mix(.94,1,leadIn).toFixed(3)+')');
