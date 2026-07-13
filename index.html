@@ -720,11 +720,12 @@ html.fx .about-txt h2.frev{
   will-change:transform,opacity;
 }
 html.fx .code-rift{opacity:0;transform:translate3d(42px,18px,0) scale(.93)}
+.code-rift-defs{position:absolute;width:0;height:0;overflow:hidden}
 .code-rift-rim{
   position:absolute;inset:0;overflow:hidden;
-  clip-path:polygon(0 44%,7% 39%,13% 30%,21% 34%,28% 25%,36% 29%,43% 19%,50% 25%,57% 13%,65% 21%,73% 18%,82% 26%,91% 23%,100% 29%,96% 42%,100% 56%,93% 65%,87% 63%,79% 73%,71% 69%,63% 80%,55% 74%,47% 86%,40% 78%,32% 83%,25% 74%,17% 80%,11% 70%,4% 73%,8% 60%,0 57%);
-  background:linear-gradient(154deg,rgba(245,244,239,.48) 0,rgba(245,244,239,.12) 9%,#25272a 17%,#08090a 55%,#1c1e20 82%,rgba(245,244,239,.2) 100%);
-  filter:drop-shadow(-15px 22px 26px rgba(0,0,0,.48));
+  -webkit-clip-path:url(#code-rift-cut);clip-path:url(#code-rift-cut);
+  background:linear-gradient(154deg,rgba(245,244,239,.26) 0,rgba(245,244,239,.07) 8%,#1b1d1f 16%,#070809 57%,#151719 84%,rgba(245,244,239,.12) 100%);
+  filter:drop-shadow(-13px 20px 24px rgba(0,0,0,.5));
 }
 .code-rift-rim::after{
   content:"";position:absolute;inset:0;pointer-events:none;
@@ -732,8 +733,8 @@ html.fx .code-rift{opacity:0;transform:translate3d(42px,18px,0) scale(.93)}
   mix-blend-mode:screen;opacity:.36;
 }
 .code-rift-well{
-  position:absolute;inset:clamp(4px,.4vw,7px);overflow:hidden;transform-origin:69% 51%;
-  clip-path:polygon(1% 44%,8% 40%,14% 31.5%,21% 35.5%,28% 27%,36% 31%,43% 21%,50% 27%,57% 15%,65% 23%,73% 20%,82% 28%,90% 25%,98% 31%,94% 43%,98% 56%,91% 63%,86% 61%,78% 71%,71% 67%,63% 78%,55% 72%,47% 84%,40% 76%,32% 81%,25% 72%,17% 78%,12% 68%,6% 71%,10% 59%,2% 56%);
+  position:absolute;inset:clamp(3px,.32vw,5px);overflow:hidden;transform-origin:69% 51%;
+  -webkit-clip-path:url(#code-rift-cut);clip-path:url(#code-rift-cut);
   background:linear-gradient(118deg,rgba(255,255,255,.025),transparent 28% 70%,rgba(255,255,255,.018)),#050607;
   box-shadow:inset 22px 17px 42px rgba(0,0,0,.9),inset -15px -13px 34px rgba(0,0,0,.72),inset 0 0 0 1px rgba(255,255,255,.045);
 }
@@ -757,11 +758,13 @@ html.fx .code-rift{opacity:0;transform:translate3d(42px,18px,0) scale(.93)}
 .code-string{color:rgba(164,198,139,1)}
 .code-number{color:rgba(218,174,111,1)}
 .code-comment{color:rgba(143,151,158,.78);font-style:italic}
-.code-rift-fractures{position:absolute;inset:-8%;width:116%;height:116%;overflow:visible;color:rgba(232,231,226,.4)}
-.code-rift-fractures path{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.rift-fracture-main path{stroke-width:.88}
-.rift-fracture-main path:nth-child(3n+2){opacity:.62;stroke-width:.62}
-.rift-fracture-fine{opacity:.42}.rift-fracture-fine path{stroke-width:.48}
+.code-rift-fractures{position:absolute;inset:-8%;width:116%;height:116%;overflow:visible;color:rgba(224,225,221,.35)}
+.code-rift-fractures path{fill:none;stroke:currentColor;stroke-linecap:butt;stroke-linejoin:miter;vector-effect:non-scaling-stroke}
+.rift-fracture-main path{stroke-width:.76}
+.rift-fracture-main path:nth-child(4n+2){opacity:.55;stroke-width:.54}
+.rift-fracture-main path:nth-child(4n+3){opacity:.72;stroke-width:.64}
+.rift-fracture-branches{opacity:.52}.rift-fracture-branches path{stroke-width:.48}
+.rift-fracture-chips{opacity:.4}.rift-fracture-chips path{stroke-width:.44}
 
 /* Лента движется справа снизу к левому верхнему краю. Сами слова не наклонены. */
 .tape{
@@ -874,6 +877,13 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
       <span class="line"><span class="line-in"><span class="hero-word hero-word-up hero-word-small">на</span> <span class="hero-word hero-word-low hero-word-small">ваш</span> <span class="hero-word hero-word-up">бизнес</span></span></span>
     </h1>
     <div class="code-rift" aria-hidden="true">
+      <svg class="code-rift-defs" aria-hidden="true">
+        <defs>
+          <clipPath id="code-rift-cut" clipPathUnits="objectBoundingBox">
+            <path d="M0 .455 C.07 .43 .09 .36 .17 .34 L.195 .348 L.224 .302 C.285 .29 .31 .24 .36 .235 L.39 .255 L.442 .198 L.47 .214 C.5 .19 .51 .14 .53 .13 L.552 .177 L.584 .15 L.612 .19 C.66 .18 .68 .22 .73 .2 L.763 .243 C.81 .23 .83 .27 .885 .244 L.91 .282 C.95 .27 .98 .284 1 .295 L.982 .352 L.997 .397 L.978 .442 L1 .496 L.972 .532 L.991 .576 C.965 .59 .942 .61 .925 .641 L.89 .63 C.878 .655 .867 .676 .855 .691 L.817 .674 C.793 .707 .774 .726 .75 .735 L.722 .708 L.69 .77 C.65 .755 .63 .82 .57 .77 L.532 .85 C.5 .815 .48 .86 .45 .86 C.41 .82 .39 .85 .35 .81 L.294 .822 L.253 .758 C.21 .79 .19 .735 .15 .765 L.113 .7 C.07 .73 .08 .66 .038 .65 L.063 .606 L.02 .589 L.041 .545 L0 .533 Z"/>
+          </clipPath>
+        </defs>
+      </svg>
       <div class="code-rift-rim">
         <div class="code-rift-well">
           <div class="code-rift-plane">
@@ -966,22 +976,39 @@ function activateServiceRow(index){
       </div>
       <svg class="code-rift-fractures" viewBox="0 0 720 510" preserveAspectRatio="none">
         <g class="rift-fracture-main">
-          <path d="M86 198 C78 191 73 184 67 192 C62 187 58 181 53 177 C46 171 43 180 38 181 C33 180 30 177 26 181 C18 177 15 169 9 174 C3 169 -2 164 -8 156"/>
-          <path d="M53 177 C49 167 57 158 47 146 C42 138 39 132 36 130 C34 125 35 120 28 119 C23 118 20 116 17 114"/>
-          <path d="M252 106 C244 98 252 89 238 80 C231 76 227 70 229 68 C236 59 228 51 238 39 C232 33 234 23 222 10 C220 1 218 -7 215 -14"/>
-          <path d="M514 94 C523 84 519 76 532 72 C542 69 545 61 548 62 C558 68 566 60 584 66 C593 58 599 51 601 42 C613 38 617 35 620 36 C632 43 645 37 668 45 C679 38 689 42 694 40 C704 33 708 26 718 24 C723 19 727 13 730 8"/>
-          <path d="M548 62 C551 53 546 47 547 43 C554 37 558 34 556 34 C552 29 555 24 560 20"/>
-          <path d="M646 348 C655 357 664 356 674 373 C684 369 690 376 696 373 C706 368 712 370 718 376 C725 375 733 380 739 388"/>
-          <path d="M674 373 C669 383 678 393 668 404 C663 411 659 417 661 416 C668 427 658 438 674 446 C679 451 681 455 682 458"/>
-          <path d="M253 414 C243 423 248 433 232 436 C219 438 217 450 205 446 C197 450 195 458 183 456 C174 454 165 458 160 463 C164 472 152 479 143 489 C131 490 125 500 119 501 C107 497 100 504 89 511"/>
-          <path d="M217 449 C220 460 214 468 215 469 C225 478 229 486 228 493 C218 504 224 514 210 523 C203 529 198 534 196 538"/>
-          <path d="M101 326 C92 333 84 327 82 329 C75 336 69 339 62 340 C53 335 47 340 43 339 C35 335 31 330 30 332 C20 340 13 334 10 335 C1 342 -7 350 -14 356"/>
+          <path d="M118 191 L108 186 L103 176 L91 179 L86 167 L74 164 L76 153 L63 149 L59 136 L47 137 L40 124 L25 118 L20 104"/>
+          <path d="M292 115 L283 104 L286 94 L275 87 L279 74 L271 65 L278 55 L273 42 L281 31 L275 18 L279 4 L271 -9"/>
+          <path d="M505 111 L514 100 L526 103 L532 91 L543 94 L551 82 L564 86 L573 73 L587 78 L595 65 L610 70 L620 57 L637 61 L649 49 L664 53 L675 42 L692 45 L708 33 L729 34"/>
+          <path d="M648 238 L660 233 L670 238 L678 227 L691 231 L699 220 L711 225 L720 214 L736 216"/>
+          <path d="M620 362 L632 369 L636 382 L649 383 L655 396 L666 394 L676 408 L689 409 L696 423 L711 427 L716 442 L734 451"/>
+          <path d="M444 415 L437 428 L443 439 L434 451 L439 464 L430 475 L435 488 L426 501 L430 517"/>
+          <path d="M259 415 L248 425 L251 436 L239 443 L242 455 L228 460 L225 473 L211 477 L205 491 L188 496 L181 512"/>
+          <path d="M91 314 L80 319 L75 313 L66 322 L56 318 L48 327 L38 323 L30 332 L18 328 L8 337 L-8 333"/>
         </g>
-        <g class="rift-fracture-fine">
-          <path d="M335 80 C330 71 337 63 327 53 C321 48 318 43 320 42 C327 35 319 27 329 9"/>
-          <path d="M600 142 C610 138 615 146 628 138 C636 136 639 142 645 132 C654 136 662 128 674 124 C679 119 681 113 683 108"/>
-          <path d="M535 419 C543 430 550 426 558 439 C565 447 568 453 567 452 C562 461 571 472 568 481 C570 486 573 490 576 493"/>
-          <path d="M142 260 C131 257 125 264 112 255 C105 254 101 261 97 250 C86 253 78 245 68 247 C64 240 62 235 60 230"/>
+        <g class="rift-fracture-branches">
+          <path d="M86 167 L80 173 L72 171 L64 178 L53 176"/>
+          <path d="M59 136 L65 126 L61 118 L67 109"/>
+          <path d="M275 87 L263 84 L257 76 L247 78 L239 70"/>
+          <path d="M278 55 L289 49 L292 39 L302 34"/>
+          <path d="M573 73 L568 62 L573 54 L569 44"/>
+          <path d="M620 57 L624 45 L619 37 L624 27"/>
+          <path d="M678 227 L674 216 L680 207 L677 196"/>
+          <path d="M655 396 L648 404 L650 415 L643 423"/>
+          <path d="M696 423 L703 414 L714 412 L720 404"/>
+          <path d="M439 464 L451 468 L458 477 L470 476"/>
+          <path d="M239 443 L228 438 L219 442 L210 436"/>
+          <path d="M225 473 L235 481 L236 492 L245 500"/>
+          <path d="M66 322 L62 311 L53 306 L52 297"/>
+          <path d="M30 332 L27 343 L18 349 L16 359"/>
+        </g>
+        <g class="rift-fracture-chips">
+          <path d="M153 153 L148 143 L141 150 M180 132 L176 123 L168 128"/>
+          <path d="M337 93 L333 82 L325 88 M363 83 L369 74 L364 66"/>
+          <path d="M465 112 L471 102 L478 107 M603 111 L611 103 L618 108"/>
+          <path d="M677 281 L687 277 L693 282 M657 318 L668 315 L674 321"/>
+          <path d="M570 410 L578 418 L575 428 M518 430 L524 440 L519 449"/>
+          <path d="M357 442 L351 452 L355 461 M307 432 L300 441 L303 450"/>
+          <path d="M151 365 L142 370 L136 365 M114 277 L105 272 L99 278"/>
         </g>
       </svg>
     </div>
