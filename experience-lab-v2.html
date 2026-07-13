@@ -103,7 +103,7 @@ button{font:inherit;color:inherit}
 .lab-back:hover{border-color:var(--line-bright);color:var(--ink)}
 .lab-back:active{transform:scale(.97)}
 
-.lab-scroll{position:relative;height:1450svh}
+.lab-scroll{position:relative;height:1800svh}
 .lab-sticky{
   position:sticky;
   top:0;
@@ -1061,7 +1061,7 @@ body.fx-enabled .fx-panel{
   .lab-brand img{width:34px;height:34px}
   .lab-brand em{display:none}
   .lab-back{min-height:36px;padding:0 13px;font-size:12px}
-  .lab-scroll{height:1580svh}
+  .lab-scroll{height:1850svh}
   .lab-sticky{min-height:620px}
   .stage-layout{grid-template-columns:1fr;align-items:start;padding:91px 18px 28px}
   .stage-copy{justify-content:flex-start;max-width:none;height:36%;padding:0 2px}
@@ -2073,6 +2073,7 @@ body.fx-enabled .fx-panel{
   var cueStarted=false;
   var mobileFinalShellHeight=330;
   var processCompleted=false;
+  var processReverseMode=false;
 
   function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
   function mix(a,b,t){return a+(b-a)*t;}
@@ -2082,7 +2083,21 @@ body.fx-enabled .fx-panel{
   function backOut(value){var c1=1.36,c3=c1+1;return 1+c3*Math.pow(value-1,3)+c1*Math.pow(value-1,2);}
   function setOpacity(element,value){element.style.opacity=clamp(value,0,1).toFixed(3);}
   function setTransform(element,value){element.style.transform=value;}
-  function labPhaseEnd(){return reduced?.60:(window.innerWidth<=700?.555:.563);}
+  function labPhaseEnd(){return reduced?.60:(window.innerWidth<=700?.469:.447);}
+  function processReverseCheckpoint(value){
+    if(value>=buildStart)return buildEnd;
+    if(value>=.60)return .90;
+    if(value>=.075)return .135;
+    return 0;
+  }
+  function setProcessTarget(value){
+    value=clamp(value,0,storyUnits);
+    if(!manual){
+      if(value<target-.002)processReverseMode=true;
+      else if(value>target+.002)processReverseMode=false;
+    }
+    target=value;
+  }
   function syncStagePicker(tabs,active){
     tabs.forEach(function(tab,index){
       tab.style.setProperty('--stage-shift',((index-active)*118)+'%');
@@ -2552,20 +2567,30 @@ body.fx-enabled .fx-panel{
     pointer.x+=(pointerTarget.x-pointer.x)*(reduced?1:.055);
     pointer.y+=(pointerTarget.y-pointer.y)*(reduced?1:.055);
     var gatedTarget=target;
-    if(target>.16&&noticeAction<.96)gatedTarget=Math.min(gatedTarget,.16);
-    else if(target>.935&&runAction<.96)gatedTarget=Math.min(gatedTarget,.935);
-    if(reduced){
+    var abbreviatedReverse=processReverseMode&&!manual&&target<visual-.001;
+    if(abbreviatedReverse){
+      gatedTarget=processReverseCheckpoint(target);
       visual=gatedTarget;
+      noticeAction=visual>.28?1:0;
+      runAction=visual>=buildStart?1:0;
+      runHoverTime=0;
+      runAutoAdvanced=visual>=buildStart;
     }else{
-      gatedTarget=Math.max(gatedTarget,visual);
-      var visualDelta=(gatedTarget-visual)*follow;
-      var messageCorridor=visual>.255&&visual<.42;
-      var codeCorridor=visual>.42&&visual<buildStart;
-      var buildCorridor=visual>buildStart&&visual<buildEnd;
-      var buildIntro=visual>buildStart&&visual<buildStart+.15;
-      var maxVisualRate=messageCorridor?.15:(codeCorridor?.082:(buildCorridor?(buildIntro?.19:.14):.32));
-      var maxVisualStep=maxVisualRate*Math.max(deltaTime,1/240);
-      visual+=clamp(visualDelta,-maxVisualStep,maxVisualStep);
+      if(target>.16&&noticeAction<.96)gatedTarget=Math.min(gatedTarget,.16);
+      else if(target>.935&&runAction<.96)gatedTarget=Math.min(gatedTarget,.935);
+      if(reduced){
+        visual=gatedTarget;
+      }else{
+        gatedTarget=Math.max(gatedTarget,visual);
+        var visualDelta=(gatedTarget-visual)*follow;
+        var messageCorridor=visual>.255&&visual<.42;
+        var codeCorridor=visual>.42&&visual<buildStart;
+        var buildCorridor=visual>buildStart&&visual<buildEnd;
+        var buildIntro=visual>buildStart&&visual<buildStart+.15;
+        var maxVisualRate=messageCorridor?.15:(codeCorridor?.082:(buildCorridor?(buildIntro?.19:.14):.32));
+        var maxVisualStep=maxVisualRate*Math.max(deltaTime,1/240);
+        visual+=clamp(visualDelta,-maxVisualStep,maxVisualStep);
+      }
     }
     if(Math.abs(gatedTarget-visual)<.00005)visual=gatedTarget;
     if(visual>=buildEnd-.006)processCompleted=true;
@@ -2696,7 +2721,7 @@ body.fx-enabled .fx-panel{
     var rect=section.getBoundingClientRect();
     var distance=Math.max(1,section.offsetHeight-window.innerHeight);
     var overall=clamp(-rect.top/distance,0,1);
-    target=clamp(overall/labPhaseEnd(),0,1)*storyUnits;
+    setProcessTarget(clamp(overall/labPhaseEnd(),0,1)*storyUnits);
   }
 
   function sectionProgress(){
@@ -2766,7 +2791,7 @@ body.fx-enabled .fx-panel{
       trigger:section,
       start:'top top',
       end:'bottom bottom',
-      onUpdate:function(self){if(!manual)target=clamp(self.progress/labPhaseEnd(),0,1)*storyUnits;},
+      onUpdate:function(self){if(!manual)setProcessTarget(clamp(self.progress/labPhaseEnd(),0,1)*storyUnits);},
       onRefresh:measure
     });
   }else{
@@ -2920,6 +2945,9 @@ body.fx-enabled .fx-panel{
   var defaultHeaderStatus=headerStatus?headerStatus.textContent:'';
   var target=0;
   var current=0;
+  var reverseMode=false;
+  var reverseVisual=0;
+  var renderedMotion=0;
   var lastTime=performance.now();
   var launchWheelFrame=0;
   var launchWheelStep=0;
@@ -2942,9 +2970,47 @@ body.fx-enabled .fx-panel{
   function out(value){return 1-Math.pow(1-value,3);}
   function setOpacity(element,value){if(element)element.style.opacity=clamp(value,0,1).toFixed(3);}
   function setTransform(element,value){if(element)element.style.transform=value;}
-  function labPhaseEnd(){return reduced?.60:(window.innerWidth<=700?.555:.563);}
+  function labPhaseEnd(){return reduced?.60:(window.innerWidth<=700?.469:.447);}
   function phase(value,startIn,endIn,startOut,endOut){
     return smooth(segment(value,startIn,endIn))*(1-smooth(segment(value,startOut,endOut)));
+  }
+  var launchMotionStops=[
+    [0,0],
+    [.16,.22],[.24,.22],
+    [.34,.36],[.44,.36],
+    [.54,.50],[.64,.50],
+    [.72,.59],[.76,.59],
+    [.84,.68],[.87,.68],
+    [.96,.92],[1,1]
+  ];
+  function forwardStageMotion(value){
+    value=clamp(value,0,1);
+    for(var index=1;index<launchMotionStops.length;index++){
+      var from=launchMotionStops[index-1];
+      var to=launchMotionStops[index];
+      if(value<=to[0])return mix(from[1],to[1],smooth(segment(value,from[0],to[0])));
+    }
+    return 1;
+  }
+  function reverseStageCheckpoint(value){
+    if(value>=.965)return .97;
+    if(value>=.87)return .78;
+    if(value>=.76)return .68;
+    if(value>=.64)return .59;
+    if(value>=.44)return .50;
+    if(value>=.24)return .36;
+    if(value>=.02)return .22;
+    return 0;
+  }
+  function setLaunchTarget(value){
+    value=clamp(value,0,1);
+    if(value<target-.0005){
+      if(!reverseMode)reverseVisual=renderedMotion;
+      reverseMode=true;
+    }else if(value>target+.0005){
+      reverseMode=false;
+    }
+    target=value;
   }
   function syncLaunchPicker(activeIndex){
     sharedStageTabs.forEach(function(tab,index){
@@ -2954,17 +3020,17 @@ body.fx-enabled .fx-panel{
     });
   }
 
-  function renderCopy(progress,processReady){
+  function renderCopy(progress,processReady,motion){
     if(!processReady){
       copySteps.forEach(function(step){setOpacity(step,0);step.setAttribute('aria-hidden','true');});
       return;
     }
     var copyEntry=smooth(segment(progress,.008,.068));
     var values=[
-      1-smooth(segment(progress,.515,.56)),
-      phase(progress,.515,.56,.69,.735),
-      phase(progress,.69,.735,.89,.93),
-      smooth(segment(progress,.89,.93))
+      1-smooth(segment(motion,.515,.56)),
+      phase(motion,.515,.56,.69,.735),
+      phase(motion,.69,.735,.89,.93),
+      smooth(segment(motion,.89,.93))
     ];
     var active=0;
     values.forEach(function(value,index){
@@ -2973,7 +3039,7 @@ body.fx-enabled .fx-panel{
       if(value>values[active])active=index;
       var step=copySteps[index];
       setOpacity(step,value);
-      var before=progress<[0,.515,.69,.89][index];
+      var before=motion<[0,.515,.69,.89][index];
       setTransform(step,'translate3d(0,'+((before?1:-1)*(1-value)*26).toFixed(1)+'px,0)');
       step.style.filter='blur('+((1-value)*3).toFixed(2)+'px)';
       step.setAttribute('aria-hidden',value>.45?'false':'true');
@@ -3057,13 +3123,14 @@ body.fx-enabled .fx-panel{
     targetMeasured=true;
   }
 
-  function render(progress){
+  function render(progress,motionOverride,isReverse){
     var processReady=window.__labProcessReady===true;
     if(!processReady)progress=0;
     progress=clamp(progress,0,1);
-    var motion=progress;
+    var motion=Number.isFinite(motionOverride)?clamp(motionOverride,0,1):forwardStageMotion(progress);
+    renderedMotion=motion;
     var launchEntry=smooth(segment(progress,.002,.055));
-    var adaptiveTakeover=smooth(segment(motion,.17,.25));
+    var adaptiveTakeover=smooth(segment(motion,.215,.222));
     window.__labLaunchActive=processReady&&progress>.006;
     var processExit=smooth(segment(progress,.012,.105));
     var desktopSettle=smooth(segment(motion,.14,.22));
@@ -3083,7 +3150,7 @@ body.fx-enabled .fx-panel{
     var width=Math.max(320,visual.clientWidth);
     var height=Math.max(360,visual.clientHeight);
     var tabletMorph=smooth(segment(motion,.225,.36));
-    var phoneMorph=smooth(segment(motion,.35,.50));
+    var phoneMorph=smooth(segment(motion,.365,.50));
     var browserIn=smooth(segment(motion,.51,.59));
     var browserLayerIn=smooth(segment(browserIn,.18,.82));
     var deviceLayerOut=1-browserLayerIn;
@@ -3101,11 +3168,11 @@ body.fx-enabled .fx-panel{
     var routeTelegram=smooth(segment(motion,.85,.905));
     var deliveryDone=smooth(segment(motion,.875,.925));
     var finalIn=smooth(segment(motion,.91,.97));
-    var tabletReveal=smooth(segment(motion,.235,.365));
-    var phoneReveal=smooth(segment(motion,.36,.505));
+    var tabletReveal=smooth(segment(motion,.292,.304));
+    var phoneReveal=smooth(segment(motion,.425,.439));
     var activeShot=phoneReveal>=.5?2:(tabletReveal>=.5?1:0);
 
-    renderCopy(progress,processReady);
+    renderCopy(progress,processReady,motion);
     launchProgress.style.transform='scaleY('+progress.toFixed(4)+')';
 
     if(window.__labProcessReady===true&&!deviceMetrics)measureDeviceMetrics();
@@ -3202,16 +3269,11 @@ body.fx-enabled .fx-panel{
       browser.style.borderRadius=deviceRadius.toFixed(2)+'px';
       setOpacity(adaptiveDesktopChrome,(1-desktopSettle)*(1-browserIn));
 
-      adaptiveShots.forEach(function(shot){
-        setOpacity(shot,0);
-      });
-      setOpacity(adaptiveShots[activeShot],1);
-      var tabletShutter=Math.pow(Math.sin(tabletReveal*Math.PI),3);
-      var phoneShutter=Math.pow(Math.sin(phoneReveal*Math.PI),3);
-      var desktopSwapShutter=Math.pow(Math.sin(smooth(segment(motion,.18,.25))*Math.PI),3);
-      var browserShutter=smooth(segment(browserIn,.08,.40))*(1-smooth(segment(browserIn,.60,.92)));
-      setOpacity(adaptiveScreenShutter,Math.max(desktopSwapShutter,tabletShutter,phoneShutter,browserShutter));
-      setOpacity(browserMorphShutter,browserShutter);
+      setOpacity(adaptiveShots[0],1-tabletReveal);
+      setOpacity(adaptiveShots[1],tabletReveal*(1-phoneReveal));
+      setOpacity(adaptiveShots[2],phoneReveal);
+      setOpacity(adaptiveScreenShutter,0);
+      setOpacity(browserMorphShutter,0);
       setOpacity(adaptiveCamera,tabletMorph*(1-phoneMorph)*(1-browserIn));
       setOpacity(adaptiveIsland,phoneUi);
       setOpacity(phoneSystemBar,phoneUi);
@@ -3267,14 +3329,15 @@ body.fx-enabled .fx-panel{
     var cursorMove=smooth(segment(motion,.755,.81));
     var cursorX=mix(cursorStartX,cursorTargetX,cursorMove);
     var cursorY=mix(cursorStartY,cursorTargetY,cursorMove)-Math.sin(cursorMove*Math.PI)*(mobile?32:54);
-    var cursorAlpha=phase(motion,.73,.76,.88,.92);
+    var transientAlpha=isReverse?0:1;
+    var cursorAlpha=phase(motion,.73,.76,.88,.92)*transientAlpha;
     setOpacity(launchCursor,cursorAlpha);
     setTransform(launchCursor,'translate3d('+(cursorX-4).toFixed(1)+'px,'+(cursorY-4).toFixed(1)+'px,0) rotate('+mix(-7,1,cursorMove).toFixed(2)+'deg) scale('+(1-Math.sin(clickPhase*Math.PI)*.1).toFixed(3)+')');
-    var clickAlpha=Math.sin(clickPhase*Math.PI);
+    var clickAlpha=Math.sin(clickPhase*Math.PI)*transientAlpha;
     setOpacity(launchClick,clickAlpha);
     setTransform(launchClick,'translate3d('+(cursorTargetX-14).toFixed(1)+'px,'+(cursorTargetY-14).toFixed(1)+'px,0) scale('+mix(.55,1.45,out(clickPhase)).toFixed(3)+')');
 
-    var routeAlpha=phase(motion,.81,.835,.91,.94);
+    var routeAlpha=phase(motion,.81,.835,.91,.94)*transientAlpha;
     setOpacity(deliveryRoute,routeAlpha);
     mailPath.style.strokeDashoffset=(1-routeMail).toFixed(4);
     telegramPath.style.strokeDashoffset=(1-routeTelegram).toFixed(4);
@@ -3332,9 +3395,9 @@ body.fx-enabled .fx-panel{
     if(rect.top>1||rect.bottom<window.innerHeight)return;
     var state=launchScrollState();
     if(state.overall<state.split-.0005||state.progress>=.999||current>=.992)return;
-    var maxLead=current<.25?.018:(current<.57?.014:(current<.93?.016:.024));
+    var maxLead=current<.25?.014:(current<.76?.011:(current<.96?.013:.018));
     var available=Math.max(0,(current+maxLead-state.progress)*state.launchDistance);
-    var step=Math.min(event.deltaY,28,available);
+    var step=Math.min(event.deltaY,24,available);
     if(step+1<event.deltaY){
       event.preventDefault();
       if(step>.5){
@@ -3351,7 +3414,7 @@ body.fx-enabled .fx-panel{
     }
   }
 
-  function fallback(){target=sectionProgress();}
+  function fallback(){setLaunchTarget(sectionProgress());}
 
   function frame(now){
     var delta=clamp((now-lastTime)/1000,0,.05);
@@ -3364,13 +3427,27 @@ body.fx-enabled .fx-panel{
       var follow=1-Math.pow(difference<0?.00002:.0015,delta);
       var change=difference*follow;
       if(difference>0){
-        var maxRate=current<.22?.12:(current<.57?.09:(current<.93?.105:.16));
+        var maxRate=current<.24?.085:(current<.76?.065:(current<.96?.075:.095));
         change=Math.min(change,maxRate*Math.max(delta,1/240));
       }
       current+=change;
     }
     if(Math.abs(gatedTarget-current)<.00005)current=gatedTarget;
-    render(current);
+    var motion;
+    if(reverseMode){
+      var reverseTarget=reverseStageCheckpoint(current);
+      if(reduced){
+        reverseVisual=reverseTarget;
+      }else{
+        reverseVisual+=(reverseTarget-reverseVisual)*(1-Math.pow(.00001,delta));
+        if(Math.abs(reverseTarget-reverseVisual)<.0005)reverseVisual=reverseTarget;
+      }
+      motion=reverseVisual;
+    }else{
+      motion=forwardStageMotion(current);
+      reverseVisual=motion;
+    }
+    render(current,motion,reverseMode);
     requestAnimationFrame(frame);
   }
 
@@ -3380,7 +3457,7 @@ body.fx-enabled .fx-panel{
       trigger:section,
       start:'top top',
       end:'bottom bottom',
-      onUpdate:function(self){var split=labPhaseEnd();target=clamp((self.progress-split)/(1-split),0,1);},
+      onUpdate:function(self){var split=labPhaseEnd();setLaunchTarget(clamp((self.progress-split)/(1-split),0,1));},
       onLeaveBack:function(){if(headerStatus)headerStatus.textContent=defaultHeaderStatus;}
     });
   }else{
@@ -3395,8 +3472,10 @@ body.fx-enabled .fx-panel{
       var value=parseFloat(this.value);
       if(!Number.isFinite(value))return;
       value=clamp(value,0,1);
-      target=current=value;
-      render(current);
+      setLaunchTarget(value);
+      current=value;
+      reverseVisual=reverseMode?reverseStageCheckpoint(value):forwardStageMotion(value);
+      render(current,reverseVisual,reverseMode);
     });
   }
 
