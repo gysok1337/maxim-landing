@@ -514,9 +514,10 @@ html.dark .ba-handle{background:#F3F1EC}
 /* ---------- faq ---------- */
 .faq{max-width:none;margin:0 auto}
 .faq-scene{
-  position:relative;min-height:680px;overflow:hidden;isolation:isolate;border:1px solid var(--line);
+  position:relative;min-height:820px;overflow:hidden;isolation:isolate;border:1px solid var(--line);
   border-radius:28px;background:
-    radial-gradient(circle at 52% 48%,rgb(var(--accent-rgb) / .075),transparent 27%),
+    radial-gradient(circle at 20% 18%,rgb(var(--accent-rgb) / .055),transparent 23%),
+    radial-gradient(circle at 78% 72%,rgb(var(--iso-rgb) / .045),transparent 26%),
     linear-gradient(145deg,color-mix(in srgb,var(--card) 88%,transparent),color-mix(in srgb,var(--bg-2) 82%,transparent));
   box-shadow:0 52px 120px -100px rgb(var(--iso-rgb) / .68);
 }
@@ -526,101 +527,99 @@ html.dark .ba-handle{background:#F3F1EC}
     linear-gradient(rgb(var(--iso-rgb) / .055) 1px,transparent 1px),
     linear-gradient(90deg,rgb(var(--iso-rgb) / .055) 1px,transparent 1px);
   background-size:46px 46px;
-  -webkit-mask-image:radial-gradient(circle at 50% 48%,#000 0 24%,transparent 76%);
-  mask-image:radial-gradient(circle at 50% 48%,#000 0 24%,transparent 76%);
+  -webkit-mask-image:linear-gradient(145deg,#000,transparent 84%);
+  mask-image:linear-gradient(145deg,#000,transparent 84%);
 }
 .faq-scene::after{
-  content:"";position:absolute;left:50%;top:50%;z-index:-1;width:42%;aspect-ratio:1;
-  border:1px solid rgb(var(--accent-rgb) / .1);border-radius:50%;transform:translate(-50%,-50%);
-  box-shadow:0 0 0 68px rgb(var(--accent-rgb) / .018),0 0 0 136px rgb(var(--accent-rgb) / .012);
-  pointer-events:none;
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.22;
+  background:linear-gradient(118deg,transparent 12%,rgb(var(--accent-rgb) / .11) 12.1%,transparent 12.3% 68%,rgb(var(--iso-rgb) / .08) 68.1%,transparent 68.3%);
 }
 .faq-cloud{position:absolute;inset:0;z-index:2}
-.faq-node{position:absolute;width:clamp(218px,22vw,282px)}
-.faq-node:nth-child(1){left:3%;top:7%;--faq-tilt:-1.4deg;--faq-drift:-8px;--faq-time:7.2s;--faq-delay:-1.8s}
+.faq-node{position:absolute;width:clamp(240px,24vw,310px);z-index:1}
+.faq-node.is-open{z-index:6}
+.faq-node:nth-child(1){left:3%;top:5%;--faq-tilt:-1.4deg;--faq-drift:-7px;--faq-time:7.2s;--faq-delay:-1.8s}
 .faq-node:nth-child(2){right:3.5%;top:8%;--faq-tilt:1.2deg;--faq-drift:7px;--faq-time:8.1s;--faq-delay:-4.6s}
-.faq-node:nth-child(3){left:1.5%;top:40%;--faq-tilt:.8deg;--faq-drift:-6px;--faq-time:7.8s;--faq-delay:-2.9s}
-.faq-node:nth-child(4){left:10%;bottom:6%;--faq-tilt:-.9deg;--faq-drift:8px;--faq-time:8.5s;--faq-delay:-5.2s}
-.faq-node:nth-child(5){right:2.5%;bottom:7%;--faq-tilt:1.5deg;--faq-drift:-7px;--faq-time:7.5s;--faq-delay:-3.7s}
+.faq-node:nth-child(3){left:37%;top:34%;--faq-tilt:.8deg;--faq-drift:-6px;--faq-time:7.8s;--faq-delay:-2.9s}
+.faq-node:nth-child(4){left:5%;top:60%;--faq-tilt:-.9deg;--faq-drift:8px;--faq-time:8.5s;--faq-delay:-5.2s}
+.faq-node:nth-child(5){right:4%;top:64%;--faq-tilt:1.5deg;--faq-drift:-7px;--faq-time:7.5s;--faq-delay:-3.7s}
 .faq-question{
   position:relative;width:100%;display:grid;grid-template-columns:38px minmax(0,1fr);gap:12px;align-items:start;
   padding:15px 17px;border:1px solid var(--line-2);border-radius:18px 18px 18px 6px;
   background:color-mix(in srgb,var(--card) 94%,transparent);color:var(--ink);font:inherit;text-align:left;
   box-shadow:0 20px 52px -42px rgb(var(--iso-rgb) / .72);cursor:pointer;
   transform:rotate(var(--faq-tilt));transform-origin:50% 60%;
-  transition:border-color .24s ease,background .24s ease,box-shadow .32s ease,opacity .24s ease;
+  transition:border-color .24s ease,background .24s ease,box-shadow .32s ease,transform .38s cubic-bezier(.22,1,.36,1);
 }
 .faq-question:hover,.faq-question:focus-visible{
   border-color:color-mix(in srgb,var(--line-2) 62%,var(--accent));
   background:color-mix(in srgb,var(--card) 94%,rgb(var(--accent-rgb) / .06));
-  box-shadow:0 24px 64px -42px rgb(var(--accent-rgb) / .42);
+  box-shadow:0 24px 64px -42px rgb(var(--accent-rgb) / .42);transform:translate3d(0,-3px,0) rotate(0deg);
 }
-.faq-question.is-active{
+.faq-node.is-open .faq-question{
   border-color:rgb(var(--accent-rgb) / .48);
   background:color-mix(in srgb,var(--card) 92%,rgb(var(--accent-rgb) / .08));
-  box-shadow:0 28px 72px -46px rgb(var(--accent-rgb) / .6);
+  box-shadow:0 28px 72px -46px rgb(var(--accent-rgb) / .6);transform:rotate(0deg);
 }
 .faq-avatar{
   width:38px;height:38px;border:1px solid var(--line-2);border-radius:50%;display:grid;place-items:center;
   background:var(--bg-2);color:var(--muted);font-family:var(--mono);font-size:11px;font-weight:500;
   transition:background .24s ease,color .24s ease,border-color .24s ease;
 }
-.faq-question.is-active .faq-avatar{border-color:transparent;background:var(--accent);color:var(--accent-contrast)}
+.faq-node.is-open .faq-question .faq-avatar{border-color:transparent;background:var(--accent);color:var(--accent-contrast)}
 .faq-question-body{display:block;min-width:0}
 .faq-question-meta{display:block;margin:1px 0 6px;color:var(--muted-2);font-family:var(--mono);font-size:8px;letter-spacing:.13em;text-transform:uppercase}
 .faq-question-text{display:block;font-size:clamp(14px,1.25vw,17px);font-weight:620;letter-spacing:-.018em;line-height:1.3;text-wrap:balance}
-
-.faq-reply{
-  position:absolute;left:50%;top:51%;z-index:3;width:min(44%,520px);min-height:276px;
-  padding:clamp(22px,2.6vw,32px);border:1px solid color-mix(in srgb,var(--line-2) 72%,var(--accent));
-  border-radius:28px 28px 8px 28px;background:color-mix(in srgb,var(--card) 97%,transparent);
-  transform:translate(-50%,-50%);box-shadow:0 38px 90px -60px rgb(var(--iso-rgb) / .82);
+.faq-inline-reply{
+  position:relative;width:calc(100% - 28px);max-height:0;margin:0 0 0 auto;padding:0 16px;overflow:hidden;
+  border:1px solid transparent;border-radius:18px 18px 6px 18px;background:var(--ink);color:var(--bg);
+  opacity:0;visibility:hidden;transform:translate3d(18px,-8px,0) scale(.985);pointer-events:none;
+  box-shadow:0 28px 68px -48px rgb(var(--iso-rgb) / .78);
+  transition:max-height .52s cubic-bezier(.22,1,.36,1),margin .42s ease,padding .42s ease,
+    opacity .24s ease,visibility 0s linear .52s,transform .52s cubic-bezier(.22,1,.36,1),border-color .24s ease;
 }
-.faq-reply::before{
-  content:"";position:absolute;left:-1px;top:31px;width:3px;height:52px;border-radius:0 4px 4px 0;
-  background:var(--accent);box-shadow:0 0 24px rgb(var(--accent-rgb) / .48);
+.faq-node.is-open .faq-inline-reply{
+  max-height:290px;margin-top:11px;padding:15px 16px 16px;border-color:rgb(var(--accent-rgb) / .28);
+  opacity:1;visibility:visible;transform:none;pointer-events:auto;
+  transition:max-height .58s cubic-bezier(.22,1,.36,1),margin .42s ease,padding .42s ease,
+    opacity .3s ease .06s,visibility 0s,transform .58s cubic-bezier(.22,1,.36,1),border-color .24s ease;
 }
-.faq-reply-top{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center}
-.faq-reply .faq-avatar{width:42px;height:42px;border-color:transparent;background:var(--ink);color:var(--bg);font-family:var(--serif);font-size:20px;font-style:italic}
-.faq-reply-author{display:block;font-size:14px;font-weight:650;line-height:1.15}
-.faq-reply-state{display:block;margin-top:4px;color:var(--muted-2);font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase}
-.faq-reply-index{color:var(--muted-2);font-family:var(--mono);font-size:9px;letter-spacing:.1em}
-.faq-reply-context{margin-top:26px;color:var(--muted-2);font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase}
-.faq-reply-text{margin-top:10px;color:var(--ink-2);font-size:clamp(16px,1.45vw,19px);line-height:1.55;letter-spacing:-.012em}
-.faq-reply-foot{display:flex;align-items:center;gap:8px;margin-top:24px;color:var(--muted-2);font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase}
-.faq-reply-foot::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 14px rgb(var(--accent-rgb) / .58)}
-.faq-reply.is-updating .faq-reply-context,.faq-reply.is-updating .faq-reply-text{animation:faqReplyIn .38s cubic-bezier(.22,1,.36,1) both}
-@keyframes faqReplyIn{from{opacity:0;transform:translate3d(0,10px,0)}to{opacity:1;transform:none}}
+.faq-inline-top{display:flex;align-items:center;justify-content:flex-end;gap:8px;color:color-mix(in srgb,var(--bg) 72%,transparent)}
+.faq-inline-top .faq-avatar{width:28px;height:28px;border:0;background:var(--accent);color:var(--accent-contrast);font-family:var(--serif);font-size:15px;font-style:italic;order:2}
+.faq-inline-author{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase}
+.faq-inline-text{margin-top:11px;color:var(--bg);font-size:13.5px;line-height:1.48;letter-spacing:-.008em}
+.faq-inline-text::after{content:"";display:inline-block;width:1px;height:1em;margin-left:3px;background:currentColor;vertical-align:-.12em;opacity:0}
+.faq-inline-reply.is-typing .faq-inline-text::after{opacity:1;animation:faqCaret .7s steps(1,end) infinite}
+.faq-inline-accessible{
+  position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
+  overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
+}
+@keyframes faqCaret{0%,48%{opacity:1}49%,100%{opacity:0}}
 @keyframes faqFloat{
-  0%,100%{transform:translate3d(0,0,0) rotate(var(--faq-tilt))}
-  50%{transform:translate3d(0,var(--faq-drift),0) rotate(var(--faq-tilt))}
+  0%,100%{transform:translate3d(0,0,0)}
+  50%{transform:translate3d(0,var(--faq-drift),0)}
 }
 @media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
-  .faq-question{animation:faqFloat var(--faq-time) ease-in-out var(--faq-delay) infinite}
-  .faq-question:hover,.faq-question:focus-visible{animation-play-state:paused}
+  .faq-node{animation:faqFloat var(--faq-time) ease-in-out var(--faq-delay) infinite}
+  .faq-node:hover,.faq-node.is-open{animation-play-state:paused}
 }
 @media (max-width:920px){
-  .faq-scene{min-height:0;padding:18px;border-radius:22px;overflow:hidden}
-  .faq-scene::after{width:68%;top:67%}
-  .faq-cloud{
-    position:relative;inset:auto;display:flex;gap:11px;overflow-x:auto;margin:0 -18px;padding:4px 18px 20px;
-    scroll-snap-type:x mandatory;scroll-padding-inline:18px;scrollbar-width:none;-webkit-overflow-scrolling:touch;
-  }
-  .faq-cloud::-webkit-scrollbar{display:none}
-  .faq-node,.faq-node:nth-child(n){position:relative;inset:auto;flex:0 0 min(76vw,330px);width:auto;scroll-snap-align:start}
-  .faq-question{min-height:108px;transform:none;animation:none}
+  .faq-scene{min-height:0;padding:22px;border-radius:22px;overflow:hidden}
+  .faq-cloud{position:relative;inset:auto;display:flex;flex-direction:column;gap:15px}
+  .faq-node,.faq-node:nth-child(n){position:relative;inset:auto;width:min(88%,540px);margin-right:auto;animation:none}
+  .faq-question{transform:none;animation:none}
   .faq-question-text{font-size:15px}
-  .faq-reply{position:relative;left:auto;top:auto;width:100%;min-height:250px;padding:24px;transform:none}
+  .faq-node.is-open .faq-question{transform:none}
+  .faq-inline-reply{width:calc(100% - 22px)}
 }
 @media (max-width:520px){
   .faq-scene{padding:14px;border-radius:18px}
-  .faq-cloud{margin:0 -14px;padding:3px 14px 16px;scroll-padding-inline:14px}
-  .faq-node,.faq-node:nth-child(n){flex-basis:84vw}
+  .faq-cloud{gap:12px}
+  .faq-node,.faq-node:nth-child(n){width:96%}
   .faq-question{grid-template-columns:34px minmax(0,1fr);gap:10px;padding:13px 14px;min-height:98px}
   .faq-question .faq-avatar{width:34px;height:34px}
-  .faq-reply{min-height:265px;padding:20px 18px}
-  .faq-reply-text{font-size:15.5px;line-height:1.52}
-  .faq-reply-context{margin-top:22px}
+  .faq-inline-reply{width:calc(100% - 18px)}
+  .faq-node.is-open .faq-inline-reply{padding:14px 15px 15px}
+  .faq-inline-text{font-size:13px;line-height:1.5}
 }
 
 /* ---------- contact ---------- */
@@ -713,8 +712,8 @@ html.fx .about-txt h2.frev{
   .hero-status .dot,.hero-scroll svg,.iso-scene::before{animation:none}
   .tape-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}
   .ba.smooth .ba-after,.ba.smooth .ba-handle{transition:none}
-  .faq-question{animation:none!important}
-  .faq-reply.is-updating .faq-reply-context,.faq-reply.is-updating .faq-reply-text{animation:none}
+  .faq-node{animation:none!important}
+  .faq-inline-reply.is-typing .faq-inline-text::after{animation:none}
   .service-tab,.service-detail,.diagram-piece,.diagram-path{transition:none}
   .diagram-path{stroke-dashoffset:0}
 }
@@ -1797,13 +1796,13 @@ function activateServiceRow(index){
   <div class="wrap">
     <div class="sec-head">
       <h2 class="frev">Коротко о <span class="serif">главном</span></h2>
-      <span class="count frev">( <span id="faqCurrent">01</span> / 05 )</span>
+      <span class="count frev">( 05 )</span>
     </div>
     <div class="faq frev">
       <div class="faq-scene" id="faqScene">
         <div class="faq-cloud" role="list" aria-label="Частые вопросы">
           <div class="faq-node" role="listitem">
-            <button class="faq-question is-active" id="faqQuestion1" type="button" aria-controls="faqReply" aria-pressed="true" data-faq-index="01">
+            <button class="faq-question" id="faqQuestion1" type="button" aria-controls="faqAnswer1" aria-expanded="false" data-faq-index="01">
               <span class="faq-avatar" aria-hidden="true">К</span>
               <span class="faq-question-body">
                 <span class="faq-question-meta">Клиент / вопрос 01</span>
@@ -1811,9 +1810,14 @@ function activateServiceRow(index){
                 <span class="faq-answer-source" hidden>Стоимость зависит от объёма. Сначала я бесплатно разбираю задачу и показываю макет. После этого называю точную сумму, и во время работы она не меняется.</span>
               </span>
             </button>
+            <div class="faq-inline-reply" id="faqAnswer1" role="status" aria-labelledby="faqQuestion1" aria-hidden="true">
+              <div class="faq-inline-top"><span class="faq-inline-author">Максим / ответ</span><span class="faq-avatar" aria-hidden="true">М</span></div>
+              <p class="faq-inline-text" aria-hidden="true"></p>
+              <p class="faq-inline-accessible"></p>
+            </div>
           </div>
           <div class="faq-node" role="listitem">
-            <button class="faq-question" id="faqQuestion2" type="button" aria-controls="faqReply" aria-pressed="false" data-faq-index="02">
+            <button class="faq-question" id="faqQuestion2" type="button" aria-controls="faqAnswer2" aria-expanded="false" data-faq-index="02">
               <span class="faq-avatar" aria-hidden="true">К</span>
               <span class="faq-question-body">
                 <span class="faq-question-meta">Клиент / вопрос 02</span>
@@ -1821,9 +1825,14 @@ function activateServiceRow(index){
                 <span class="faq-answer-source" hidden>Лендинг обычно занимает около недели. На редизайн или корпоративный сайт чаще нужно 1-2 недели. Точный срок скажу после разбора задачи.</span>
               </span>
             </button>
+            <div class="faq-inline-reply" id="faqAnswer2" role="status" aria-labelledby="faqQuestion2" aria-hidden="true">
+              <div class="faq-inline-top"><span class="faq-inline-author">Максим / ответ</span><span class="faq-avatar" aria-hidden="true">М</span></div>
+              <p class="faq-inline-text" aria-hidden="true"></p>
+              <p class="faq-inline-accessible"></p>
+            </div>
           </div>
           <div class="faq-node" role="listitem">
-            <button class="faq-question" id="faqQuestion3" type="button" aria-controls="faqReply" aria-pressed="false" data-faq-index="03">
+            <button class="faq-question" id="faqQuestion3" type="button" aria-controls="faqAnswer3" aria-expanded="false" data-faq-index="03">
               <span class="faq-avatar" aria-hidden="true">К</span>
               <span class="faq-question-body">
                 <span class="faq-question-meta">Клиент / вопрос 03</span>
@@ -1831,9 +1840,14 @@ function activateServiceRow(index){
                 <span class="faq-answer-source" hidden>Нет, это нормально. Помогу собрать структуру, приведу тексты в порядок и подскажу, какие фотографии стоит сделать или заменить.</span>
               </span>
             </button>
+            <div class="faq-inline-reply" id="faqAnswer3" role="status" aria-labelledby="faqQuestion3" aria-hidden="true">
+              <div class="faq-inline-top"><span class="faq-inline-author">Максим / ответ</span><span class="faq-avatar" aria-hidden="true">М</span></div>
+              <p class="faq-inline-text" aria-hidden="true"></p>
+              <p class="faq-inline-accessible"></p>
+            </div>
           </div>
           <div class="faq-node" role="listitem">
-            <button class="faq-question" id="faqQuestion4" type="button" aria-controls="faqReply" aria-pressed="false" data-faq-index="04">
+            <button class="faq-question" id="faqQuestion4" type="button" aria-controls="faqAnswer4" aria-expanded="false" data-faq-index="04">
               <span class="faq-avatar" aria-hidden="true">К</span>
               <span class="faq-question-body">
                 <span class="faq-question-meta">Клиент / вопрос 04</span>
@@ -1841,9 +1855,14 @@ function activateServiceRow(index){
                 <span class="faq-answer-source" hidden>Обычно беру 50% перед началом работы и 50% после того, как вы всё проверите и примете. Оплатить можно на карту или по реквизитам.</span>
               </span>
             </button>
+            <div class="faq-inline-reply" id="faqAnswer4" role="status" aria-labelledby="faqQuestion4" aria-hidden="true">
+              <div class="faq-inline-top"><span class="faq-inline-author">Максим / ответ</span><span class="faq-avatar" aria-hidden="true">М</span></div>
+              <p class="faq-inline-text" aria-hidden="true"></p>
+              <p class="faq-inline-accessible"></p>
+            </div>
           </div>
           <div class="faq-node" role="listitem">
-            <button class="faq-question" id="faqQuestion5" type="button" aria-controls="faqReply" aria-pressed="false" data-faq-index="05">
+            <button class="faq-question" id="faqQuestion5" type="button" aria-controls="faqAnswer5" aria-expanded="false" data-faq-index="05">
               <span class="faq-avatar" aria-hidden="true">К</span>
               <span class="faq-question-body">
                 <span class="faq-question-meta">Клиент / вопрос 05</span>
@@ -1851,22 +1870,13 @@ function activateServiceRow(index){
                 <span class="faq-answer-source" hidden>Да. Я сам выкладываю сайт на домен, передаю доступы и остаюсь на связи. Если позже понадобятся доработки, их можно обсудить отдельно.</span>
               </span>
             </button>
+            <div class="faq-inline-reply" id="faqAnswer5" role="status" aria-labelledby="faqQuestion5" aria-hidden="true">
+              <div class="faq-inline-top"><span class="faq-inline-author">Максим / ответ</span><span class="faq-avatar" aria-hidden="true">М</span></div>
+              <p class="faq-inline-text" aria-hidden="true"></p>
+              <p class="faq-inline-accessible"></p>
+            </div>
           </div>
         </div>
-
-        <article class="faq-reply" id="faqReply" aria-live="polite" aria-labelledby="faqQuestion1">
-          <div class="faq-reply-top">
-            <span class="faq-avatar" aria-hidden="true">М</span>
-            <span>
-              <span class="faq-reply-author">Максим</span>
-              <span class="faq-reply-state">отвечает сейчас</span>
-            </span>
-            <span class="faq-reply-index">01 / 05</span>
-          </div>
-          <p class="faq-reply-context">Ответ на выбранный вопрос</p>
-          <p class="faq-reply-text">Стоимость зависит от объёма. Сначала я бесплатно разбираю задачу и показываю макет. После этого называю точную сумму, и во время работы она не меняется.</p>
-          <p class="faq-reply-foot">сообщение прочитано</p>
-        </article>
       </div>
     </div>
   </div>
@@ -2487,59 +2497,79 @@ function activateServiceRow(index){
     commit(current);
   })();
 
-  /* ---------- FAQ: плавающие вопросы и единый ответ ---------- */
+  /* ---------- FAQ: ответ появляется под выбранным сообщением ---------- */
   (function(){
     var scene=document.querySelector('#faqScene');
     if(!scene)return;
+    var nodes=Array.from(scene.querySelectorAll('.faq-node'));
     var questions=Array.from(scene.querySelectorAll('.faq-question'));
-    var reply=scene.querySelector('#faqReply');
-    var replyText=scene.querySelector('.faq-reply-text');
-    var replyIndex=scene.querySelector('.faq-reply-index');
-    var currentCount=document.querySelector('#faqCurrent');
-    if(!questions.length||!reply||!replyText||!replyIndex)return;
+    if(!nodes.length||nodes.length!==questions.length)return;
 
-    var selected=0,shown=-1;
-    function show(index){
-      index=(index+questions.length)%questions.length;
-      var question=questions[index];
-      var source=question.querySelector('.faq-answer-source');
-      questions.forEach(function(item,itemIndex){
-        item.classList.toggle('is-active',itemIndex===index);
-        item.setAttribute('aria-pressed',String(itemIndex===selected));
+    var active=-1,typeTimer=0,typeToken=0;
+    function stopTyping(){
+      typeToken++;
+      if(typeTimer){clearTimeout(typeTimer);typeTimer=0}
+      nodes.forEach(function(node){
+        var reply=node.querySelector('.faq-inline-reply');
+        if(reply)reply.classList.remove('is-typing');
       });
-      reply.setAttribute('aria-labelledby',question.id);
-      replyText.textContent=source?source.textContent.trim():'';
-      replyIndex.textContent=question.dataset.faqIndex+' / '+String(questions.length).padStart(2,'0');
-      if(currentCount)currentCount.textContent=question.dataset.faqIndex;
-      if(shown!==index&&!reduce){
-        reply.classList.remove('is-updating');
-        void reply.offsetWidth;
-        reply.classList.add('is-updating');
-      }
-      shown=index;
     }
-    function select(index){selected=(index+questions.length)%questions.length;show(selected)}
+    function closeAll(){
+      nodes.forEach(function(node,index){
+        var reply=node.querySelector('.faq-inline-reply');
+        node.classList.remove('is-open');
+        questions[index].setAttribute('aria-expanded','false');
+        if(reply)reply.setAttribute('aria-hidden','true');
+      });
+    }
+    function typeAnswer(node,answer){
+      var reply=node.querySelector('.faq-inline-reply');
+      var visual=node.querySelector('.faq-inline-text');
+      var accessible=node.querySelector('.faq-inline-accessible');
+      if(!reply||!visual||!accessible)return;
+      accessible.textContent=answer;
+      visual.textContent='';
+      reply.setAttribute('aria-hidden','false');
+      node.classList.add('is-open');
+      node.querySelector('.faq-question').setAttribute('aria-expanded','true');
+      if(reduce){visual.textContent=answer;return}
+
+      var chars=Array.from(answer),cursor=0,token=++typeToken;
+      reply.classList.add('is-typing');
+      function tick(){
+        if(token!==typeToken)return;
+        cursor=Math.min(chars.length,cursor+(cursor<16?1:2));
+        visual.textContent=chars.slice(0,cursor).join('');
+        if(cursor>=chars.length){reply.classList.remove('is-typing');typeTimer=0;return}
+        var last=chars[Math.max(0,cursor-1)];
+        typeTimer=setTimeout(tick,/[.!?]/.test(last)?78:16);
+      }
+      typeTimer=setTimeout(tick,170);
+    }
+    function toggle(index){
+      var closing=active===index;
+      stopTyping();closeAll();
+      if(closing){active=-1;return}
+      active=index;
+      var source=nodes[index].querySelector('.faq-answer-source');
+      typeAnswer(nodes[index],source?source.textContent.trim():'');
+    }
 
     questions.forEach(function(question,index){
-      question.addEventListener('click',function(){select(index)});
-      question.addEventListener('focus',function(){select(index)});
-      if(fine){
-        question.addEventListener('pointerenter',function(){show(index)});
-        question.addEventListener('pointerleave',function(){show(selected)});
-      }
+      question.addEventListener('click',function(){toggle(index)});
       question.addEventListener('keydown',function(e){
         var next=index;
         if(e.key==='ArrowRight'||e.key==='ArrowDown')next=index+1;
         else if(e.key==='ArrowLeft'||e.key==='ArrowUp')next=index-1;
         else if(e.key==='Home')next=0;
         else if(e.key==='End')next=questions.length-1;
+        else if(e.key==='Escape'&&active!==-1){e.preventDefault();stopTyping();closeAll();active=-1;return}
         else return;
         e.preventDefault();
         next=(next+questions.length)%questions.length;
-        select(next);questions[next].focus();
+        questions[next].focus();
       });
     });
-    show(0);
   })();
 
   /* ---------- магнитные кнопки ---------- */
