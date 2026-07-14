@@ -427,7 +427,7 @@ html.dark .ba-handle{background:#F3F1EC}
 .service-tab.is-active .service-tab-arrow{color:var(--accent);transform:rotate(45deg)}
 
 .service-stage{
-  position:relative;min-height:610px;overflow:hidden;isolation:isolate;border:1px solid var(--line);
+  position:relative;min-height:640px;overflow:hidden;isolation:isolate;border:1px solid var(--line);
   border-radius:24px;background:
     radial-gradient(circle at 82% 16%,rgb(var(--accent-rgb) / .10),transparent 29%),
     linear-gradient(145deg,color-mix(in srgb,var(--card) 96%,var(--ink)),var(--bg-2));
@@ -463,25 +463,31 @@ html.dark .ba-handle{background:#F3F1EC}
 .service-detail-copy h3 em{font-family:var(--serif);font-weight:500}
 .service-detail-copy p{max-width:37em;margin-top:15px;color:var(--muted);font-size:clamp(14px,1.3vw,16px);line-height:1.55}
 
-.service-anatomy{position:relative;min-height:246px;margin-top:auto;padding-top:18px}
-.service-layer{
-  position:absolute;width:82%;min-height:82px;display:grid;grid-template-columns:116px minmax(0,1fr);align-items:center;gap:18px;
-  padding:17px 24px;border:1px solid var(--line-2);background:color-mix(in srgb,var(--card) 90%,transparent);
-  clip-path:polygon(0 0,calc(100% - 15px) 0,100% 15px,100% 100%,15px 100%,0 calc(100% - 15px));
-  box-shadow:0 24px 54px -45px rgb(var(--iso-rgb) / .7);opacity:0;will-change:transform,opacity;
-  transition:opacity .28s ease,transform .62s cubic-bezier(.22,1,.36,1);
+.service-visual{
+  position:relative;min-height:270px;margin-top:auto;padding-top:12px;display:grid;place-items:center;
+  overflow:hidden;border-top:1px solid var(--line);
 }
-.service-layer:nth-child(1){left:0;top:12px;transform:translate3d(-30px,12px,0)}
-.service-layer:nth-child(2){left:9%;top:88px;transform:translate3d(30px,12px,0)}
-.service-layer:nth-child(3){left:18%;top:164px;transform:translate3d(-24px,12px,0);border-color:color-mix(in srgb,var(--accent) 38%,var(--line-2))}
-.service-detail.is-active .service-layer{opacity:1;transform:none}
-.service-detail.is-active .service-layer:nth-child(1){transition-delay:.08s}
-.service-detail.is-active .service-layer:nth-child(2){transition-delay:.15s}
-.service-detail.is-active .service-layer:nth-child(3){transition-delay:.22s}
-.service-layer small{font-family:var(--mono);font-size:8.5px;letter-spacing:.13em;color:var(--muted-2);text-transform:uppercase}
-.service-layer strong{font-size:clamp(15px,1.6vw,19px);font-weight:620;line-height:1.25;color:var(--ink-2)}
-.service-layer:nth-child(3) strong{color:var(--ink)}
-.service-layer:nth-child(3)::after{content:"";position:absolute;right:18px;top:18px;width:7px;height:7px;background:var(--accent);transform:rotate(45deg)}
+.service-diagram{display:block;width:100%;height:100%;min-height:258px;overflow:visible}
+.diagram-frame{fill:color-mix(in srgb,var(--card) 88%,transparent);stroke:var(--line-2);stroke-width:1.4}
+.diagram-surface{fill:color-mix(in srgb,var(--bg-2) 84%,transparent);stroke:var(--line);stroke-width:1}
+.diagram-ink{fill:color-mix(in srgb,var(--ink) 78%,transparent)}
+.diagram-muted{fill:color-mix(in srgb,var(--muted-2) 44%,transparent)}
+.diagram-accent{fill:var(--accent)}
+.diagram-line{fill:none;stroke:color-mix(in srgb,var(--ink) 38%,transparent);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.diagram-line-accent{stroke:var(--accent)}
+.diagram-dash{stroke-dasharray:5 7}
+.diagram-label{fill:var(--muted);font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.diagram-piece{
+  opacity:0;transform:translate3d(0,12px,0);transform-box:fill-box;transform-origin:center;
+  transition:opacity .32s ease,transform .64s cubic-bezier(.22,1,.36,1);
+}
+.service-detail.is-active .diagram-piece{opacity:1;transform:none}
+.service-detail.is-active .diagram-piece.d1{transition-delay:.07s}
+.service-detail.is-active .diagram-piece.d2{transition-delay:.13s}
+.service-detail.is-active .diagram-piece.d3{transition-delay:.19s}
+.service-detail.is-active .diagram-piece.d4{transition-delay:.25s}
+.diagram-path{stroke-dasharray:420;stroke-dashoffset:420;transition:stroke-dashoffset .78s cubic-bezier(.22,1,.36,1)}
+.service-detail.is-active .diagram-path{stroke-dashoffset:0;transition-delay:.16s}
 
 .service-detail-foot{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
 .service-tags{display:flex;gap:7px;flex-wrap:wrap}
@@ -569,7 +575,7 @@ html.fx .about-txt h2.frev{
   .service-tab.is-active::before{transform:translateX(-50%) scaleX(1)}
   .service-tab-no{font-size:11px;text-align:center}
   .service-tab-name,.service-tab-arrow{display:none}
-  .service-stage{min-height:590px}
+  .service-stage{min-height:610px}
   .svc-note{max-width:100%;margin-left:0}
 }
 @media (min-width:921px){
@@ -589,14 +595,8 @@ html.fx .about-txt h2.frev{
   .service-ready{font-size:7.5px}
   .service-detail-copy h3{font-size:clamp(29px,8.6vw,38px);line-height:1}
   .service-detail-copy p{font-size:13.5px;line-height:1.48;margin-top:11px}
-  .service-anatomy{min-height:220px;padding-top:10px}
-  .service-layer{width:92%;min-height:68px;grid-template-columns:78px minmax(0,1fr);gap:9px;padding:12px 14px}
-  .service-layer:nth-child(1){left:0;top:8px}
-  .service-layer:nth-child(2){left:4%;top:73px}
-  .service-layer:nth-child(3){left:8%;top:138px}
-  .service-layer small{font-size:7px;line-height:1.4}
-  .service-layer strong{font-size:13.5px;line-height:1.22}
-  .service-layer:nth-child(3)::after{right:12px;top:12px;width:5px;height:5px}
+  .service-visual{min-height:185px;padding-top:8px}
+  .service-diagram{min-height:178px}
   .service-detail-foot{align-items:flex-start;flex-direction:column;gap:11px;margin-top:15px;padding-top:14px}
   .service-tags{gap:5px}
   .service-tags span{font-size:7.5px}
@@ -622,7 +622,8 @@ html.fx .about-txt h2.frev{
   .tape-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}
   .ba.smooth .ba-after,.ba.smooth .ba-handle{transition:none}
   .q .aw{transition:none}
-  .service-tab,.service-detail,.service-layer{transition:none}
+  .service-tab,.service-detail,.diagram-piece,.diagram-path{transition:none}
+  .diagram-path{stroke-dashoffset:0}
 }
 /* ---------- пространственная композиция ---------- */
 .journey-zone{overflow:clip}
@@ -1476,10 +1477,35 @@ function activateServiceRow(index){
             <h3>Лендинг, который <em>ведёт к заявке</em></h3>
             <p>Собираю одну ясную историю: человек быстро понимает предложение, видит доказательства и без лишних шагов выходит на связь.</p>
           </div>
-          <div class="service-anatomy" aria-label="Состав услуги">
-            <div class="service-layer"><small>01 / на входе</small><strong>Продукт, аудитория и цель</strong></div>
-            <div class="service-layer"><small>02 / собираю</small><strong>Оффер · структура · дизайн</strong></div>
-            <div class="service-layer"><small>03 / результат</small><strong>Заявка в Telegram или CRM</strong></div>
+          <div class="service-visual">
+            <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема продающего лендинга" focusable="false">
+              <g class="diagram-piece d1">
+                <rect class="diagram-frame" x="38" y="14" width="564" height="272" rx="18"/>
+                <path class="diagram-line" d="M38 50H602"/>
+                <circle class="diagram-muted" cx="59" cy="32" r="4"/><circle class="diagram-muted" cx="73" cy="32" r="4"/><circle class="diagram-accent" cx="87" cy="32" r="4"/>
+                <rect class="diagram-muted" x="482" y="28" width="92" height="8" rx="4"/>
+              </g>
+              <g class="diagram-piece d2">
+                <rect class="diagram-surface" x="62" y="68" width="516" height="112" rx="12"/>
+                <rect class="diagram-ink" x="84" y="88" width="224" height="11" rx="5"/>
+                <rect class="diagram-ink" x="84" y="108" width="178" height="11" rx="5"/>
+                <rect class="diagram-muted" x="84" y="133" width="190" height="7" rx="3"/>
+                <rect class="diagram-muted" x="84" y="147" width="145" height="7" rx="3"/>
+                <rect class="diagram-accent" x="84" y="162" width="88" height="24" rx="12"/>
+                <circle class="diagram-muted" cx="486" cy="118" r="37"/>
+                <rect class="diagram-frame" x="437" y="91" width="98" height="70" rx="10"/>
+                <path class="diagram-line diagram-line-accent" d="M451 145l20-18 16 11 22-25 13 13"/>
+              </g>
+              <g class="diagram-piece d3">
+                <rect class="diagram-frame" x="62" y="199" width="154" height="64" rx="10"/>
+                <rect class="diagram-frame" x="243" y="199" width="154" height="64" rx="10"/>
+                <rect class="diagram-frame" x="424" y="199" width="154" height="64" rx="10"/>
+                <rect class="diagram-muted" x="78" y="214" width="72" height="7" rx="3"/><rect class="diagram-ink" x="78" y="229" width="109" height="9" rx="4"/><rect class="diagram-accent" x="78" y="246" width="48" height="5" rx="2"/>
+                <rect class="diagram-muted" x="259" y="214" width="72" height="7" rx="3"/><rect class="diagram-ink" x="259" y="229" width="109" height="9" rx="4"/><rect class="diagram-accent" x="259" y="246" width="48" height="5" rx="2"/>
+                <rect class="diagram-muted" x="440" y="214" width="72" height="7" rx="3"/><rect class="diagram-ink" x="440" y="229" width="109" height="9" rx="4"/><rect class="diagram-accent" x="440" y="246" width="48" height="5" rx="2"/>
+              </g>
+              <path class="diagram-line diagram-line-accent diagram-path" d="M178 174C209 191 241 190 274 197"/>
+            </svg>
           </div>
           <div class="service-detail-foot">
             <div class="service-tags"><span>1 страница</span><span>адаптив</span><span>аналитика</span></div>
@@ -1493,10 +1519,40 @@ function activateServiceRow(index){
             <h3>Старый сайт становится <em>новым инструментом</em></h3>
             <p>Сохраняю полезный контент, убираю лишнее и пересобираю логику. На выходе — современный, быстрый и понятный сайт вместо косметического ремонта.</p>
           </div>
-          <div class="service-anatomy" aria-label="Состав услуги">
-            <div class="service-layer"><small>01 / на входе</small><strong>Старый сайт и накопленный контент</strong></div>
-            <div class="service-layer"><small>02 / собираю</small><strong>Аудит · новая логика · перенос</strong></div>
-            <div class="service-layer"><small>03 / результат</small><strong>Быстрый сайт без старых проблем</strong></div>
+          <div class="service-visual">
+            <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема редизайна старого сайта в новый" focusable="false">
+              <g class="diagram-piece d1">
+                <text class="diagram-label" x="44" y="43">ДО</text>
+                <rect class="diagram-frame" x="34" y="54" width="238" height="210" rx="14"/>
+                <path class="diagram-line" d="M34 84H272"/>
+                <circle class="diagram-muted" cx="52" cy="69" r="3"/><circle class="diagram-muted" cx="64" cy="69" r="3"/>
+                <rect class="diagram-muted" x="51" y="100" width="188" height="15" rx="2"/>
+                <rect class="diagram-muted" x="72" y="127" width="151" height="8" rx="2"/>
+                <rect class="diagram-muted" x="48" y="149" width="74" height="72" rx="3"/>
+                <rect class="diagram-muted" x="132" y="159" width="112" height="8" rx="2"/>
+                <rect class="diagram-muted" x="145" y="178" width="91" height="8" rx="2"/>
+                <rect class="diagram-muted" x="126" y="203" width="124" height="31" rx="3"/>
+                <path class="diagram-line diagram-dash" d="M55 244l39-17 31 16 40-10 34 14"/>
+              </g>
+              <path class="diagram-line diagram-line-accent diagram-path" d="M292 154H349m-15-14 15 14-15 14"/>
+              <g class="diagram-piece d2">
+                <text class="diagram-label" x="376" y="24">ПОСЛЕ</text>
+                <rect class="diagram-frame" x="365" y="35" width="241" height="239" rx="16"/>
+                <path class="diagram-line" d="M365 67H606"/>
+                <circle class="diagram-muted" cx="384" cy="51" r="3"/><circle class="diagram-muted" cx="396" cy="51" r="3"/><circle class="diagram-accent" cx="408" cy="51" r="3"/>
+                <rect class="diagram-ink" x="388" y="88" width="128" height="12" rx="5"/>
+                <rect class="diagram-ink" x="388" y="108" width="101" height="12" rx="5"/>
+                <rect class="diagram-muted" x="388" y="132" width="111" height="7" rx="3"/>
+                <rect class="diagram-accent" x="388" y="151" width="72" height="23" rx="11"/>
+                <rect class="diagram-surface" x="518" y="86" width="65" height="88" rx="10"/>
+                <circle class="diagram-accent" cx="550" cy="117" r="17"/>
+                <rect class="diagram-frame" x="388" y="195" width="91" height="54" rx="8"/>
+                <rect class="diagram-frame" x="491" y="195" width="92" height="54" rx="8"/>
+                <rect class="diagram-muted" x="402" y="211" width="56" height="6" rx="3"/><rect class="diagram-ink" x="402" y="226" width="65" height="7" rx="3"/>
+                <rect class="diagram-muted" x="505" y="211" width="56" height="6" rx="3"/><rect class="diagram-ink" x="505" y="226" width="65" height="7" rx="3"/>
+              </g>
+              <g class="diagram-piece d3"><circle class="diagram-accent" cx="349" cy="154" r="5"/></g>
+            </svg>
           </div>
           <div class="service-detail-foot">
             <div class="service-tags"><span>аудит</span><span>перенос</span><span>ускорение</span></div>
@@ -1510,10 +1566,39 @@ function activateServiceRow(index){
             <h3>Магазин, в котором <em>легко купить</em></h3>
             <p>Выстраиваю путь от каталога до заказа: понятные категории, карточки товаров, корзина или быстрый запрос — под реальный процесс вашего бизнеса.</p>
           </div>
-          <div class="service-anatomy" aria-label="Состав услуги">
-            <div class="service-layer"><small>01 / на входе</small><strong>Товары, услуги и правила продажи</strong></div>
-            <div class="service-layer"><small>02 / собираю</small><strong>Каталог · карточки · оплата</strong></div>
-            <div class="service-layer"><small>03 / результат</small><strong>Заказ без лишних шагов</strong></div>
+          <div class="service-visual">
+            <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема интернет-магазина с каталогом и корзиной" focusable="false">
+              <g class="diagram-piece d1">
+                <rect class="diagram-frame" x="26" y="16" width="588" height="270" rx="18"/>
+                <path class="diagram-line" d="M26 52H614"/>
+                <rect class="diagram-ink" x="48" y="31" width="72" height="8" rx="4"/>
+                <rect class="diagram-muted" x="250" y="31" width="58" height="7" rx="3"/><rect class="diagram-muted" x="324" y="31" width="58" height="7" rx="3"/><rect class="diagram-muted" x="398" y="31" width="58" height="7" rx="3"/>
+                <circle class="diagram-accent" cx="584" cy="34" r="8"/>
+              </g>
+              <g class="diagram-piece d2">
+                <rect class="diagram-frame" x="48" y="72" width="165" height="84" rx="10"/>
+                <rect class="diagram-surface" x="59" y="83" width="54" height="62" rx="7"/>
+                <rect class="diagram-ink" x="125" y="88" width="66" height="8" rx="4"/><rect class="diagram-muted" x="125" y="105" width="52" height="6" rx="3"/><rect class="diagram-accent" x="125" y="129" width="44" height="7" rx="3"/>
+                <rect class="diagram-frame" x="230" y="72" width="165" height="84" rx="10"/>
+                <rect class="diagram-surface" x="241" y="83" width="54" height="62" rx="7"/>
+                <rect class="diagram-ink" x="307" y="88" width="66" height="8" rx="4"/><rect class="diagram-muted" x="307" y="105" width="52" height="6" rx="3"/><rect class="diagram-accent" x="307" y="129" width="44" height="7" rx="3"/>
+                <rect class="diagram-frame" x="48" y="174" width="165" height="84" rx="10"/>
+                <rect class="diagram-surface" x="59" y="185" width="54" height="62" rx="7"/>
+                <rect class="diagram-ink" x="125" y="190" width="66" height="8" rx="4"/><rect class="diagram-muted" x="125" y="207" width="52" height="6" rx="3"/><rect class="diagram-accent" x="125" y="231" width="44" height="7" rx="3"/>
+                <rect class="diagram-frame" x="230" y="174" width="165" height="84" rx="10"/>
+                <rect class="diagram-surface" x="241" y="185" width="54" height="62" rx="7"/>
+                <rect class="diagram-ink" x="307" y="190" width="66" height="8" rx="4"/><rect class="diagram-muted" x="307" y="207" width="52" height="6" rx="3"/><rect class="diagram-accent" x="307" y="231" width="44" height="7" rx="3"/>
+              </g>
+              <g class="diagram-piece d3">
+                <rect class="diagram-surface" x="420" y="72" width="169" height="186" rx="12"/>
+                <text class="diagram-label" x="441" y="96">КОРЗИНА</text>
+                <circle class="diagram-muted" cx="447" cy="124" r="16"/><rect class="diagram-ink" x="473" y="114" width="84" height="7" rx="3"/><rect class="diagram-muted" x="473" y="130" width="55" height="6" rx="3"/>
+                <circle class="diagram-muted" cx="447" cy="166" r="16"/><rect class="diagram-ink" x="473" y="156" width="84" height="7" rx="3"/><rect class="diagram-muted" x="473" y="172" width="55" height="6" rx="3"/>
+                <path class="diagram-line" d="M441 199H568"/>
+                <rect class="diagram-accent" x="441" y="214" width="127" height="28" rx="14"/>
+              </g>
+              <path class="diagram-line diagram-line-accent diagram-path" d="M371 133C398 133 407 143 420 155"/>
+            </svg>
           </div>
           <div class="service-detail-foot">
             <div class="service-tags"><span>каталог</span><span>корзина</span><span>доставка</span></div>
@@ -1527,10 +1612,32 @@ function activateServiceRow(index){
             <h3>Заявка сама попадает <em>куда нужно</em></h3>
             <p>Связываю сайт с Telegram, почтой или CRM. Команда сразу видит нового клиента, а человек получает подтверждение — без ручного копирования.</p>
           </div>
-          <div class="service-anatomy" aria-label="Состав услуги">
-            <div class="service-layer"><small>01 / на входе</small><strong>Формы и разные каналы заявок</strong></div>
-            <div class="service-layer"><small>02 / собираю</small><strong>CRM · уведомления · автоответы</strong></div>
-            <div class="service-layer"><small>03 / результат</small><strong>Ни один клиент не теряется</strong></div>
+          <div class="service-visual">
+            <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема автоматической передачи заявки в Telegram, почту и CRM" focusable="false">
+              <g class="diagram-piece d1">
+                <rect class="diagram-frame" x="32" y="58" width="202" height="190" rx="16"/>
+                <text class="diagram-label" x="52" y="84">ЗАЯВКА С САЙТА</text>
+                <rect class="diagram-surface" x="52" y="101" width="162" height="30" rx="7"/>
+                <rect class="diagram-surface" x="52" y="142" width="162" height="30" rx="7"/>
+                <rect class="diagram-surface" x="52" y="183" width="162" height="30" rx="7"/>
+                <rect class="diagram-accent" x="52" y="222" width="94" height="16" rx="8"/>
+              </g>
+              <path class="diagram-line diagram-line-accent diagram-path" d="M234 229C278 229 274 151 324 151C374 151 368 62 431 62M324 151C384 151 389 150 455 150M324 151C376 151 374 238 429 238"/>
+              <g class="diagram-piece d2">
+                <circle class="diagram-frame" cx="324" cy="151" r="36"/>
+                <circle class="diagram-accent" cx="324" cy="151" r="12"/>
+                <circle class="diagram-muted" cx="324" cy="124" r="3"/><circle class="diagram-muted" cx="348" cy="151" r="3"/><circle class="diagram-muted" cx="324" cy="178" r="3"/><circle class="diagram-muted" cx="300" cy="151" r="3"/>
+              </g>
+              <g class="diagram-piece d3">
+                <rect class="diagram-frame" x="430" y="34" width="174" height="58" rx="12"/>
+                <circle class="diagram-accent" cx="458" cy="63" r="13"/><text class="diagram-label" x="482" y="67">TELEGRAM</text>
+                <rect class="diagram-frame" x="454" y="121" width="150" height="58" rx="12"/>
+                <circle class="diagram-muted" cx="481" cy="150" r="13"/><text class="diagram-label" x="505" y="154">ПОЧТА</text>
+                <rect class="diagram-frame" x="428" y="209" width="176" height="58" rx="12"/>
+                <circle class="diagram-accent" cx="456" cy="238" r="13"/><text class="diagram-label" x="480" y="242">CRM</text>
+              </g>
+              <g class="diagram-piece d4"><circle class="diagram-accent" cx="431" cy="62" r="5"/><circle class="diagram-accent" cx="455" cy="150" r="5"/><circle class="diagram-accent" cx="429" cy="238" r="5"/></g>
+            </svg>
           </div>
           <div class="service-detail-foot">
             <div class="service-tags"><span>Telegram</span><span>CRM</span><span>интеграции</span></div>
@@ -1544,10 +1651,39 @@ function activateServiceRow(index){
             <h3>Помощник отвечает, <em>пока вы заняты</em></h3>
             <p>Настраиваю Telegram-бота или ИИ-консультанта на сайте: он отвечает на частые вопросы, принимает заявку и передаёт живому человеку нужный контекст.</p>
           </div>
-          <div class="service-anatomy" aria-label="Состав услуги">
-            <div class="service-layer"><small>01 / на входе</small><strong>Вопросы клиентов и база знаний</strong></div>
-            <div class="service-layer"><small>02 / собираю</small><strong>Сценарий · бот · интеллект</strong></div>
-            <div class="service-layer"><small>03 / результат</small><strong>Ответы и заявки 24 / 7</strong></div>
+          <div class="service-visual">
+            <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема ИИ-помощника, который использует базу знаний и отвечает в чате" focusable="false">
+              <g class="diagram-piece d1">
+                <rect class="diagram-frame" x="24" y="42" width="156" height="58" rx="11"/>
+                <rect class="diagram-muted" x="42" y="58" width="78" height="7" rx="3"/><rect class="diagram-ink" x="42" y="76" width="112" height="8" rx="4"/>
+                <rect class="diagram-frame" x="39" y="121" width="156" height="58" rx="11"/>
+                <rect class="diagram-muted" x="57" y="137" width="78" height="7" rx="3"/><rect class="diagram-ink" x="57" y="155" width="112" height="8" rx="4"/>
+                <rect class="diagram-frame" x="24" y="200" width="156" height="58" rx="11"/>
+                <rect class="diagram-muted" x="42" y="216" width="78" height="7" rx="3"/><rect class="diagram-ink" x="42" y="234" width="112" height="8" rx="4"/>
+                <text class="diagram-label" x="31" y="28">БАЗА ЗНАНИЙ</text>
+              </g>
+              <path class="diagram-line diagram-path" d="M180 71C232 71 238 118 278 139M195 150H278M180 229C232 229 238 182 278 161"/>
+              <g class="diagram-piece d2">
+                <circle class="diagram-frame" cx="320" cy="150" r="54"/>
+                <circle class="diagram-accent" cx="320" cy="150" r="19"/>
+                <path class="diagram-line diagram-line-accent" d="M320 96v35m0 38v35M266 150h35m38 0h35M282 112l25 25m26 26 25 25M358 112l-25 25m-26 26-25 25"/>
+                <circle class="diagram-muted" cx="320" cy="96" r="5"/><circle class="diagram-muted" cx="374" cy="150" r="5"/><circle class="diagram-muted" cx="320" cy="204" r="5"/><circle class="diagram-muted" cx="266" cy="150" r="5"/>
+              </g>
+              <path class="diagram-line diagram-line-accent diagram-path" d="M374 150H420"/>
+              <g class="diagram-piece d3">
+                <rect class="diagram-frame" x="420" y="24" width="194" height="252" rx="18"/>
+                <path class="diagram-line" d="M420 58H614M420 238H614"/>
+                <circle class="diagram-accent" cx="444" cy="41" r="8"/><text class="diagram-label" x="461" y="45">AI ЧАТ</text>
+                <rect class="diagram-surface" x="440" y="79" width="112" height="38" rx="13"/>
+                <rect class="diagram-muted" x="455" y="92" width="74" height="6" rx="3"/><rect class="diagram-muted" x="455" y="103" width="52" height="5" rx="2"/>
+                <rect class="diagram-accent" x="468" y="132" width="126" height="48" rx="14"/>
+                <rect x="485" y="146" width="87" height="6" rx="3" fill="var(--accent-contrast)" opacity=".9"/><rect x="485" y="158" width="62" height="5" rx="2" fill="var(--accent-contrast)" opacity=".7"/>
+                <rect class="diagram-surface" x="440" y="195" width="104" height="27" rx="11"/>
+                <rect class="diagram-muted" x="455" y="206" width="62" height="5" rx="2"/>
+                <rect class="diagram-muted" x="440" y="249" width="130" height="12" rx="6"/><circle class="diagram-accent" cx="588" cy="255" r="8"/>
+              </g>
+              <g class="diagram-piece d4"><circle class="diagram-accent" cx="397" cy="150" r="5"/></g>
+            </svg>
           </div>
           <div class="service-detail-foot">
             <div class="service-tags"><span>Telegram</span><span>ИИ</span><span>24 / 7</span></div>
