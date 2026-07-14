@@ -666,7 +666,7 @@ html.fx .about-txt h2.frev{
 
 /* ---------- cases: ручная наклонная лента ---------- */
 #works{overflow:hidden}
-.case-carousel{position:relative;--case-width:clamp(600px,67vw,860px)}
+.case-carousel{position:relative;--case-width:clamp(540px,60vw,780px)}
 .case-carousel-viewport{
   overflow-x:auto;overflow-y:hidden;margin-right:calc(var(--pad)*-1);padding:12px var(--pad) 38px 0;
   scroll-snap-type:x mandatory;scroll-padding-left:0;scrollbar-width:none;-ms-overflow-style:none;
@@ -694,6 +694,8 @@ html.fx .about-txt h2.frev{
   width:100%;height:auto;min-height:0;aspect-ratio:16/10;margin:0;border-radius:18px;
 }
 .case-slide .work-visual::before,.case-slide .work-visual::after{display:none}
+.case-slide.work-featured .work-visual{aspect-ratio:16/9}
+.case-slide.work-featured .leader-static{object-fit:contain;object-position:center}
 .case-slide.work-featured,.case-slide.work-mbm,.case-slide.work-slot{
   grid-column:auto;width:var(--case-width);min-height:0;padding:0;
 }
@@ -734,12 +736,13 @@ html.fx .about-txt h2.frev{
 
 @media (max-width:760px){
   #works{padding-top:clamp(92px,13vh,126px)}
-  .case-carousel{--case-width:84vw}
+  .case-carousel{--case-width:82vw}
   .case-carousel-viewport{margin-right:calc(var(--pad)*-1);padding-top:6px;padding-bottom:28px}
   .case-carousel .works-grid{gap:14px;padding-right:36px}
   .case-slide{--case-y:0px!important;opacity:.52;transform:translate3d(0,6px,0)}
   .case-slide.is-active{transform:none}
   .case-slide .work-visual,.case-slide.work-featured .work-visual,.case-slide.work-mbm .work-visual,.case-slide.work-slot .work-visual{border-radius:14px;aspect-ratio:16/10}
+  .case-slide.work-featured .work-visual{aspect-ratio:16/9}
   .case-slide .work-tag{top:10px;left:10px;max-width:calc(100% - 62px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .case-slide .work-arrow{top:9px;right:9px;width:39px;height:39px}
   .case-slide .work-meta,.case-slide.work-featured .work-meta{padding-top:13px}
