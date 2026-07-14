@@ -242,8 +242,8 @@
     try{if(window.gsap)window.gsap.killTweensOf(targets);}catch(_){}
     if(header){header.style.opacity='1';header.style.removeProperty('transform');}
     if(scene)setStyles(scene,{opacity:getComputedStyle(root).getPropertyValue('--iso-opacity')||'.34',transform:'scale(1)'});
-    if(rift)setStyles(rift,{opacity:'1',transform:'translate3d(0,0,0) scale(1)'});
-    if(riftWell)setStyles(riftWell,{transform:'scaleX(1)'});
+    if(rift)setStyles(rift,{opacity:'1',transform:'none'});
+    if(riftWell)setStyles(riftWell,{transform:'none'});
     if(riftStream)setStyles(riftStream,{opacity:'1',transform:'translate3d(0,0,0) rotate(-.65deg)'});
     targets.forEach(function(target){if(target&&target!==header&&target!==scene&&target!==rift&&target!==riftWell&&target!==riftStream)setStyles(target,{opacity:'1',transform:'translate3d(0,0,0)'});});
   }
@@ -274,10 +274,11 @@
     lines.forEach(function(line,index){
       motion(line,[{opacity:.12,transform:'translate3d(0,118%,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:980,delay:480+index*210,easing:enterEase});
     });
-    setStyles(riftWell,{transform:''});
+    /* The rift is part of the first composition, not a later reveal. Show the
+       opening and its code in the very first frame after the ice disappears. */
+    setStyles(rift,{opacity:'1',transform:'none'});
+    setStyles(riftWell,{transform:'none'});
     setStyles(riftStream,{opacity:'1',transform:'translate3d(0,0,0) rotate(-.65deg)'});
-    var riftAnimation=motion(rift,[{opacity:0},{opacity:1}],{duration:940,delay:760,easing:enterEase});
-    settle(riftAnimation,rift,{opacity:'1',transform:''});
     motion(signature,[{opacity:0,transform:'translate3d(0,24px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:760,delay:1240,easing:enterEase});
     motion(heroScroll,[{opacity:0,transform:'translate3d(-50%,12px,0)'},{opacity:1,transform:'translate3d(-50%,0,0)'}],{duration:560,delay:1510,easing:enterEase});
     later(2200,function(){window.dispatchEvent(new CustomEvent('iceintro:reveal-complete'));});
@@ -288,7 +289,7 @@
     root.classList.remove('loading');
     markSeen();
     window.dispatchEvent(new CustomEvent('iceintro:complete'));
-    later(160,runSiteReveal);
+    runSiteReveal();
   }
 
   function playIntro(){

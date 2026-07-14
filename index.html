@@ -41,7 +41,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/ice-loader.css?v=20260714-3">
-  <link rel="stylesheet" href="assets/experience.css?v=20260714-2">
+  <link rel="stylesheet" href="assets/experience.css?v=20260715-11">
 
 <style>
 :root{
@@ -1407,7 +1407,7 @@ function activateServiceRow(index){
 <!-- HOW I WORK -->
 <section class="experience-section" id="approach" data-experience-source="experience-lab-v2.html">
   <div class="experience-mount" id="experienceMount">
-<section class="lab-scroll" id="labExperience" data-lenis-prevent-wheel aria-label="Разбор задачи, код и готовый сайт">
+<section class="lab-scroll" id="labExperience" aria-label="Разбор задачи, код и готовый сайт">
     <div class="lab-sticky" id="labSticky">
       <div class="world-grid" id="worldGrid" aria-hidden="true"></div>
 
@@ -1622,9 +1622,7 @@ function activateServiceRow(index){
                   <span class="adaptive-chrome-address mono">preview.local / lider-vino</span>
                 </div>
                 <img class="adaptive-shot" id="adaptiveShotDesktop" src="assets/screens/lider-hero-lab.webp?v=20260714-1" alt="" width="1280" height="800" loading="lazy" decoding="async">
-                <div class="adaptive-shot adaptive-tablet-screen" id="adaptiveShotTablet">
-                  <img src="assets/screens/lider-responsive-tablet-cropped.jpg?v=20260714-1" alt="" width="1024" height="702" loading="lazy" decoding="async">
-                </div>
+                <img class="adaptive-shot adaptive-tablet-screen" id="adaptiveShotTablet" src="assets/screens/lider-responsive-tablet-cropped.jpg?v=20260715-2" alt="" width="1024" height="702" loading="eager" decoding="async">
                 <img class="adaptive-shot" id="adaptiveShotPhone" src="assets/screens/lider-responsive-phone.png?v=20260712-2" alt="" width="390" height="844" loading="lazy" decoding="async">
                 <div class="phone-browser-bar" id="phoneBrowserBar"><span>lider-vino.ru</span></div>
                 <span class="adaptive-screen-shutter" id="adaptiveScreenShutter"></span>
@@ -1698,6 +1696,8 @@ function activateServiceRow(index){
       </div>
     </div>
   </section>
+  <input class="record-control" id="recordLabControl" type="number" min="0" max="1.86" step="0.001" tabindex="-1" aria-hidden="true">
+  <input class="record-control" id="recordLaunchControl" type="number" min="0" max="1" step="0.001" tabindex="-1" aria-hidden="true">
   </div>
 </section>
 
@@ -2171,7 +2171,7 @@ function activateServiceRow(index){
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="assets/ice-loader.js?v=20260714-3"></script>
+<script src="assets/ice-loader.js?v=20260715-5"></script>
 <script>
 (function(){
   var TG='https://t.me/maksim_site';
@@ -2387,8 +2387,24 @@ function activateServiceRow(index){
 
   /* ---------- header: скрывать при скролле вниз ---------- */
   var header=document.getElementById('header'),lastY=0,idleT;
+  var experienceHeaderSection=document.getElementById('labExperience');
+  var experienceHeaderStart=Infinity,experienceHeaderEnd=-Infinity,experienceHeaderResize=0;
+  function measureExperienceHeaderRange(){
+    if(!experienceHeaderSection)return;
+    var rect=experienceHeaderSection.getBoundingClientRect();
+    var sectionTop=rect.top+window.scrollY;
+    experienceHeaderStart=sectionTop-window.innerHeight*.65;
+    experienceHeaderEnd=sectionTop+Math.max(0,experienceHeaderSection.offsetHeight-window.innerHeight)+2;
+  }
+  window.__measureExperienceHeaderRange=measureExperienceHeaderRange;
   function onScrollDir(y){
     header.classList.toggle('solid',y>30);
+    if(y>=experienceHeaderStart&&y<=experienceHeaderEnd){
+      header.classList.remove('hide');
+      lastY=y;
+      clearTimeout(idleT);
+      return;
+    }
     var menuOpen=document.getElementById('mmenu').classList.contains('open');
     if(!menuOpen&&innerWidth>760){
       if(y>140&&y>lastY+4)header.classList.add('hide');
@@ -2398,11 +2414,20 @@ function activateServiceRow(index){
     clearTimeout(idleT); // скролл остановился - показать шапку
     idleT=setTimeout(function(){header.classList.remove('hide');},420);
   }
+  measureExperienceHeaderRange();
+  addEventListener('load',measureExperienceHeaderRange,{once:true});
+  addEventListener('resize',function(){
+    clearTimeout(experienceHeaderResize);
+    experienceHeaderResize=setTimeout(measureExperienceHeaderRange,120);
+  },{passive:true});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(measureExperienceHeaderRange);
 
   /* ---------- Lenis ---------- */
   var lenis=null;
+  window.__portfolioLenis=null;
   if(window.Lenis&&!reduce&&fine&&innerWidth>760){
     lenis=new Lenis({duration:1.15,easing:function(t){return Math.min(1,1.001-Math.pow(2,-10*t));}});
+    window.__portfolioLenis=lenis;
     document.documentElement.classList.add('lenis');
     lenis.on('scroll',function(e){onScrollDir(e.scroll);});
     if(hasFX){
@@ -2896,6 +2921,7 @@ function activateServiceRow(index){
   setTimeout(killLoader,6000);
 })();
 </script>
-<script src="assets/experience-loader.js?v=20260714-1"></script>
+<script src="assets/experience-loader.js?v=20260714-4"></script>
+<script src="assets/experience.js?v=20260715-14"></script>
 </body>
 </html>

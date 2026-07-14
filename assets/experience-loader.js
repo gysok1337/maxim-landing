@@ -1,34 +1,55 @@
-/* Load the immersive scene only when the visitor approaches it. */
+/* Keep the scene controller ready before a fast scroll reaches the section. */
 (function(){
   'use strict';
 
   var mount=document.getElementById('experienceMount');
   if(!mount)return;
 
-  var loaded=false;
   window.__experienceLabActive=false;
+  var pendingFrames=[];
+  var activationStart=0;
+  var activationEnd=0;
+  var activationResize=0;
+  var activationMargin=420;
 
-  function loadExperience(){
-    if(loaded)return;
-    loaded=true;
-    mount.dataset.experienceLoaded='true';
-    var script=document.createElement('script');
-    script.src='assets/experience.js?v=20260714-2';
-    script.async=true;
-    document.body.appendChild(script);
+  window.__experienceLabSchedule=function(callback){
+    if(window.__experienceLabActive===false){
+      if(pendingFrames.indexOf(callback)===-1)pendingFrames.push(callback);
+      return;
+    }
+    requestAnimationFrame(callback);
+  };
+
+  function setActivity(active){
+    active=!!active;
+    if(window.__experienceLabActive===active)return;
+    window.__experienceLabActive=active;
+    if(!active||!pendingFrames.length)return;
+    var callbacks=pendingFrames.splice(0,pendingFrames.length);
+    requestAnimationFrame(function(){
+      callbacks.forEach(function(callback){callback(performance.now());});
+    });
   }
 
-  if(!('IntersectionObserver' in window)){
-    window.__experienceLabActive=true;
-    loadExperience();
-    return;
+  function measureActivityRange(){
+    var rect=mount.getBoundingClientRect();
+    var top=rect.top+window.scrollY;
+    activationStart=Math.max(0,top-window.innerHeight-activationMargin);
+    activationEnd=top+mount.offsetHeight+activationMargin;
+    updateActivity();
+  }
+  window.__measureExperienceActivity=measureActivityRange;
+
+  function updateActivity(){
+    setActivity(window.scrollY>=activationStart&&window.scrollY<=activationEnd);
   }
 
-  var observer=new IntersectionObserver(function(entries){
-    var entry=entries[0];
-    window.__experienceLabActive=!!(entry&&entry.isIntersecting);
-    if(window.__experienceLabActive)loadExperience();
-  },{rootMargin:'800px 0px'});
-
-  observer.observe(mount);
+  measureActivityRange();
+  window.addEventListener('scroll',updateActivity,{passive:true});
+  window.addEventListener('load',measureActivityRange,{once:true});
+  window.addEventListener('resize',function(){
+    clearTimeout(activationResize);
+    activationResize=setTimeout(measureActivityRange,120);
+  },{passive:true});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(measureActivityRange);
 })();
