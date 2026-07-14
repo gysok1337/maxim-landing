@@ -1343,8 +1343,8 @@ body.fx-enabled .fx-panel{
 .adaptive-morph #adaptiveShotDesktop{opacity:1;filter:none;transform:scale(var(--desktop-shot-scale,1));transform-origin:64% 42%}
 .adaptive-morph #adaptiveShotTablet{
   object-position:center top;
-  transform:none;
-  transform-origin:50% 0;
+  transform:scale(1.026);
+  transform-origin:50% 100%;
 }
 .adaptive-morph #adaptiveShotPhone{object-fit:cover;object-position:center top}
 .adaptive-morph .adaptive-desktop-chrome{
@@ -1615,7 +1615,7 @@ body.fx-enabled .fx-panel{
   .stage-copy > .stage-tabs .stage-tab{min-width:0;min-height:34px;padding:0 8px;font-size:7.2px;letter-spacing:.08em}
 }
 
-@media (min-width:701px) and (max-width:1000px) and (max-height:520px){
+@media (min-width:701px) and (max-width:1000px) and (max-height:700px){
   .lab-sticky > .launch-sticky{height:100svh;min-height:0;bottom:auto}
   .launch-copy{left:24px;right:auto;top:51%;width:34vw;transform:translateY(-45%)}
   .launch-label{margin-bottom:8px}
@@ -1625,6 +1625,20 @@ body.fx-enabled .fx-panel{
   .launch-copy-step p{margin-top:10px;font-size:12px;line-height:1.35}
   .launch-visual{left:38%;right:1.5%;top:68px;bottom:16px}
   .launch-scroll-cue{bottom:7px}
+}
+
+@media (max-width:700px) and (max-height:700px){
+  .lab-sticky > .launch-sticky{height:100svh;min-height:0;bottom:auto}
+  .lab-scroll.is-launch-active .stage-layout{padding:74px 18px 14px}
+  .lab-scroll.is-launch-active .stage-copy{width:min(54vw,250px);height:auto;padding:0}
+  .lab-scroll.is-launch-active .chapter-label{margin-bottom:9px}
+  .lab-scroll.is-launch-active .stage-copy > .stage-tabs{width:166px;height:42px;margin-bottom:10px}
+  .lab-scroll.is-launch-active .stage-copy > .stage-tabs .stage-tab{min-height:40px}
+  .lab-scroll.is-launch-active .copy-stack{min-height:154px}
+  .lab-scroll.is-launch-active .launch-copy-step h2{max-width:9ch;font-size:clamp(34px,9.6vw,46px);line-height:.9}
+  .lab-scroll.is-launch-active .launch-copy-step p{max-width:26ch;margin-top:9px;font-size:12px;line-height:1.32}
+  .launch-visual{left:43%;right:0;top:68px;bottom:10px;overflow:visible}
+  .launch-scroll-cue{bottom:5px}
 }
 
 .is-apple-webkit .final-site-shot{display:none!important;visibility:hidden!important;will-change:auto!important}
@@ -2153,6 +2167,7 @@ body.fx-enabled .fx-panel{
   var buildEnd=1.80;
   var idleCueTimer=0;
   var nudgeCueTimer=0;
+  var cueStableSince=0;
   var cueStarted=false;
   var mobileFinalShellHeight=330;
   var processCompleted=false;
@@ -2176,7 +2191,10 @@ body.fx-enabled .fx-panel{
   function setProcessTarget(value){
     value=clamp(value,0,storyUnits);
     if(!manual){
-      if(value<target-.002)processReverseMode=true;
+      if(!processReverseMode&&value<target){
+        if(value>target-.008)return;
+        processReverseMode=true;
+      }
       else if(value>target+.002)processReverseMode=false;
     }
     target=value;
@@ -2743,22 +2761,41 @@ body.fx-enabled .fx-panel{
     scrollCue.classList.remove('is-visible','is-idle','is-nudging');
   }
 
+  function cueAnimationSettled(){
+    var noticeSettled=noticeAction<.03||noticeAction>.97;
+    var runSettled=runAction<.03||runAction>.97;
+    return !manual&&Math.abs(target-visual)<.003&&noticeSettled&&runSettled;
+  }
+
   function scheduleScrollCue(){
     clearTimeout(idleCueTimer);
     clearTimeout(nudgeCueTimer);
-    idleCueTimer=setTimeout(function(){
+    cueStableSince=0;
+    function waitForRest(){
       if(!cueCanShow())return;
-      scrollCueText.textContent='Дальше по процессу';
+      var now=performance.now();
+      if(!cueAnimationSettled()){
+        cueStableSince=0;
+        idleCueTimer=setTimeout(waitForRest,180);
+        return;
+      }
+      if(!cueStableSince)cueStableSince=now;
+      if(now-cueStableSince<650){
+        idleCueTimer=setTimeout(waitForRest,180);
+        return;
+      }
+      scrollCueText.textContent='Дальше';
       scrollCue.classList.add('is-visible','is-idle');
-    },2200);
-    if(!reduced){
-      nudgeCueTimer=setTimeout(function(){
-        if(!cueCanShow()||!scrollCue.classList.contains('is-visible'))return;
-        scrollCue.classList.remove('is-nudging');
-        void scrollCue.offsetWidth;
-        scrollCue.classList.add('is-nudging');
-      },4300);
+      if(!reduced){
+        nudgeCueTimer=setTimeout(function(){
+          if(!cueCanShow()||!scrollCue.classList.contains('is-visible'))return;
+          scrollCue.classList.remove('is-nudging');
+          void scrollCue.offsetWidth;
+          scrollCue.classList.add('is-nudging');
+        },2100);
+      }
     }
+    idleCueTimer=setTimeout(waitForRest,180);
   }
 
   function registerCueActivity(){
@@ -3083,7 +3120,8 @@ body.fx-enabled .fx-panel{
     [.61,.75],[.65,.79],[.68,.79],
     [.72,.82],[.76,.86],[.84,.86],[.88,.90],
     [.905,.925],[.935,.925],
-    [.98,.975],[.99,.975],
+    [.955,.95],[.968,.962],
+    [.988,.984],[.992,.989],[.997,.989],
     [1,1]
   ];
   function forwardStageMotion(value){
@@ -3100,7 +3138,8 @@ body.fx-enabled .fx-panel{
   }
   function setLaunchTarget(value){
     value=clamp(value,0,1);
-    if(value<target-.0005){
+    if(!reverseMode&&value<target){
+      if(value>target-.006)return;
       if(!reverseMode)reverseVisual=renderedMotion;
       reverseMode=true;
       current=value;
@@ -3165,19 +3204,21 @@ body.fx-enabled .fx-panel{
     var viewportWidth=window.innerWidth;
     var mobile=viewportWidth<=700;
     var compact=viewportWidth<=900;
+    var shortMobile=mobile&&window.innerHeight<=700;
+    var deviceHeightReserve=shortMobile?6:24;
     var desktopWidth=mobile
-      ?Math.min(sourceRect.width,viewportWidth-28)
+      ?Math.min(sourceRect.width,shortMobile?visualRect.width-12:viewportWidth-28)
       :(compact?Math.min(sourceRect.width,visualRect.width-28):Math.min(sourceRect.width,viewportWidth*.50,860));
-    desktopWidth=Math.min(desktopWidth,Math.max(260,(visualRect.height-24)*1.6));
+    desktopWidth=Math.min(desktopWidth,Math.max(shortMobile?220:260,(visualRect.height-deviceHeightReserve)*1.6));
     var desktopHeight=desktopWidth/1.6;
     var tabletWidth=mobile
-      ?Math.min(viewportWidth*.72,500)
-      :(compact?Math.min(viewportWidth*.68,500):Math.min(viewportWidth*.36,540));
+      ?Math.min(viewportWidth*(shortMobile?.60:.72),500,shortMobile?visualRect.width-12:Infinity)
+      :(compact?Math.min(viewportWidth*.68,500,visualRect.width-14):Math.min(viewportWidth*.36,540));
     var phoneWidth=mobile
-      ?Math.min(viewportWidth*.48,200,Math.max(116,(visualRect.height-24)/2.32))
+      ?Math.min(viewportWidth*(shortMobile?.32:.48),200,Math.max(shortMobile?132:116,(visualRect.height-deviceHeightReserve)/2.32))
       :(compact?Math.min(viewportWidth*.34,220):Math.min(viewportWidth*.185,250));
     var tabletHeight=(tabletWidth-10)/(1024/702)+10;
-    var tabletHeightLimit=Math.max(180,visualRect.height-24);
+    var tabletHeightLimit=Math.max(shortMobile?150:180,visualRect.height-deviceHeightReserve);
     if(tabletHeight>tabletHeightLimit){
       tabletHeight=tabletHeightLimit;
       tabletWidth=(tabletHeight-10)*(1024/702)+10;
@@ -3236,6 +3277,7 @@ body.fx-enabled .fx-panel{
     var launchEntry=smooth(segment(progress,.0005,.012));
     var adaptiveTakeover=smooth(segment(motion,.185,.22));
     window.__labLaunchActive=processReady&&progress>.003;
+    section.classList.toggle('is-launch-active',window.__labLaunchActive);
     var processExit=smooth(segment(progress,.003,.03));
     var desktopSettle=smooth(segment(motion,.14,.22));
     if(processVisualLayer){
@@ -3538,7 +3580,7 @@ body.fx-enabled .fx-panel{
     event.preventDefault();
     reverseWheelCarry+=Math.min(60,Math.abs(event.deltaY));
     var now=performance.now();
-    if(reverseWheelCarry<6||now-lastReverseStepAt<85)return;
+    if(reverseWheelCarry<18||now-lastReverseStepAt<140)return;
     reverseWheelCarry=0;
     lastReverseStepAt=now;
     var nextOverall=reverseAnchorOverall(state);
@@ -3607,7 +3649,7 @@ body.fx-enabled .fx-panel{
       var follow=1-Math.pow(difference<0?.00002:.0015,delta);
       var change=difference*follow;
       if(difference>0){
-        var maxRate=current<.38?.13:(current<.68?.07:(current<.88?.055:.08));
+        var maxRate=current<.38?.13:(current<.68?.07:(current<.88?.055:.045));
         change=Math.min(change,maxRate*Math.max(delta,1/240));
       }
       current+=change;
