@@ -41,6 +41,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/ice-loader.css?v=20260714-3">
+  <link rel="stylesheet" href="assets/experience.css?v=20260714-2">
 
 <style>
 :root{
@@ -721,7 +722,7 @@ html.fx .about-txt h2.frev{
   .diagram-path{stroke-dashoffset:0}
 }
 /* ---------- пространственная композиция ---------- */
-.journey-zone{overflow:clip}
+.journey-zone{overflow-x:clip;overflow-y:visible}
 .journey-zone>.hero,
 .journey-zone>.tape,
 .journey-zone>#works,
@@ -1403,36 +1404,300 @@ function activateServiceRow(index){
   </div>
 </section>
 
-<!-- APPROACH - сюда позже переносится production-версия experience-lab-v2.html -->
-<section class="approach sec" id="approach" data-experience-source="experience-lab-v2.html">
-  <div class="wrap">
-    <div class="sec-head">
-      <h2 class="frev">Как я <span class="serif">работаю</span></h2>
-      <span class="count frev">( подход )</span>
-    </div>
+<!-- HOW I WORK -->
+<section class="experience-section" id="approach" data-experience-source="experience-lab-v2.html">
+  <div class="experience-mount" id="experienceMount">
+<section class="lab-scroll" id="labExperience" data-lenis-prevent-wheel aria-label="Разбор задачи, код и готовый сайт">
+    <div class="lab-sticky" id="labSticky">
+      <div class="world-grid" id="worldGrid" aria-hidden="true"></div>
 
-    <div class="experience-mount" id="experienceMount">
-      <div class="ap-row frev">
-        <span class="ap-num">/ 01</span>
-        <h3>Разбираюсь в вашем <span class="serif">бизнесе</span></h3>
-        <p>Смотрю, как устроен ваш бизнес и кто ваши клиенты. Потом <b>собираю структуру сайта под вашу задачу</b>.</p>
+      <div class="stage-layout">
+        <aside class="stage-copy">
+          <div class="chapter-label mono">Как я работаю · 01 / 04</div>
+          <nav class="stage-tabs" aria-label="Этапы процесса">
+            <button class="stage-tab is-active" type="button" data-jump="0.08">01 Разбор</button>
+            <button class="stage-tab" type="button" data-jump="0.58">02 Код</button>
+            <button class="stage-tab" type="button" data-jump="1.16">03 Результат</button>
+            <button class="stage-tab" type="button" data-launch-jump="true">04 Запуск</button>
+          </nav>
+          <div class="copy-stack">
+            <article class="copy-step copy-one" id="copyOne">
+              <h2>Читаю <em>задачу</em></h2>
+              <p>Выделяю главное: <strong>что продаём, кому и какое действие</strong> должен сделать посетитель.</p>
+            </article>
+            <article class="copy-step copy-two" id="copyTwo" aria-hidden="true">
+              <h2>Пишу <em>код</em></h2>
+              <p>Перевожу задачу в рабочую страницу: <strong>собираю структуру, добавляю тексты, изображения и нужные функции.</strong></p>
+            </article>
+            <article class="copy-step copy-three" id="copyThree" aria-hidden="true">
+              <h2>Получается <em>сайт</em></h2>
+              <p>Готовая страница: <strong>дизайн, изображения и рабочие формы.</strong></p>
+            </article>
+            <article class="copy-step launch-copy-step" data-launch-copy="0" aria-hidden="true">
+              <h2>Проверяю <em>адаптив</em></h2>
+              <p>Сайт должен одинаково уверенно работать <strong>на компьютере, планшете и телефоне.</strong></p>
+            </article>
+            <article class="copy-step launch-copy-step" data-launch-copy="1" aria-hidden="true">
+              <h2>Готовлю <em>сервер</em></h2>
+              <p>Перед публикацией подключаю домен, настраиваю сервер и включаю <strong>защищённое соединение.</strong></p>
+            </article>
+            <article class="copy-step launch-copy-step" data-launch-copy="2" aria-hidden="true">
+              <h2>Проверяю <em>заявки</em></h2>
+              <p>Отправляю тестовую форму: обращение должно прийти <strong>на почту и в Telegram.</strong></p>
+            </article>
+            <article class="copy-step launch-copy-step" data-launch-copy="3" aria-hidden="true">
+              <h2>Всё <em>проверено</em></h2>
+              <p>Домен подключён, формы проверены, защищённая версия <strong>готова принимать клиентов.</strong></p>
+            </article>
+          </div>
+          <div class="stage-foot mono" aria-hidden="true">
+            <span class="stage-count" id="stageCount">01 / 04</span>
+            <span class="stage-track"><span id="stageTrack"></span></span>
+          </div>
+        </aside>
       </div>
-      <div class="ap-row frev">
-        <span class="ap-num">/ 02</span>
-        <h3>Показываю <span class="serif">макет</span></h3>
-        <p>Делаю набросок первого экрана и объясняю, что именно буду делать. Вы смотрите макет и решаете, продолжать ли работу.</p>
+
+      <div class="visual-field" id="visualField" aria-hidden="true">
+        <svg class="ribbon-svg" id="ribbonSvg" viewBox="0 0 1000 700" preserveAspectRatio="none">
+          <path class="ribbon-glow" id="ribbonGlow" pathLength="1" d="M625 490 C790 475 882 370 830 230 C770 70 525 80 475 236 C431 374 555 452 704 420 C848 389 895 520 820 628 C730 756 510 705 455 560 C420 468 468 398 550 360"/>
+          <path class="ribbon-core" id="ribbonCore" pathLength="1" d="M625 490 C790 475 882 370 830 230 C770 70 525 80 475 236 C431 374 555 452 704 420 C848 389 895 520 820 628 C730 756 510 705 455 560 C420 468 468 398 550 360"/>
+          <g class="ribbon-head" id="ribbonHead" transform="translate(625 490)">
+            <path d="M0 0V28.5L7.5 21.5L13.8 35.5L19.2 33L13 19.5H24Z"/>
+          </g>
+        </svg>
+
+        <div class="object-wrap" id="objectWrap">
+          <div class="bubble-tail" id="bubbleTail"></div>
+          <div class="morph-shell" id="morphShell">
+            <div class="notification-content" id="notificationContent">
+              <span class="notification-avatar">К</span>
+              <span class="notification-copy"><strong>Клиент</strong><span>Нужен новый сайт для оборудования...</span></span>
+              <span class="notification-time mono">сейчас</span>
+              <i class="notification-dot"></i>
+            </div>
+            <div class="message-tint" id="messageTint"></div>
+
+            <div class="message-content" id="messageContent">
+              <div class="message-meta">
+                <span class="message-sender"><span class="sender-avatar">К</span>Клиент</span>
+                <span class="message-time mono">только что</span>
+              </div>
+              <p class="typed-message" id="typedMessage"></p>
+              <div class="message-state mono"><span>14:32</span><span class="message-checks">✓✓</span></div>
+            </div>
+
+            <div class="typing-caret" id="typingCaret"></div>
+
+            <div class="editor-content" id="editorContent">
+              <div class="editor-top">
+                <i></i><i></i><i></i>
+                <div class="editor-tabs mono">
+                  <span class="editor-tab is-active">index.html</span>
+                  <span class="editor-tab css">style.css</span>
+                  <span class="editor-tab js">script.js</span>
+                </div>
+                <span class="top-play" id="playControl"></span>
+              </div>
+              <div class="editor-body">
+                <div class="activity-bar">
+                  <span class="activity-icon is-active">&lt;&gt;</span>
+                  <span class="activity-icon">{ }</span>
+                  <span class="activity-icon">#</span>
+                </div>
+                <aside class="explorer">
+                  <div class="explorer-title mono">Explorer</div>
+                  <div class="folder-label mono">▾ Portfolio</div>
+                  <div class="folder-row">assets</div>
+                  <div class="file-row image nested">hero.webp</div>
+                  <div class="file-row svg nested">favicon.svg</div>
+                  <div class="file-row is-active">index.html</div>
+                  <div class="file-row css">style.css</div>
+                  <div class="file-row js">script.js</div>
+                </aside>
+                <div class="editor-pane">
+                  <div class="code-area">
+                    <div class="code-row"><span class="line-no">01</span><span class="line-code syn-doctype">&lt;!DOCTYPE html&gt;</span></div>
+                    <div class="code-row"><span class="line-no">02</span><span class="line-code"><span class="syn-tag">&lt;html</span> <span class="syn-attr">lang</span>=<span class="syn-string">"ru"</span><span class="syn-tag">&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">03</span><span class="line-code">&nbsp;&nbsp;<span class="syn-tag">&lt;head&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">04</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;meta</span> <span class="syn-attr">charset</span>=<span class="syn-string">"UTF-8"</span><span class="syn-tag">&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">05</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;meta</span> <span class="syn-attr">name</span>=<span class="syn-string">"viewport"</span> <span class="syn-attr">content</span>=<span class="syn-string">"width=device-width"</span><span class="syn-tag">&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">06</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;title&gt;</span><span class="syn-text">Лидер Вино · оборудование</span><span class="syn-tag">&lt;/title&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">07</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;link</span> <span class="syn-attr">rel</span>=<span class="syn-string">"stylesheet"</span> <span class="syn-attr">href</span>=<span class="syn-string">"style.css"</span><span class="syn-tag">&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">08</span><span class="line-code">&nbsp;&nbsp;<span class="syn-tag">&lt;/head&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">09</span><span class="line-code">&nbsp;&nbsp;<span class="syn-tag">&lt;body&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">10</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;main</span> <span class="syn-attr">class</span>=<span class="syn-string">"hero"</span><span class="syn-tag">&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">11</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;p</span> <span class="syn-attr">class</span>=<span class="syn-string">"eyebrow"</span><span class="syn-tag">&gt;</span><span class="code-target" data-code-token="product">винодельческого оборудования</span><span class="syn-tag">&lt;/p&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">12</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;h1&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">13</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-text">Поставка оборудования для вашего вина</span></span></div>
+                    <div class="code-row"><span class="line-no">14</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;/h1&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">15</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;a</span> <span class="syn-attr">href</span>=<span class="syn-string">"#catalog"</span><span class="syn-tag">&gt;</span><span class="syn-text">Смотреть </span><span class="code-target" data-code-token="catalog">каталог</span><span class="syn-tag">&lt;/a&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">16</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;a</span> <span class="syn-attr">href</span>=<span class="syn-string">"#projects"</span><span class="syn-tag">&gt;</span><span class="syn-text">Наши </span><span class="code-target" data-code-token="projects">проекты</span><span class="syn-tag">&lt;/a&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">17</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;form</span> <span class="syn-attr">data-purpose</span>=<span class="syn-string">"lead"</span><span class="syn-tag">&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">18</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;button&gt;</span><span class="syn-text">Оставить </span><span class="code-target" data-code-token="lead">заявку</span><span class="syn-tag">&lt;/button&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">19</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;/form&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">20</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;/main&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">21</span><span class="line-code">&nbsp;&nbsp;&nbsp;&nbsp;<span class="syn-tag">&lt;script</span> <span class="syn-attr">src</span>=<span class="syn-string">"script.js"</span><span class="syn-tag">&gt;&lt;/script&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">22</span><span class="line-code">&nbsp;&nbsp;<span class="syn-tag">&lt;/body&gt;</span></span></div>
+                    <div class="code-row"><span class="line-no">23</span><span class="line-code"><span class="syn-tag">&lt;/html&gt;</span></span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="editor-statusbar"><span>main*</span><span>HTML · UTF-8 · Ln 23</span></div>
+            </div>
+
+            <div class="browser-content" id="browserContent">
+              <div class="browser-chrome">
+                <div class="browser-nav" aria-hidden="true"><span></span><span></span><span></span></div>
+<div class="browser-address"><span class="address-text">preview.local / lider-vino</span></div>
+              </div>
+              <div class="browser-page">
+                <div class="semantic-assembly" id="semanticAssembly">
+                  <div class="assembly-backplate" id="assemblyBackplate" aria-hidden="true"></div>
+                  <div class="assembly-veil" id="assemblyVeil"></div>
+                  <div class="assembly-artboard" id="assemblyArtboard">
+                    <div class="semantic-module blueprint-nav" data-semantic-module="0">
+                      <span class="bp-brand"><i></i><span></span></span>
+                      <span class="bp-nav-links"><i></i><i></i><i></i><i></i><i></i></span>
+                      <i class="bp-nav-cta"></i>
+                    </div>
+                    <div class="semantic-module blueprint-hero" data-semantic-module="1">
+                      <i class="bp-kicker"></i>
+                      <span class="bp-title"><i></i><i></i><i></i></span>
+                      <i class="bp-media-frame"></i>
+                    </div>
+                    <div class="semantic-module blueprint-copy" data-semantic-module="2"><i></i><i></i><i></i></div>
+                    <div class="semantic-module blueprint-actions" data-semantic-module="3"><i></i><i></i></div>
+                    <div class="semantic-module blueprint-proof" data-semantic-module="4"><i></i><i></i><i></i><i></i></div>
+                  </div>
+                </div>
+                <img class="final-site-shot" id="finalPreview" src="assets/screens/lider-hero-lab.webp?v=20260714-1" alt="Первый экран сайта «Лидер Вино»" width="1280" height="800" loading="lazy" decoding="async">
+                <svg class="assembly-route" id="assemblyRoute" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="assembly-route-glow" id="assemblyRouteGlow" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
+                  <path class="assembly-route-core" id="assemblyRouteCore" pathLength="1" d="M72 46 C270 18 520 68 872 46 C944 82 920 162 772 205 C612 250 286 196 118 280 C36 326 202 390 454 362 C684 338 908 394 862 474 C820 538 614 510 430 568"/>
+                  <circle class="assembly-node" data-route-node="0" cx="872" cy="46" r="7"/>
+                  <circle class="assembly-node" data-route-node="1" cx="772" cy="205" r="7"/>
+                  <circle class="assembly-node" data-route-node="2" cx="118" cy="280" r="7"/>
+                  <circle class="assembly-node" data-route-node="3" cx="454" cy="362" r="7"/>
+                  <circle class="assembly-node" data-route-node="4" cx="430" cy="568" r="7"/>
+                  <circle class="assembly-route-head" id="assemblyRouteHead" cx="0" cy="0" r="6"/>
+                </svg>
+                <div class="assembly-beam" id="assemblyBeam"><i></i></div>
+              </div>
+            </div>
+            <div class="build-seam" id="buildSeam"></div>
+          </div>
+        </div>
+
+        <div class="webkit-final-portal" id="webkitFinalPortal" aria-hidden="true">
+          <img id="webkitFinalPortalImage" src="assets/screens/lider-hero-lab.webp?v=20260714-1" alt="" width="1280" height="800" loading="lazy" decoding="async">
+        </div>
+
+        <div class="token-layer" id="tokenLayer"></div>
+        <div class="virtual-cursor" id="virtualCursor"><svg viewBox="0 0 29 39" aria-hidden="true"><path d="M2.9 2.2C2.25 1.73 1.6 2.18 1.6 2.97V27.55C1.6 28.6 2.84 29.16 3.62 28.45L9.2 23.32L14.3 35.15C14.75 36.2 15.97 36.68 17.02 36.23L20.25 34.83C21.32 34.37 21.8 33.12 21.34 32.06L16.25 20.26H24.28C25.53 20.26 26.05 18.64 25.02 17.92L2.9 2.2Z"/></svg></div>
+        <div class="click-ring" id="clickRing"></div>
       </div>
-      <div class="ap-row frev">
-        <span class="ap-num">/ 03</span>
-        <h3>Сам собираю <span class="serif">весь сайт</span></h3>
-        <p>Делаю структуру, тексты и дизайн, настраиваю формы, домен и хостинг. <b>За всё отвечаю сам.</b> Вам не нужно искать других специалистов.</p>
+
+      <div class="scroll-cue is-visible" id="scrollCue" aria-hidden="true"><span id="scrollCueText">Листайте, чтобы продолжить</span><i></i></div>
+      <div class="page-progress" aria-hidden="true"><span id="pageProgress"></span></div>
+
+      <div class="launch-sticky" id="launchSticky">
+      <div class="launch-grid" aria-hidden="true"></div>
+
+      <div class="launch-visual" id="launchVisual" aria-hidden="true">
+        <div class="launch-camera" id="launchCamera">
+          <div class="adaptive-stage" id="adaptiveStage">
+            <div class="adaptive-device adaptive-morph" id="adaptiveDevice">
+              <div class="adaptive-frame" id="adaptiveFrame">
+                <span class="dynamic-island" id="adaptiveIsland"></span>
+                <div class="phone-system-bar" id="phoneSystemBar">
+                  <span class="phone-time">16:42</span>
+                  <span class="phone-status-icons" aria-hidden="true">
+                    <svg class="phone-signal" viewBox="0 0 16 11"><rect x=".4" y="7" width="1.8" height="4" rx=".55" fill="currentColor"></rect><rect x="4.8" y="5" width="1.8" height="6" rx=".55" fill="currentColor"></rect><rect x="9.2" y="2.7" width="1.8" height="8.3" rx=".55" fill="currentColor"></rect><rect x="13.6" y="0" width="1.8" height="11" rx=".55" fill="currentColor"></rect></svg>
+                    <svg class="phone-wifi" viewBox="0 0 16 11"><path d="M1 3.2C4.9-.1 11.1-.1 15 3.2M3.5 6c2.5-2.1 6.5-2.1 9 0M6.2 8.6c1-.8 2.6-.8 3.6 0" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round"></path><circle cx="8" cy="10" r=".8" fill="currentColor"></circle></svg>
+                    <svg class="phone-battery" viewBox="0 0 22 11"><rect x=".8" y=".8" width="18" height="9.4" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.2"></rect><rect x="2.8" y="2.8" width="11.6" height="5.4" rx="1.1" fill="currentColor"></rect><path d="M20.2 3.7v3.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+                  </span>
+                </div>
+                <div class="adaptive-desktop-chrome" id="adaptiveDesktopChrome">
+                  <span class="adaptive-chrome-traffic"><i></i><i></i><i></i></span>
+                  <span class="adaptive-chrome-address mono">preview.local / lider-vino</span>
+                </div>
+                <img class="adaptive-shot" id="adaptiveShotDesktop" src="assets/screens/lider-hero-lab.webp?v=20260714-1" alt="" width="1280" height="800" loading="lazy" decoding="async">
+                <div class="adaptive-shot adaptive-tablet-screen" id="adaptiveShotTablet">
+                  <img src="assets/screens/lider-responsive-tablet-cropped.jpg?v=20260714-1" alt="" width="1024" height="702" loading="lazy" decoding="async">
+                </div>
+                <img class="adaptive-shot" id="adaptiveShotPhone" src="assets/screens/lider-responsive-phone.png?v=20260712-2" alt="" width="390" height="844" loading="lazy" decoding="async">
+                <div class="phone-browser-bar" id="phoneBrowserBar"><span>lider-vino.ru</span></div>
+                <span class="adaptive-screen-shutter" id="adaptiveScreenShutter"></span>
+              </div>
+              <span class="device-label" id="adaptiveLabel">Компьютер</span>
+            </div>
+          </div>
+
+          <div class="launch-browser" id="launchBrowser">
+            <div class="launch-chrome">
+              <span class="launch-traffic"><i></i><i></i><i></i></span>
+              <div class="launch-address" id="launchAddress">
+                <span class="launch-warning" id="launchWarning">Небезопасно</span>
+                <span class="launch-security">
+                  <svg class="secure-lock" id="secureLock" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect class="lock-body" x="4.5" y="10" width="15" height="11" rx="2.5"></rect>
+                    <path class="lock-shackle" id="lockShackle" d="M7.5 10V7.5a4.5 4.5 0 0 1 9 0V10"></path>
+                    <circle class="lock-key" cx="12" cy="15.5" r="1.2"></circle>
+                  </svg>
+                  <span class="secure-caption mono" id="secureCaption">Соединение защищено</span>
+                </span>
+                <span class="launch-url"><span class="protocol">http<span class="protocol-s" id="protocolS">s</span>://</span><span>lider-vino.ru</span></span>
+              </div>
+              <span></span>
+            </div>
+            <div class="launch-page">
+              <img src="assets/screens/lider-responsive-desktop.png?v=20260712-2" alt="" width="1280" height="800" loading="lazy" decoding="async">
+              <div class="launch-page-shade" id="launchPageShade"></div>
+              <div class="server-console" id="serverConsole">
+                <div class="server-console-head mono"><span>Публикация сайта</span><span>перед запуском</span></div>
+                <div class="server-check" data-server-check><span><b>Домен и DNS</b><small>адрес подключён</small></span><strong>готово</strong></div>
+                <div class="server-check" data-server-check><span><b>Сервер</b><small>сайт опубликован</small></span><strong>готово</strong></div>
+                <div class="server-check" data-server-check><span><b>HTTPS</b><small>сертификат активен</small></span><strong>включён</strong></div>
+              </div>
+              <div class="lead-form" id="leadForm">
+                <div class="lead-form-label mono">Тестовая заявка</div>
+                <div class="lead-fields"><span>Максим</span><span>+7 900 000-00-00</span></div>
+                <div class="lead-send" id="leadSend">Отправить</div>
+              </div>
+            </div>
+            <span class="browser-morph-shutter" id="browserMorphShutter"></span>
+            <div class="secure-focus" id="secureFocus"></div>
+          </div>
+
+          <svg class="delivery-route" id="deliveryRoute" viewBox="0 0 1000 700" preserveAspectRatio="none">
+            <path id="deliveryPathMail" pathLength="1" d="M705 528 C770 470 815 350 900 226"/>
+            <path id="deliveryPathTelegram" pathLength="1" d="M705 528 C790 500 830 420 900 330"/>
+            <circle class="delivery-packet" id="deliveryPacketMail" cx="0" cy="0" r="5"/>
+            <circle class="delivery-packet" id="deliveryPacketTelegram" cx="0" cy="0" r="5"/>
+          </svg>
+          <div class="delivery-targets">
+            <div class="delivery-target" id="mailTarget"><i><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="m4.5 7 7.5 6 7.5-6"></path></svg></i><span><strong>Почта</strong><span>Получено</span></span></div>
+            <div class="delivery-target" id="telegramTarget"><i><svg viewBox="0 0 24 24"><path d="M21 4 3.8 10.6c-1.15.46-1.14 1.12-.2 1.4l4.4 1.38L18.2 7c.48-.3.92-.14.56.18l-8.27 7.46-.32 4.25c.47 0 .68-.2.94-.46l2.25-2.18 4.68 3.46c.86.48 1.48.23 1.7-.8L22.8 5.45C23.12 4.2 22.32 3.62 21 4Z"></path></svg></i><span><strong>Telegram</strong><span>Получено</span></span></div>
+          </div>
+
+          <div class="launch-cursor" id="launchCursor">
+            <svg viewBox="0 0 29 39"><path d="M2.9 2.2C2.25 1.73 1.6 2.18 1.6 2.97V27.55C1.6 28.6 2.84 29.16 3.62 28.45L9.2 23.32L14.3 35.15C14.75 36.2 15.97 36.68 17.02 36.23L20.25 34.83C21.32 34.37 21.8 33.12 21.34 32.06L16.25 20.26H24.28C25.53 20.26 26.05 18.64 25.02 17.92L2.9 2.2Z"/></svg>
+          </div>
+          <div class="launch-click" id="launchClick"></div>
+
+          <div class="launch-ready" id="launchReady">
+            <span class="ready-mark">✓</span>
+            <strong>Сайт работает</strong>
+            <span>HTTPS · формы · домен</span>
+          </div>
+        </div>
       </div>
-      <div class="ap-row frev">
-        <span class="ap-num">/ 04</span>
-        <h3>Проверяю и <span class="serif">запускаю</span></h3>
-        <p>Настраиваю отправку заявок на почту, в Telegram или CRM. Перед запуском проверяю сайт на телефоне и ПК и исправляю ошибки. <b>После запуска остаюсь на связи.</b></p>
+
+      <div class="launch-scroll-cue mono" aria-hidden="true"><span>Листайте</span><i></i></div>
+      <div class="launch-progress" aria-hidden="true"><span id="launchProgress"></span></div>
       </div>
     </div>
+  </section>
   </div>
 </section>
 
@@ -2226,20 +2491,6 @@ function activateServiceRow(index){
       heroIn(.15);
     }
 
-    /* ---------- смысловой ритм строк процесса и услуг ---------- */
-    var approachRows=gsap.utils.toArray('.ap-row');
-    function activateApproachRow(index){
-      approachRows.forEach(function(row,rowIndex){row.classList.toggle('is-active',rowIndex===index);});
-    }
-    activateApproachRow(0);
-    approachRows.forEach(function(row,index){
-      ScrollTrigger.create({
-        trigger:row,start:'top 58%',end:'bottom 42%',
-        onEnter:function(){activateApproachRow(index);},
-        onEnterBack:function(){activateApproachRow(index);}
-      });
-    });
-
     addEventListener('load',function(){ScrollTrigger.refresh();},{once:true});
 
     gsap.utils.toArray('.contact .line-in').forEach(function(el){
@@ -2645,5 +2896,6 @@ function activateServiceRow(index){
   setTimeout(killLoader,6000);
 })();
 </script>
+<script src="assets/experience-loader.js?v=20260714-1"></script>
 </body>
 </html>
