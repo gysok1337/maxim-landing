@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Максим - делаю продающие сайты и редизайн</title>
 <meta name="description" content="Сайты под ключ: изучаю нишу, показываю бесплатный макет до старта, собираю сайт и довожу до заявок. Лендинги, магазины, боты, автоматизация.">
 
@@ -85,7 +86,7 @@ html.dark{
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:auto;scroll-padding-top:100px}
+html{scroll-behavior:auto;scroll-padding-top:100px;background:var(--bg)}
 html.lenis,html.lenis body{height:auto}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
 body{
@@ -119,6 +120,7 @@ img{display:block;max-width:100%}
 /* ---------- header ---------- */
 header{
   position:fixed;top:0;left:0;right:0;z-index:90;
+  padding-top:env(safe-area-inset-top,0px);
   transition:transform .45s cubic-bezier(.22,1,.36,1), background .3s ease, border-color .3s ease;
   border-bottom:1px solid transparent;
 }
@@ -255,7 +257,7 @@ html.dark .tswitch .moon{display:block}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:24px;margin-bottom:clamp(38px,6vh,64px)}
 .sec-head h2{font-weight:800;font-size:clamp(34px,5.6vw,72px);letter-spacing:-.03em;line-height:1}
 .sec-head h2 .serif{font-weight:600}
-.sec-head .count{font-family:var(--mono);font-size:12px;color:var(--muted-2)}
+.sec-head .count{font-family:var(--mono);font-size:12px;color:var(--muted-2);white-space:nowrap;flex:0 0 auto}
 
 /* ---------- works (grid) ---------- */
 .works-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.6vw,32px)}
@@ -463,7 +465,6 @@ html.dark .contact{background:var(--card);border-top:1px solid var(--line)}
 
 /* ---------- reveal base ---------- */
 html.fx .frev{opacity:0;transform:translateY(26px)}
-html.fx .work-reveal{clip-path:inset(0 0 100% 0 round 20px)}
 html.fx .sec-head h2.frev,
 html.fx .about-txt h2.frev{
   opacity:1;transform:translateY(34px);clip-path:inset(0 0 100% 0);
@@ -488,16 +489,24 @@ html.fx .about-txt h2.frev{
   .approach .ap-row p{grid-column:2}
 }
 @media (max-width:760px){
+  header,header.solid{
+    background:var(--bg);border-bottom-color:var(--line);
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+  }
+  header.hide{transform:none}
+  .nav{height:72px}
   .nav-links{display:none}
   .nav .btn{display:none}
   .burger{display:block}
-  .hero{min-height:92svh}
+  .mmenu{padding-top:calc(90px + env(safe-area-inset-top,0px))}
+  .hero{min-height:92svh;padding-top:calc(106px + env(safe-area-inset-top,0px))}
+  .sec-head{gap:12px;align-items:flex-start}
+  .sec-head .count{margin-top:8px}
   .work-meta{flex-direction:column;gap:6px}
   .hero-scroll{display:none}
 }
 @media (prefers-reduced-motion:reduce){
   html.fx .frev{opacity:1;transform:none}
-  html.fx .work-reveal{clip-path:none}
   html.fx .sec-head h2.frev,html.fx .about-txt h2.frev{clip-path:none;transform:none}
   .hero-status .dot,.hero-scroll svg,.iso-scene::before{animation:none}
   .tape-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}
@@ -532,39 +541,22 @@ html.fx .about-txt h2.frev{
 #works{padding-top:clamp(120px,17vh,210px)}
 .works-grid{grid-template-columns:1fr 1fr;gap:clamp(24px,3vw,42px)}
 .work-featured{
-  grid-column:1/-1;position:relative;min-height:260svh;
-  padding-bottom:clamp(92px,13vh,148px);
+  grid-column:1/-1;position:relative;min-height:auto;padding-bottom:0;
 }
 .work-featured .work-visual{
-  position:sticky;top:clamp(92px,10vh,112px);z-index:3;
-  width:min(100%,148svh,1280px);height:auto;aspect-ratio:16/9;margin-inline:auto;
+  position:relative;top:auto;z-index:3;
+  width:min(100%,1280px);height:auto;aspect-ratio:16/9;margin-inline:auto;
   border-radius:22px;background:#090909;overflow:hidden;
   box-shadow:0 60px 140px -90px rgba(0,0,0,.82);
 }
 .work-featured .work-visual::before,
 .work-featured .work-visual::after{display:none}
 .leader-stage{position:absolute;inset:0;overflow:hidden;background:#17130f;isolation:isolate}
-.leader-shot{
-  position:absolute;inset:0;margin:0;z-index:1;opacity:1;transform:scale(1.035);
-  clip-path:inset(0 100% 0 0);-webkit-clip-path:inset(0 100% 0 0);will-change:clip-path,transform;
-}
-.leader-shot:first-child{clip-path:inset(0);-webkit-clip-path:inset(0)}
-.leader-shot:nth-child(2){z-index:2}.leader-shot:nth-child(3){z-index:3}
-.leader-shot img{width:100%;height:100%;object-fit:cover;object-position:center;pointer-events:none}
+.leader-static{width:100%;height:100%;object-fit:cover;object-position:center top;pointer-events:none}
 .leader-stage::after{
   content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
   background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 28%,transparent 66%,rgba(0,0,0,.54));
 }
-.leader-case-caption{
-  position:absolute;left:18px;bottom:18px;z-index:7;display:grid;gap:3px;max-width:min(420px,62%);
-  padding:11px 14px;border:1px solid rgba(255,255,255,.18);border-radius:7px;
-  background:rgba(12,10,8,.68);color:#F3F1EC;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-}
-.leader-case-caption .mono{color:rgba(255,255,255,.62);font-size:9px}
-.leader-case-caption strong{font-size:clamp(14px,1.6vw,19px);line-height:1.15;letter-spacing:0}
-.leader-case-steps{position:absolute;right:18px;bottom:27px;z-index:7;display:flex;gap:7px}
-.leader-case-steps i{display:block;width:22px;height:2px;background:rgba(255,255,255,.28);transition:background .25s ease,transform .25s ease;transform-origin:left}
-.leader-case-steps i.is-active{background:#F3F1EC;transform:scaleX(1.24)}
 .work-mbm{grid-column:1/-1;width:min(100%,760px);margin-top:clamp(20px,4vh,44px)}
 .work-mbm .work-visual{aspect-ratio:1280/860}
 .case-compare{
@@ -624,9 +616,7 @@ html.fx .about-txt h2.frev{
   transition:background .22s ease,color .22s ease;
 }
 .case-mode:hover,.case-mode[aria-pressed="true"]{background:#F3F1EC;color:#0E0E0D}
-.case-scroll-progress{position:absolute;left:0;right:0;bottom:0;height:2px;z-index:9;background:rgba(255,255,255,.13);pointer-events:none}
-.case-scroll-progress span{display:block;width:100%;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;will-change:transform;box-shadow:0 0 12px rgb(var(--accent-rgb) / .54)}
-.work-featured .work-meta{position:absolute;left:0;right:0;bottom:0;padding:22px 4px 0}
+.work-featured .work-meta{position:relative;left:auto;right:auto;bottom:auto;padding:22px 4px 0}
 .work-featured .work-meta h3{font-size:clamp(28px,4vw,48px)}
 .work-featured .facts{display:inline-block;margin-top:3px}
 
@@ -648,8 +638,6 @@ html.fx .about-txt h2.frev{
 @media (max-width:920px){
   .hero{min-height:100svh;padding-top:106px}
   .hero h1 .line:nth-child(2){transform:translateX(clamp(0px,3vw,24px))}
-  .work-featured{min-height:228svh}
-  .work-featured .work-visual{width:100%;aspect-ratio:4/3;top:92px}
   .work-mbm{width:100%}
   #services .sec-head,#services .svc-row,#services .svc-note{width:100%}
   .approach{background:linear-gradient(90deg,var(--card) 0 78%,color-mix(in srgb,var(--card) 94%,transparent) 92%,transparent 100%)}
@@ -663,13 +651,7 @@ html.fx .about-txt h2.frev{
   }
   .hero h1{font-size:clamp(42px,13.6vw,68px);line-height:.96}
   .hero h1 .line:nth-child(2){transform:none}
-  .work-featured{min-height:215svh;padding-bottom:118px}
-  .work-featured .work-visual{height:auto;aspect-ratio:4/3;top:82px;border-radius:16px}
-  .leader-shot img{object-position:center top}
-  .leader-case-caption{left:12px;bottom:12px;max-width:72%;padding:8px 10px}
-  .leader-case-caption strong{font-size:13px}
-  .leader-case-steps{right:12px;bottom:21px}
-  .leader-case-steps i{width:14px}
+  .work-featured .work-visual{border-radius:16px}
   .case-before,.case-after{object-position:top center}
   .case-divider-knob{width:42px;height:42px}
   .case-side-tag{bottom:66px}
@@ -679,11 +661,7 @@ html.fx .about-txt h2.frev{
   .work-soon,.work-slot{grid-column:1/-1}
 }
 @media (prefers-reduced-motion:reduce){
-  .work-featured{min-height:auto;padding-bottom:0}
-  .work-featured .work-visual{position:relative;top:auto;width:100%;aspect-ratio:16/9}
-  .work-featured .work-meta{position:relative;left:auto;right:auto;bottom:auto}
   .case-compare{--split:50%;--divider-opacity:1;--before-tag:1;--after-tag:1}
-  .leader-shot{display:none;opacity:1;transform:none}.leader-shot:first-child{display:block}
 }
 
 /* ---------- hero V4: разлом поверхности вместо мини-сайтов ---------- */
@@ -901,10 +879,10 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
       <span class="logo-text">Максим <em>web dev</em></span>
     </a>
     <nav class="nav-links">
-      <a href="#works">Кейсы</a>
-      <a href="#approach">Подход</a>
-      <a href="#services">Услуги</a>
       <a href="#about">Обо мне</a>
+      <a href="#approach">Подход</a>
+      <a href="#works">Кейсы</a>
+      <a href="#services">Услуги</a>
       <a href="#faq">Вопросы</a>
     </nav>
     <div class="nav-r">
@@ -920,10 +898,10 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
 
 <nav class="mmenu" id="mmenu">
   <div class="mono">Меню</div>
-  <a href="#works">Кейсы</a>
-  <a href="#approach">Подход</a>
-  <a href="#services">Услуги</a>
   <a href="#about">Обо мне</a>
+  <a href="#approach">Подход</a>
+  <a href="#works">Кейсы</a>
+  <a href="#services">Услуги</a>
   <a href="#faq">Вопросы</a>
   <a href="https://t.me/maksim_site" target="_blank" rel="noopener">Telegram ↗</a>
 </nav>
@@ -1110,6 +1088,57 @@ function activateServiceRow(index){
   </div>
 </div>
 
+<!-- ABOUT -->
+<section class="sec" id="about">
+  <div class="wrap about-grid">
+    <div class="about-ph frev"><img src="assets/maxim-work.webp" alt="Максим за работой" width="900" height="1200" loading="lazy"></div>
+    <div class="about-txt">
+      <span class="mono frev">Обо мне</span>
+      <h2 class="frev">Привет, я <span class="serif">Максим</span></h2>
+      <p class="frev">Частный веб-разработчик. Делаю сайты с нуля и переделываю старые: от первого экрана до запуска на вашем домене.</p>
+      <p class="frev">Вы работаете <b>со мной напрямую</b>, без менеджеров и студий. Я вникаю в проект как в свой: смотрю, где текст слабый, где форма неудобная, где на телефоне всё разваливается, и довожу до нормального вида.</p>
+      <p class="muted frev">Обычно отвечаю за пару часов.</p>
+      <div class="about-ctas frev">
+        <a href="https://t.me/maksim_site" target="_blank" rel="noopener" class="btn magnetic">Написать в Telegram</a>
+        <a href="#works" class="btn btn-o magnetic">Смотреть кейсы</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APPROACH — сюда позже переносится production-версия experience-lab-v2.html -->
+<section class="approach sec" id="approach" data-experience-source="experience-lab-v2.html">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 class="frev">Как я <span class="serif">работаю</span></h2>
+      <span class="count frev">( подход )</span>
+    </div>
+
+    <div class="experience-mount" id="experienceMount">
+      <div class="ap-row frev">
+        <span class="ap-num">/ 01</span>
+        <h3>Погружаюсь в вашу <span class="serif">нишу</span></h3>
+        <p>Сначала разбираюсь, как устроен ваш бизнес, кто клиенты и что для них важно. Сайт собирается <b>под вашу нишу и ваши задачи</b>, а не по шаблону «как у всех».</p>
+      </div>
+      <div class="ap-row frev">
+        <span class="ap-num">/ 02</span>
+        <h3>Бесплатный макет <span class="serif">до старта</span></h3>
+        <p>До оплаты показываю набросок первого экрана и разбираю, что будет сделано и что вы получите. <b>Решение принимаете, уже видя картинку</b>, а не покупая кота в мешке.</p>
+      </div>
+      <div class="ap-row frev">
+        <span class="ap-num">/ 03</span>
+        <h3>Делаю всё <span class="serif">под ключ</span></h3>
+        <p>Структура, тексты, дизайн, адаптив, домен, хостинг, формы. <b>Один исполнитель за всё</b>: вам не нужно собирать специалистов и вникать в техничку.</p>
+      </div>
+      <div class="ap-row frev">
+        <span class="ap-num">/ 04</span>
+        <h3>Довожу до <span class="serif">результата</span></h3>
+        <p>Настраиваю воронку: заявки с сайта идут на почту, в Telegram или CRM. Проверяю всё на телефоне и ПК, правлю до состояния «работает идеально». <b>Не пропадаю после запуска.</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- WORKS -->
 <section class="sec" id="works">
   <div class="wrap">
@@ -1119,26 +1148,12 @@ function activateServiceRow(index){
     </div>
 
     <div class="works-grid">
-      <div class="work work-featured leader-featured" id="leaderCase">
-        <div class="work-visual work-reveal leader-visual">
+      <div class="work work-featured">
+        <div class="work-visual">
           <span class="work-tag">Корпоративный сайт · в работе</span>
           <a class="work-arrow" href="https://maksim-site.github.io/lider/" target="_blank" rel="noopener" aria-label="Открыть сайт Лидер Вино"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-          <div class="leader-stage" id="leaderCaseStage">
-            <figure class="leader-shot" data-leader-step="0">
-              <img src="assets/screens/lider-hero.png" alt="Первый экран сайта Лидер Вино" width="1280" height="720" loading="eager">
-            </figure>
-            <figure class="leader-shot" data-leader-step="1" aria-hidden="true">
-              <img src="assets/screens/lider-catalog.png" alt="Каталог оборудования на сайте Лидер Вино" width="1280" height="720" loading="lazy">
-            </figure>
-            <figure class="leader-shot" data-leader-step="2" aria-hidden="true">
-              <img src="assets/screens/lider-projects.png" alt="Реальные проекты на сайте Лидер Вино" width="1280" height="720" loading="lazy">
-            </figure>
-            <div class="leader-case-caption" aria-live="polite">
-              <span class="mono" id="leaderStepLabel">01 / Первый экран</span>
-              <strong id="leaderStepTitle">Позиционирование и заявка</strong>
-            </div>
-            <div class="leader-case-steps" aria-hidden="true"><i></i><i></i><i></i></div>
-            <div class="case-scroll-progress" aria-hidden="true"><span id="leaderCaseProgress"></span></div>
+          <div class="leader-stage">
+            <img class="leader-static" src="assets/screens/lider-hero.png" alt="Первый экран сайта Лидер Вино" width="1280" height="720" loading="lazy">
           </div>
         </div>
         <div class="work-meta">
@@ -1153,7 +1168,7 @@ function activateServiceRow(index){
       </div>
 
       <div class="work work-mbm">
-        <div class="work-visual work-reveal">
+        <div class="work-visual">
           <span class="work-tag">Редизайн · до / после</span>
           <a class="work-arrow" href="https://mbm-trans.ru" target="_blank" rel="noopener" aria-label="Открыть сайт MBM-Trans"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
           <div class="case-compare" id="caseCompare" tabindex="0" role="slider" aria-label="Сравнение старого и нового сайта MBM-Trans" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="Старый сайт слева, новый справа; разделитель на 50 процентах">
@@ -1194,37 +1209,6 @@ function activateServiceRow(index){
           <span class="btn btn-o" style="pointer-events:none">Обсудить проект</span>
         </div>
       </a>
-    </div>
-  </div>
-</section>
-
-<!-- APPROACH -->
-<section class="approach sec" id="approach">
-  <div class="wrap">
-    <div class="sec-head">
-      <h2 class="frev">Как я <span class="serif">работаю</span></h2>
-      <span class="count frev">( подход )</span>
-    </div>
-
-    <div class="ap-row frev">
-      <span class="ap-num">/ 01</span>
-      <h3>Погружаюсь в вашу <span class="serif">нишу</span></h3>
-      <p>Сначала разбираюсь, как устроен ваш бизнес, кто клиенты и что для них важно. Сайт собирается <b>под вашу нишу и ваши задачи</b>, а не по шаблону «как у всех».</p>
-    </div>
-    <div class="ap-row frev">
-      <span class="ap-num">/ 02</span>
-      <h3>Бесплатный макет <span class="serif">до старта</span></h3>
-      <p>До оплаты показываю набросок первого экрана и разбираю, что будет сделано и что вы получите. <b>Решение принимаете, уже видя картинку</b>, а не покупая кота в мешке.</p>
-    </div>
-    <div class="ap-row frev">
-      <span class="ap-num">/ 03</span>
-      <h3>Делаю всё <span class="serif">под ключ</span></h3>
-      <p>Структура, тексты, дизайн, адаптив, домен, хостинг, формы. <b>Один исполнитель за всё</b>: вам не нужно собирать специалистов и вникать в техничку.</p>
-    </div>
-    <div class="ap-row frev">
-      <span class="ap-num">/ 04</span>
-      <h3>Довожу до <span class="serif">результата</span></h3>
-      <p>Настраиваю воронку: заявки с сайта идут на почту, в Telegram или CRM. Проверяю всё на телефоне и ПК, правлю до состояния «работает идеально». <b>Не пропадаю после запуска.</b></p>
     </div>
   </div>
 </section>
@@ -1279,24 +1263,6 @@ function activateServiceRow(index){
     </div>
 
     <p class="svc-note frev">Цены не вывешиваю на витрину: стоимость зависит от объёма и задач. <b>Сначала бесплатный разбор и макет</b>, потом точная сумма. Фиксирую её до старта, без доплат по ходу.</p>
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section class="sec" id="about">
-  <div class="wrap about-grid">
-    <div class="about-ph frev"><img src="assets/maxim-work.webp" alt="Максим за работой" width="900" height="1200" loading="lazy"></div>
-    <div class="about-txt">
-      <span class="mono frev">Обо мне</span>
-      <h2 class="frev">Привет, я <span class="serif">Максим</span></h2>
-      <p class="frev">Частный веб-разработчик. Делаю сайты с нуля и переделываю старые: от первого экрана до запуска на вашем домене.</p>
-      <p class="frev">Вы работаете <b>со мной напрямую</b>, без менеджеров и студий. Я вникаю в проект как в свой: смотрю, где текст слабый, где форма неудобная, где на телефоне всё разваливается, и довожу до нормального вида.</p>
-      <p class="muted frev">Обычно отвечаю за пару часов.</p>
-      <div class="about-ctas frev">
-        <a href="https://t.me/maksim_site" target="_blank" rel="noopener" class="btn magnetic">Написать в Telegram</a>
-        <a href="#works" class="btn btn-o magnetic">Смотреть кейсы</a>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -1576,7 +1542,7 @@ function activateServiceRow(index){
   function onScrollDir(y){
     header.classList.toggle('solid',y>30);
     var menuOpen=document.getElementById('mmenu').classList.contains('open');
-    if(!menuOpen){
+    if(!menuOpen&&innerWidth>760){
       if(y>140&&y>lastY+4)header.classList.add('hide');
       else if(y<lastY-4)header.classList.remove('hide');
     }else header.classList.remove('hide');
@@ -1723,11 +1689,6 @@ function activateServiceRow(index){
         scrollTrigger:{trigger:el,start:'top 88%'}});
     });
 
-    gsap.utils.toArray('.work-reveal').forEach(function(el){
-      gsap.to(el,{clipPath:'inset(0% 0% 0% 0% round 20px)',duration:1.25,ease:'power4.inOut',
-        scrollTrigger:{trigger:el,start:'top 86%'}});
-    });
-
     var ph=document.querySelector('.about-ph img');
     if(ph)gsap.fromTo(ph,{y:-14},{y:14,ease:'none',
       scrollTrigger:{trigger:'.about-ph',start:'top bottom',end:'bottom top',scrub:true}});
@@ -1781,57 +1742,12 @@ function activateServiceRow(index){
     }
   })();
 
-  /* ---------- Лидер Вино: закреплённая история из трёх реальных экранов ---------- */
-  (function(){
-    var featured=document.getElementById('leaderCase');
-    var shots=featured?Array.from(featured.querySelectorAll('.leader-shot')):[];
-    var progress=document.getElementById('leaderCaseProgress');
-    var label=document.getElementById('leaderStepLabel'),title=document.getElementById('leaderStepTitle');
-    var dots=featured?Array.from(featured.querySelectorAll('.leader-case-steps i')):[];
-    if(!featured||shots.length!==3)return;
-    var copy=[
-      ['01 / Первый экран','Позиционирование и заявка'],
-      ['02 / Каталог','Оборудование по задачам'],
-      ['03 / Проекты','Реальные схемы поставок']
-    ];
-    var activeStep=-1;
-    function clamp01(value){return Math.max(0,Math.min(1,value));}
-    function smoothstep(value){value=clamp01(value);return value*value*(3-2*value);}
-    function setStep(step){
-      if(step===activeStep)return;activeStep=step;
-      label.textContent=copy[step][0];title.textContent=copy[step][1];
-      dots.forEach(function(dot,index){dot.classList.toggle('is-active',index===step);});
-      shots.forEach(function(shot,index){shot.setAttribute('aria-hidden',index===step?'false':'true');});
-    }
-    function renderLeader(value){
-      var p=clamp01(value),toCatalog=smoothstep((p-.18)/.20),toProjects=smoothstep((p-.58)/.20);
-      var reveals=[1,toCatalog,toProjects];
-      shots.forEach(function(shot,index){
-        var reveal=reveals[index];
-        shot.style.clipPath='inset(0 '+((1-reveal)*100).toFixed(3)+'% 0 0)';
-        shot.style.webkitClipPath='inset(0 '+((1-reveal)*100).toFixed(3)+'% 0 0)';
-        shot.style.transform='scale('+(1.035-reveal*.035).toFixed(4)+')';
-      });
-      if(progress)progress.style.transform='scaleX('+p.toFixed(4)+')';
-      setStep(p<.34?0:(p<.70?1:2));
-    }
-    renderLeader(0);
-    if(hasFX){
-      ScrollTrigger.create({
-        trigger:featured,start:'top 14%',end:'bottom bottom',scrub:true,
-        onUpdate:function(self){renderLeader(self.progress);},
-        onLeave:function(){renderLeader(1);},
-        onLeaveBack:function(){renderLeader(0);}
-      });
-    }
-  })();
-
   /* ---------- MBM: компактное ручное сравнение ---------- */
   (function(){
     var compare=document.getElementById('caseCompare');
     var modes=compare?Array.from(compare.querySelectorAll('.case-mode')):[];
     if(!compare)return;
-    var target=50,current=50,dragging=false,visible=true,raf=0;
+    var current=50,dragging=false;
     function clampPct(value){return Math.max(0,Math.min(100,value));}
     function modeFor(value){return value>75?0:(value<25?100:50);}
     function render(value){
@@ -1845,7 +1761,7 @@ function activateServiceRow(index){
       var selected=modeFor(pct);
       modes.forEach(function(button){button.setAttribute('aria-pressed',Number(button.dataset.casePct)===selected?'true':'false');});
     }
-    function setTarget(value){target=clampPct(value);if(reduce){current=target;render(current);}}
+    function setTarget(value){current=clampPct(value);render(current);}
     function setFromClient(clientX){
       var rect=compare.getBoundingClientRect();if(rect.width)setTarget((clientX-rect.left)/rect.width*100);
     }
@@ -1862,7 +1778,7 @@ function activateServiceRow(index){
     compare.addEventListener('pointerup',release);compare.addEventListener('pointercancel',release);
     compare.addEventListener('dragstart',function(e){e.preventDefault();});
     compare.addEventListener('keydown',function(e){
-      if(e.target!==compare)return;var next=target;
+      if(e.target!==compare)return;var next=current;
       if(e.key==='ArrowLeft'||e.key==='ArrowDown')next-=4;
       else if(e.key==='ArrowRight'||e.key==='ArrowUp')next+=4;
       else if(e.key==='Home')next=0;else if(e.key==='End')next=100;else return;
@@ -1871,14 +1787,7 @@ function activateServiceRow(index){
     modes.forEach(function(button){button.addEventListener('click',function(e){
       e.stopPropagation();var mode=Number(button.dataset.casePct);setTarget(mode===0?100:(mode===100?0:50));compare.focus({preventScroll:true});
     });});
-    if('IntersectionObserver' in window){new IntersectionObserver(function(entries){visible=entries[0].isIntersecting;},{rootMargin:'220px'}).observe(compare);}
     render(current);
-    function draw(){
-      if(visible&&Math.abs(target-current)>.01){current+=(target-current)*.13;if(Math.abs(target-current)<.015)current=target;render(current);}
-      raf=requestAnimationFrame(draw);
-    }
-    if(!reduce)raf=requestAnimationFrame(draw);
-    addEventListener('beforeunload',function(){cancelAnimationFrame(raf);});
   })();
 
   /* ---------- FAQ: плавное раскрытие (height в px - стабильно) ---------- */
@@ -1910,7 +1819,7 @@ function activateServiceRow(index){
   /* ---------- магнитные кнопки ---------- */
   if(fine&&!reduce){
     document.querySelectorAll('.work-visual').forEach(function(card){
-      if(card.closest('.work-featured'))return;
+      if(card.closest('#works'))return;
       card.addEventListener('pointermove',function(e){
         var r=card.getBoundingClientRect();
         var x=(e.clientX-r.left)/r.width;
