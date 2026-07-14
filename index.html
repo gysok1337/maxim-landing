@@ -489,7 +489,7 @@ html.dark .ba-handle{background:#F3F1EC}
 .diagram-path{stroke-dasharray:420;stroke-dashoffset:420;transition:stroke-dashoffset .78s cubic-bezier(.22,1,.36,1)}
 .service-detail.is-active .diagram-path{stroke-dashoffset:0;transition-delay:.16s}
 
-.service-detail-foot{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+.service-detail-foot{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:24px;padding-top:18px;border-top:1px solid var(--line);transform:translateY(-12px)}
 .service-tags{display:flex;gap:7px;flex-wrap:wrap}
 .service-tags span{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
 .service-tags span+span::before{content:"·";margin-right:7px;color:var(--accent)}
@@ -597,7 +597,7 @@ html.fx .about-txt h2.frev{
   .service-detail-copy p{font-size:13.5px;line-height:1.48;margin-top:11px}
   .service-visual{min-height:185px;padding-top:8px}
   .service-diagram{min-height:178px}
-  .service-detail-foot{align-items:flex-start;flex-direction:column;gap:11px;margin-top:15px;padding-top:14px}
+  .service-detail-foot{align-items:flex-start;flex-direction:column;gap:11px;margin-top:15px;padding-top:14px;transform:translateY(-6px)}
   .service-tags{gap:5px}
   .service-tags span{font-size:7.5px}
   .service-tags span+span::before{margin-right:5px}
@@ -1185,7 +1185,7 @@ function moveTape(time){
   track.style.transform='translate3d('+x+'px,0,0)';
   requestAnimationFrame(moveTape);
 }</code></pre>
-              <pre class="code-rift-code"><code>// isometric surface — 30 FPS on desktop, static on touch screens
+              <pre class="code-rift-code"><code>// isometric surface - 30 FPS on desktop, static on touch screens
 var lastGridFrame=0, gridInterval=1000/30;
 function point(i,j,time,mouseX,mouseY){
   var cell=clamp(canvasWidth/19,42,78), originX=canvasWidth*.49, originY=canvasHeight*.34;
@@ -1308,7 +1308,7 @@ function activateServiceRow(index){
   </div>
 </section>
 
-<!-- APPROACH — сюда позже переносится production-версия experience-lab-v2.html -->
+<!-- APPROACH - сюда позже переносится production-версия experience-lab-v2.html -->
 <section class="approach sec" id="approach" data-experience-source="experience-lab-v2.html">
   <div class="wrap">
     <div class="sec-head">
@@ -1346,7 +1346,7 @@ function activateServiceRow(index){
   <div class="wrap">
     <div class="sec-head">
       <h2 class="frev">Мои <span class="serif">кейсы</span></h2>
-      <span class="count frev">( 01 — 03 )</span>
+      <span class="count frev">( 01 / 03 )</span>
     </div>
 
     <div class="case-carousel" id="caseCarousel" role="region" aria-roledescription="карусель" aria-label="Кейсы Максима">
@@ -1438,7 +1438,7 @@ function activateServiceRow(index){
   <div class="wrap">
     <div class="sec-head">
       <h2 class="frev">Что я <span class="serif">делаю</span></h2>
-      <span class="count frev">( 01 — 05 )</span>
+      <span class="count frev">( 01 / 05 )</span>
     </div>
 
     <div class="services-shell frev" id="servicesShell">
@@ -1475,7 +1475,7 @@ function activateServiceRow(index){
           <div class="service-detail-top"><span class="service-code">PROJECT / LANDING / 01</span><span class="service-ready">assembly ready</span></div>
           <div class="service-detail-copy">
             <h3>Лендинг, который <em>ведёт к заявке</em></h3>
-            <p>Собираю одну ясную историю: человек быстро понимает предложение, видит доказательства и без лишних шагов выходит на связь.</p>
+            <p>Делаю так, чтобы человек сразу понял, что вы предлагаете, и мог быстро оставить заявку.</p>
           </div>
           <div class="service-visual">
             <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема продающего лендинга" focusable="false">
@@ -1517,7 +1517,7 @@ function activateServiceRow(index){
           <div class="service-detail-top"><span class="service-code">PROJECT / REDESIGN / 02</span><span class="service-ready">assembly ready</span></div>
           <div class="service-detail-copy">
             <h3>Старый сайт становится <em>новым инструментом</em></h3>
-            <p>Сохраняю полезный контент, убираю лишнее и пересобираю логику. На выходе — современный, быстрый и понятный сайт вместо косметического ремонта.</p>
+            <p>Переношу полезный контент, меняю структуру и дизайн. В итоге сайт быстрее работает и лучше выглядит.</p>
           </div>
           <div class="service-visual">
             <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема редизайна старого сайта в новый" focusable="false">
@@ -1564,7 +1564,7 @@ function activateServiceRow(index){
           <div class="service-detail-top"><span class="service-code">PROJECT / COMMERCE / 03</span><span class="service-ready">assembly ready</span></div>
           <div class="service-detail-copy">
             <h3>Магазин, в котором <em>легко купить</em></h3>
-            <p>Выстраиваю путь от каталога до заказа: понятные категории, карточки товаров, корзина или быстрый запрос — под реальный процесс вашего бизнеса.</p>
+            <p>Делаю понятные категории, карточки товаров и удобный заказ. Всё под то, как вы реально продаёте.</p>
           </div>
           <div class="service-visual">
             <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема интернет-магазина с каталогом и корзиной" focusable="false">
@@ -1610,7 +1610,7 @@ function activateServiceRow(index){
           <div class="service-detail-top"><span class="service-code">PROJECT / AUTOMATION / 04</span><span class="service-ready">assembly ready</span></div>
           <div class="service-detail-copy">
             <h3>Заявка сама попадает <em>куда нужно</em></h3>
-            <p>Связываю сайт с Telegram, почтой или CRM. Команда сразу видит нового клиента, а человек получает подтверждение — без ручного копирования.</p>
+            <p>Связываю сайт с Telegram, почтой или CRM. Вы сразу видите новую заявку, а клиент получает подтверждение.</p>
           </div>
           <div class="service-visual">
             <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема автоматической передачи заявки в Telegram, почту и CRM" focusable="false">
@@ -1649,7 +1649,7 @@ function activateServiceRow(index){
           <div class="service-detail-top"><span class="service-code">PROJECT / AI ASSISTANT / 05</span><span class="service-ready">assembly ready</span></div>
           <div class="service-detail-copy">
             <h3>Помощник отвечает, <em>пока вы заняты</em></h3>
-            <p>Настраиваю Telegram-бота или ИИ-консультанта на сайте: он отвечает на частые вопросы, принимает заявку и передаёт живому человеку нужный контекст.</p>
+            <p>Настраиваю Telegram-бота или ИИ-консультанта. Он отвечает на частые вопросы, принимает заявку и передаёт её вам.</p>
           </div>
           <div class="service-visual">
             <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема ИИ-помощника, который использует базу знаний и отвечает в чате" focusable="false">
@@ -1693,7 +1693,7 @@ function activateServiceRow(index){
       </div>
     </div>
 
-    <p class="svc-note frev">Цены не вывешиваю на витрину: стоимость зависит от объёма и задач. <b>Сначала бесплатный разбор и макет</b>, потом точная сумма. Фиксирую её до старта, без доплат по ходу.</p>
+    <p class="svc-note frev">Стоимость зависит от объёма и задач. Сначала бесплатно разбираю проект и показываю макет. Потом называю точную сумму и фиксирую её до начала работы.</p>
   </div>
 </section>
 
