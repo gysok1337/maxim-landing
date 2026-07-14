@@ -2171,7 +2171,7 @@ body.fx-enabled .fx-panel{
   var cueStarted=false;
   var mobileFinalShellHeight=330;
   var processCompleted=false;
-  var processReverseMode=false;
+  var processFrozen=false;
 
   function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
   function mix(a,b,t){return a+(b-a)*t;}
@@ -2182,23 +2182,24 @@ body.fx-enabled .fx-panel{
   function setOpacity(element,value){element.style.opacity=clamp(value,0,1).toFixed(3);}
   function setTransform(element,value){element.style.transform=value;}
   function labPhaseEnd(){return reduced?.60:(window.innerWidth<=700?.469:.447);}
-  function processReverseCheckpoint(value){
-    if(value>=buildStart)return buildEnd;
-    if(value>=.60)return .90;
-    if(value>=.075)return .135;
-    return 0;
-  }
   function setProcessTarget(value){
     value=clamp(value,0,storyUnits);
-    if(!manual){
-      if(!processReverseMode&&value<target){
-        if(value>target-.008)return;
-        processReverseMode=true;
-      }
-      else if(value>target+.002)processReverseMode=false;
+    if(manual){
+      processFrozen=false;
+      target=value;
+      return;
     }
+    if(value<=target+.0005)return;
+    processFrozen=false;
     target=value;
   }
+  window.__labFreezeProcess=function(){
+    if(manual)return;
+    target=visual;
+    processFrozen=true;
+    runHoverTime=0;
+  };
+  window.__labProcessProgress=function(){return clamp(visual/storyUnits,0,1);};
   function syncStagePicker(tabs,active){
     tabs.forEach(function(tab,index){
       tab.style.setProperty('--stage-shift',((index-active)*118)+'%');
@@ -2665,34 +2666,30 @@ body.fx-enabled .fx-panel{
     var frameTime=typeof now==='number'?now:performance.now();
     var deltaTime=clamp((frameTime-lastFrameTime)/1000,0,.05);
     lastFrameTime=frameTime;
+    if(processFrozen){
+      render(visual);
+      syncFx();
+      requestAnimationFrame(frame);
+      return;
+    }
     pointer.x+=(pointerTarget.x-pointer.x)*(reduced?1:.055);
     pointer.y+=(pointerTarget.y-pointer.y)*(reduced?1:.055);
     var gatedTarget=target;
-    var abbreviatedReverse=processReverseMode&&!manual&&target<visual-.001;
-    var soundForward=!manual&&!abbreviatedReverse&&!processReverseMode;
-    if(abbreviatedReverse){
-      gatedTarget=processReverseCheckpoint(target);
+    var soundForward=!manual;
+    if(target>.16&&noticeAction<.96)gatedTarget=Math.min(gatedTarget,.16);
+    else if(target>.935&&runAction<.96)gatedTarget=Math.min(gatedTarget,.935);
+    if(reduced){
       visual=gatedTarget;
-      noticeAction=visual>.28?1:0;
-      runAction=visual>=buildStart?1:0;
-      runHoverTime=0;
-      runAutoAdvanced=visual>=buildStart;
     }else{
-      if(target>.16&&noticeAction<.96)gatedTarget=Math.min(gatedTarget,.16);
-      else if(target>.935&&runAction<.96)gatedTarget=Math.min(gatedTarget,.935);
-      if(reduced){
-        visual=gatedTarget;
-      }else{
-        gatedTarget=Math.max(gatedTarget,visual);
-        var visualDelta=(gatedTarget-visual)*follow;
-        var messageCorridor=visual>.255&&visual<.42;
-        var codeCorridor=visual>.42&&visual<buildStart;
-        var buildCorridor=visual>buildStart&&visual<buildEnd;
-        var buildIntro=visual>buildStart&&visual<buildStart+.15;
-        var maxVisualRate=messageCorridor?.15:(codeCorridor?.082:(buildCorridor?(buildIntro?.19:.14):.32));
-        var maxVisualStep=maxVisualRate*Math.max(deltaTime,1/240);
-        visual+=clamp(visualDelta,-maxVisualStep,maxVisualStep);
-      }
+      gatedTarget=Math.max(gatedTarget,visual);
+      var visualDelta=(gatedTarget-visual)*follow;
+      var messageCorridor=visual>.255&&visual<.42;
+      var codeCorridor=visual>.42&&visual<buildStart;
+      var buildCorridor=visual>buildStart&&visual<buildEnd;
+      var buildIntro=visual>buildStart&&visual<buildStart+.15;
+      var maxVisualRate=messageCorridor?.15:(codeCorridor?.082:(buildCorridor?(buildIntro?.19:.14):.32));
+      var maxVisualStep=maxVisualRate*Math.max(deltaTime,1/240);
+      visual+=clamp(visualDelta,-maxVisualStep,maxVisualStep);
     }
     if(Math.abs(gatedTarget-visual)<.00005)visual=gatedTarget;
     if(visual>=buildEnd-.006)processCompleted=true;
@@ -2737,7 +2734,7 @@ body.fx-enabled .fx-panel{
         lastTypingSound=typingSound;
         window.__labSound.type(typingSound);
       }
-    }else if(visual<.44||processReverseMode){
+    }else if(visual<.44){
       lastTypingSound=-1;
     }
     if(!manual&&!runAutoAdvanced&&runAction>=.96){
@@ -2764,7 +2761,7 @@ body.fx-enabled .fx-panel{
   function cueAnimationSettled(){
     var noticeSettled=noticeAction<.03||noticeAction>.97;
     var runSettled=runAction<.03||runAction>.97;
-    return !manual&&Math.abs(target-visual)<.003&&noticeSettled&&runSettled;
+    return !manual&&!processFrozen&&Math.abs(target-visual)<.003&&noticeSettled&&runSettled;
   }
 
   function scheduleScrollCue(){
@@ -3078,15 +3075,19 @@ body.fx-enabled .fx-panel{
   var defaultHeaderStatus=headerStatus?headerStatus.textContent:'';
   var target=0;
   var current=0;
-  var reverseMode=false;
-  var reverseVisual=0;
+  var launchFrozen=false;
   var renderedMotion=0;
   var lastTime=performance.now();
   var launchWheelFrame=0;
   var launchWheelStep=0;
   var launchExitFrame=0;
-  var reverseWheelCarry=0;
-  var lastReverseStepAt=0;
+  var sectionNavLastY=window.scrollY;
+  var sectionNavUpward=0;
+  var sectionNavFreezeStarted=false;
+  var sectionNavFrozenOverall=null;
+  var sectionResumeOverall=null;
+  var sectionNavBusy=false;
+  var sectionNavTimer=0;
   var lastSoundMotion=0;
   var launchTarget={x:0,y:0};
   var launchOrigin={x:0,y:0};
@@ -3133,20 +3134,10 @@ body.fx-enabled .fx-panel{
     }
     return 1;
   }
-  function reverseStageCheckpoint(value){
-    return value>=.02?.50:0;
-  }
   function setLaunchTarget(value){
     value=clamp(value,0,1);
-    if(!reverseMode&&value<target){
-      if(value>target-.006)return;
-      if(!reverseMode)reverseVisual=renderedMotion;
-      reverseMode=true;
-      current=value;
-      reverseVisual=reverseStageCheckpoint(value);
-    }else if(value>target+.0005){
-      reverseMode=false;
-    }
+    if(value<=target+.0005)return;
+    launchFrozen=false;
     target=value;
   }
   function syncLaunchPicker(activeIndex){
@@ -3559,32 +3550,76 @@ body.fx-enabled .fx-panel{
     return current>=.9994&&renderedMotion>=.998;
   }
 
-  function reverseAnchorOverall(state){
-    if(state.overall>state.split+.002){
-      if(state.progress>.46)return state.split+(1-state.split)*.44;
-      return state.split*(1.80/1.86);
+  function freezeSectionState(state){
+    if(state.overall>=state.split-.0005&&window.__labProcessReady===true){
+      target=current;
+      launchFrozen=true;
+      return state.split+(1-state.split)*current;
     }
-    var processTimeline=clamp(state.overall/state.split,0,1)*1.86;
-    if(processTimeline>1.20)return state.split*(.90/1.86);
-    if(processTimeline>.32)return state.split*(.135/1.86);
-    return 0;
+    if(typeof window.__labFreezeProcess==='function')window.__labFreezeProcess();
+    var processProgress=typeof window.__labProcessProgress==='function'?window.__labProcessProgress():0;
+    return state.split*clamp(processProgress,0,1);
   }
 
-  function governReverseWheel(event){
-    if(reduced)return;
-    if(event.deltaY>=0){reverseWheelCarry=0;return;}
+  function finishSectionNavigation(){
+    sectionNavBusy=false;
+    sectionNavLastY=window.scrollY;
+  }
+
+  function beginSectionExit(state){
+    if(sectionNavBusy)return;
+    sectionNavBusy=true;
+    sectionResumeOverall=clamp(sectionNavFrozenOverall===null?freezeSectionState(state):sectionNavFrozenOverall,0,1);
+    sectionNavUpward=0;
+    sectionNavFreezeStarted=false;
+    var destination=Math.max(0,state.top-Math.min(720,window.innerHeight*.78));
+    window.scrollTo({top:Math.round(destination),behavior:reduced?'auto':'smooth'});
+    clearTimeout(sectionNavTimer);
+    sectionNavTimer=setTimeout(finishSectionNavigation,reduced?80:720);
+  }
+
+  function resumeSection(state){
+    if(sectionNavBusy||sectionResumeOverall===null)return;
+    sectionNavBusy=true;
+    var resumeAt=sectionResumeOverall;
+    sectionResumeOverall=null;
+    sectionNavFrozenOverall=null;
+    var destination=state.top+state.distance*resumeAt;
+    window.scrollTo({top:Math.round(destination),behavior:reduced?'auto':'smooth'});
+    clearTimeout(sectionNavTimer);
+    sectionNavTimer=setTimeout(finishSectionNavigation,reduced?80:720);
+  }
+
+  function governSectionNavigation(){
+    var scrollY=window.scrollY;
+    var delta=scrollY-sectionNavLastY;
+    sectionNavLastY=scrollY;
+    if(sectionNavBusy||Math.abs(delta)<.25)return;
     var rect=section.getBoundingClientRect();
-    if(rect.top>1||rect.bottom<window.innerHeight){reverseWheelCarry=0;return;}
     var state=launchScrollState();
-    if(state.overall<=.0005){reverseWheelCarry=0;return;}
-    event.preventDefault();
-    reverseWheelCarry+=Math.min(60,Math.abs(event.deltaY));
-    var now=performance.now();
-    if(reverseWheelCarry<18||now-lastReverseStepAt<140)return;
-    reverseWheelCarry=0;
-    lastReverseStepAt=now;
-    var nextOverall=reverseAnchorOverall(state);
-    window.scrollTo({top:Math.round(state.top+state.distance*nextOverall),behavior:'auto'});
+    if(sectionResumeOverall!==null&&delta>0&&rect.top<=window.innerHeight*.82&&state.overall<sectionResumeOverall-.001){
+      resumeSection(state);
+      return;
+    }
+    var pinned=rect.top<=1&&rect.bottom>=window.innerHeight;
+    if(!pinned||state.overall<=.0005){
+      sectionNavUpward=0;
+      sectionNavFreezeStarted=false;
+      sectionNavFrozenOverall=null;
+      return;
+    }
+    if(delta<0){
+      sectionNavUpward+=Math.min(48,-delta);
+      if(!sectionNavFreezeStarted&&sectionNavUpward>=10){
+        sectionNavFrozenOverall=freezeSectionState(state);
+        sectionNavFreezeStarted=true;
+      }
+      if(sectionNavUpward>=34)beginSectionExit(state);
+    }else{
+      sectionNavUpward=0;
+      sectionNavFreezeStarted=false;
+      sectionNavFrozenOverall=null;
+    }
   }
 
   function governLaunchWheel(event){
@@ -3639,10 +3674,8 @@ body.fx-enabled .fx-panel{
     var delta=clamp((now-lastTime)/1000,0,.05);
     lastTime=now;
     var gatedTarget=window.__labProcessReady===true?target:0;
-    if(reverseMode&&gatedTarget<=.0001){
-      current=0;
-      reverseVisual=0;
-    }else if(reduced){
+    if(launchFrozen)gatedTarget=current;
+    if(reduced){
       current=gatedTarget;
     }else{
       var difference=gatedTarget-current;
@@ -3655,16 +3688,8 @@ body.fx-enabled .fx-panel{
       current+=change;
     }
     if(Math.abs(gatedTarget-current)<.00005)current=gatedTarget;
-    var motion;
-    if(reverseMode){
-      var reverseTarget=reverseStageCheckpoint(current);
-      reverseVisual=reverseTarget;
-      motion=reverseVisual;
-    }else{
-      motion=forwardStageMotion(current);
-      reverseVisual=motion;
-    }
-    render(current,motion,reverseMode);
+    var motion=forwardStageMotion(current);
+    render(current,motion,false);
     requestAnimationFrame(frame);
   }
 
@@ -3681,8 +3706,8 @@ body.fx-enabled .fx-panel{
     window.addEventListener('scroll',fallback,{passive:true});
     fallback();
   }
-  window.addEventListener('wheel',governReverseWheel,{passive:false});
   window.addEventListener('wheel',governLaunchWheel,{passive:false});
+  window.addEventListener('scroll',governSectionNavigation,{passive:true});
   window.addEventListener('scroll',guardLaunchExit,{passive:true});
 
   var recordLaunchControl=document.getElementById('recordLaunchControl');
@@ -3691,17 +3716,18 @@ body.fx-enabled .fx-panel{
       var value=parseFloat(this.value);
       if(!Number.isFinite(value))return;
       value=clamp(value,0,1);
-      setLaunchTarget(value);
+      launchFrozen=false;
+      target=value;
       current=value;
-      reverseVisual=reverseMode?reverseStageCheckpoint(value):forwardStageMotion(value);
-      render(current,reverseVisual,reverseMode);
+      renderedMotion=forwardStageMotion(value);
+      render(current,renderedMotion,false);
     });
   }
 
   window.addEventListener('resize',function(){
     targetMeasured=false;
     deviceMetrics=null;
-    render(current,reverseMode?reverseVisual:forwardStageMotion(current),reverseMode);
+    render(current,forwardStageMotion(current),false);
   },{passive:true});
   render(0,0,false);
   requestAnimationFrame(frame);
