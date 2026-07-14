@@ -1978,6 +1978,66 @@ body.fx-enabled .fx-panel{
 (function(){
   'use strict';
 
+  var AudioEngine=window.AudioContext||window.webkitAudioContext;
+  var reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var context=null;
+  var lastTypeAt=0;
+
+  function unlock(){
+    if(reduced||!AudioEngine)return;
+    if(!context)context=new AudioEngine();
+    if(context.state==='suspended')context.resume().catch(function(){});
+  }
+
+  function tone(frequency,endFrequency,duration,volume,type,delay){
+    if(!context||context.state!=='running'||document.hidden)return;
+    var start=context.currentTime+(delay||0);
+    var oscillator=context.createOscillator();
+    var gain=context.createGain();
+    oscillator.type=type||'sine';
+    oscillator.frequency.setValueAtTime(Math.max(40,frequency),start);
+    oscillator.frequency.exponentialRampToValueAtTime(Math.max(40,endFrequency||frequency),start+duration);
+    gain.gain.setValueAtTime(.0001,start);
+    gain.gain.exponentialRampToValueAtTime(volume,start+.003);
+    gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start(start);
+    oscillator.stop(start+duration+.01);
+  }
+
+  function click(kind){
+    var strong=kind==='strong';
+    tone(strong?720:560,strong?390:430,strong?.052:.036,strong?.018:.010,'triangle',0);
+  }
+
+  function type(step){
+    var now=performance.now();
+    if(now-lastTypeAt<95)return;
+    lastTypeAt=now;
+    tone(step%3===0?1080:880,step%3===0?920:760,.018,.0045,'square',0);
+  }
+
+  function lock(){
+    tone(360,300,.055,.012,'triangle',0);
+    tone(680,560,.045,.010,'sine',.035);
+  }
+
+  function success(){
+    tone(520,610,.075,.010,'sine',0);
+    tone(760,900,.10,.009,'sine',.065);
+  }
+
+  ['pointerdown','wheel','touchstart','keydown'].forEach(function(name){
+    window.addEventListener(name,unlock,{passive:true});
+  });
+  window.__labSound={click:click,type:type,lock:lock,success:success};
+})();
+</script>
+<script>
+(function(){
+  'use strict';
+
   var messageSegments=[
     {text:'Нужен сайт для '},
     {text:'винодельческого оборудования',key:'product',label:'продукт'},
@@ -2070,6 +2130,9 @@ body.fx-enabled .fx-panel{
   var noticeAction=0;
   var runAction=0;
   var lastTypedCount=-1;
+  var lastNoticeSound=0;
+  var lastRunSound=0;
+  var lastTypingSound=-1;
   var desktopRibbonPath=ribbonCore.getAttribute('d');
   var mobileRibbonPath='M430 642 C650 642 790 607 875 552 C945 507 950 412 885 352 C775 257 540 267 340 307 C165 342 78 427 88 517 C98 597 220 642 400 642 C575 642 710 607 800 552';
   var activeRibbonPath='';
@@ -2591,6 +2654,7 @@ body.fx-enabled .fx-panel{
     pointer.y+=(pointerTarget.y-pointer.y)*(reduced?1:.055);
     var gatedTarget=target;
     var abbreviatedReverse=processReverseMode&&!manual&&target<visual-.001;
+    var soundForward=!manual&&!abbreviatedReverse&&!processReverseMode;
     if(abbreviatedReverse){
       gatedTarget=processReverseCheckpoint(target);
       visual=gatedTarget;
@@ -2632,6 +2696,8 @@ body.fx-enabled .fx-panel{
     else if(noticeAction<.96)noticeActionTarget=target>.16&&visual>.145&&noticeDistance<13?1:0;
     else noticeActionTarget=1;
     noticeAction+=(noticeActionTarget-noticeAction)*(reduced?1:.1);
+    if(soundForward&&noticeAction>=.55&&lastNoticeSound<.55&&window.__labSound)window.__labSound.click('soft');
+    lastNoticeSound=noticeAction;
 
     var runDistance=Math.hypot(cursor.x-cursorMetrics.playX,cursor.y-cursorMetrics.playY);
     var runReady=target>.935&&visual>.91&&noticeAction>.95&&runDistance<12;
@@ -2648,6 +2714,17 @@ body.fx-enabled .fx-panel{
       runActionTarget=1;
     }
     runAction+=(runActionTarget-runAction)*(reduced?1:.18);
+    if(soundForward&&runAction>=.55&&lastRunSound<.55&&window.__labSound)window.__labSound.click('strong');
+    lastRunSound=runAction;
+    if(soundForward&&visual>=.46&&visual<.90){
+      var typingSound=Math.floor((visual-.46)/.03);
+      if(typingSound!==lastTypingSound&&window.__labSound){
+        lastTypingSound=typingSound;
+        window.__labSound.type(typingSound);
+      }
+    }else if(visual<.44||processReverseMode){
+      lastTypingSound=-1;
+    }
     if(!manual&&!runAutoAdvanced&&runAction>=.96){
       runAutoAdvanced=true;
       target=Math.max(target,buildStart+.13);
@@ -2979,6 +3056,7 @@ body.fx-enabled .fx-panel{
   var reverseGestureTimer=0;
   var reverseGestureLimit=0;
   var reverseGuardFrame=0;
+  var lastSoundMotion=0;
   var launchTarget={x:0,y:0};
   var launchOrigin={x:0,y:0};
   var targetMeasured=false;
@@ -3008,9 +3086,9 @@ body.fx-enabled .fx-panel{
     [.23,.36],[.28,.36],
     [.39,.50],[.44,.50],
     [.53,.59],[.56,.59],
-    [.70,.75],[.73,.75],
-    [.82,.84],[.85,.84],
-    [.95,.965],[.975,.965],
+    [.73,.79],[.76,.79],
+    [.82,.85],[.84,.85],
+    [.93,.965],[.95,.965],
     [1,1]
   ];
   function forwardStageMotion(value){
@@ -3030,6 +3108,8 @@ body.fx-enabled .fx-panel{
     if(value<target-.0005){
       if(!reverseMode)reverseVisual=renderedMotion;
       reverseMode=true;
+      current=value;
+      reverseVisual=reverseStageCheckpoint(value);
     }else if(value>target+.0005){
       reverseMode=false;
     }
@@ -3051,9 +3131,9 @@ body.fx-enabled .fx-panel{
     var copyEntry=smooth(segment(progress,.004,.038));
     var values=[
       1-smooth(segment(motion,.515,.55)),
-      phase(motion,.515,.55,.80,.835),
-      phase(motion,.80,.835,.955,.975),
-      smooth(segment(motion,.955,.975))
+      phase(motion,.515,.55,.85,.87),
+      phase(motion,.85,.87,.965,.98),
+      smooth(segment(motion,.965,.98))
     ];
     var active=0;
     values.forEach(function(value,index){
@@ -3062,7 +3142,7 @@ body.fx-enabled .fx-panel{
       if(value>values[active])active=index;
       var step=copySteps[index];
       setOpacity(step,value);
-      var before=motion<[0,.515,.80,.955][index];
+      var before=motion<[0,.515,.85,.965][index];
       setTransform(step,'translate3d(0,'+((before?1:-1)*(1-value)*26).toFixed(1)+'px,0)');
       step.style.filter='blur('+((1-value)*3).toFixed(2)+'px)';
       step.setAttribute('aria-hidden',value>.45?'false':'true');
@@ -3183,23 +3263,32 @@ body.fx-enabled .fx-panel{
     var browserIn=smooth(segment(motion,.51,.59));
     var browserLayerIn=smooth(segment(browserIn,.18,.82));
     var deviceLayerOut=1-browserLayerIn;
-    var secureZoomIn=smooth(segment(motion,.595,.635));
-    var secureZoomOut=smooth(segment(motion,.705,.75));
+    var secureZoomIn=smooth(segment(motion,.595,.64));
+    var secureZoomOut=smooth(segment(motion,.72,.79));
     var secureZoom=secureZoomIn*(1-secureZoomOut);
-    var warningOut=smooth(segment(motion,.635,.655));
-    var secureChange=smooth(segment(motion,.655,.70));
-    var secureMoment=smooth(segment(motion,.655,.70));
+    var warningOut=smooth(segment(motion,.64,.665));
+    var secureChange=smooth(segment(motion,.665,.72));
+    var secureMoment=smooth(segment(motion,.665,.72));
     var securePulse=Math.sin(secureMoment*Math.PI);
-    var serverPanel=phase(motion,.755,.78,.805,.835);
-    var leadIn=smooth(segment(motion,.835,.865));
-    var clickPhase=smooth(segment(motion,.885,.915));
-    var routeMail=smooth(segment(motion,.91,.95));
-    var routeTelegram=smooth(segment(motion,.925,.965));
-    var deliveryDone=smooth(segment(motion,.945,.975));
-    var finalIn=smooth(segment(motion,.965,.995));
+    var serverPanel=phase(motion,.795,.815,.835,.85);
+    var leadIn=smooth(segment(motion,.85,.87));
+    var clickPhase=smooth(segment(motion,.895,.915));
+    var routeMail=smooth(segment(motion,.91,.945));
+    var routeTelegram=smooth(segment(motion,.925,.955));
+    var deliveryDone=smooth(segment(motion,.94,.96));
+    var finalIn=smooth(segment(motion,.965,.992));
     var tabletReveal=smooth(segment(motion,.292,.304));
     var phoneReveal=smooth(segment(motion,.425,.439));
     var activeShot=phoneReveal>=.5?2:(tabletReveal>=.5?1:0);
+
+    if(!isReverse&&motion>=lastSoundMotion&&window.__labSound){
+      if(lastSoundMotion<.30&&motion>=.30)window.__labSound.click('soft');
+      if(lastSoundMotion<.43&&motion>=.43)window.__labSound.click('soft');
+      if(lastSoundMotion<.69&&motion>=.69)window.__labSound.lock();
+      if(lastSoundMotion<.905&&motion>=.905)window.__labSound.click('strong');
+      if(lastSoundMotion<.985&&motion>=.985)window.__labSound.success();
+    }
+    lastSoundMotion=motion;
 
     renderCopy(progress,processReady,motion);
     launchProgress.style.transform='scaleY('+progress.toFixed(4)+')';
@@ -3284,7 +3373,7 @@ body.fx-enabled .fx-panel{
       var desktopInsetTop=mix(0,7,desktopSettle);
       var desktopInsetBottom=mix(0,7,desktopSettle);
       var tabletInsetX=mix(desktopInsetX,5,tabletMorph);
-      var tabletInsetTop=mix(desktopInsetTop,5,tabletMorph);
+      var tabletInsetTop=mix(desktopInsetTop,1,tabletMorph);
       var tabletInsetBottom=mix(desktopInsetBottom,5,tabletMorph);
       var phoneInsetX=mix(tabletInsetX,6,phoneMorph);
       var phoneInsetTop=mix(tabletInsetTop,6,phoneMorph);
@@ -3330,7 +3419,7 @@ body.fx-enabled .fx-panel{
 
     setOpacity(warning,1-warningOut);
     setTransform(warning,'translate3d('+(-8*warningOut).toFixed(1)+'px,-50%,0)');
-    setOpacity(lock,smooth(segment(motion,.638,.655)));
+    setOpacity(lock,smooth(segment(motion,.645,.665)));
     setTransform(lock,'scale('+mix(.8,1,secureChange).toFixed(3)+')');
     if(lockShackle)lockShackle.style.transform='rotate('+mix(-38,0,secureChange).toFixed(2)+'deg)';
     protocolS.style.opacity=secureChange.toFixed(3);
@@ -3338,17 +3427,17 @@ body.fx-enabled .fx-panel{
     protocolS.style.transform='none';
     address.classList.toggle('is-secure',secureChange>.96);
 
-    var focusAlpha=phase(motion,.59,.615,.70,.75);
+    var focusAlpha=phase(motion,.59,.62,.73,.79);
     setOpacity(secureFocus,focusAlpha);
     setTransform(secureFocus,'translate(-50%,-50%) scale('+(mix(.58,1,secureZoom)+securePulse*.22).toFixed(3)+')');
-    var captionAlpha=smooth(segment(motion,.67,.70));
+    var captionAlpha=smooth(segment(motion,.69,.72));
     setOpacity(secureCaption,captionAlpha);
     setTransform(secureCaption,'translate3d('+mix(6,0,captionAlpha).toFixed(1)+'px,0,0)');
 
     setOpacity(serverConsole,serverPanel);
     setTransform(serverConsole,'translate3d(0,'+(12*(1-serverPanel)).toFixed(1)+'px,18px) scale('+mix(.96,1,serverPanel).toFixed(3)+')');
     serverChecks.forEach(function(check,index){
-      var checkIn=smooth(segment(motion,.755+index*.016,.78+index*.016))*serverPanel;
+      var checkIn=smooth(segment(motion,.795+index*.009,.815+index*.009))*serverPanel;
       setOpacity(check,checkIn);
       setTransform(check,'translate3d('+(9*(1-checkIn)).toFixed(1)+'px,0,0)');
     });
@@ -3358,25 +3447,25 @@ body.fx-enabled .fx-panel{
     leadSend.textContent=deliveryDone>.7?'Отправлено ✓':'Отправить';
     leadSend.style.background=deliveryDone>.7?'#d9d7d0':'var(--accent)';
     pageShade.style.opacity=(secureZoom*.07+serverPanel*.04+leadIn*.08+finalIn*.22).toFixed(3);
-    if(motion>.83&&!targetMeasured)measureInteractionTargets();
+    if(motion>.84&&!targetMeasured)measureInteractionTargets();
 
     var cursorStartX=targetMeasured?launchOrigin.x:(mobile?width*.58:width*.69);
     var cursorStartY=targetMeasured?launchOrigin.y:(mobile?height*.61:height*.55);
     var cursorTargetX=targetMeasured?launchTarget.x:(mobile?width*.70:width*.77);
     var cursorTargetY=targetMeasured?launchTarget.y:(mobile?height*.76:height*.79);
-    var cursorMove=smooth(segment(motion,.86,.90));
+    var cursorMove=smooth(segment(motion,.875,.90));
     var cursorArc=Math.sin(cursorMove*Math.PI);
     var cursorX=mix(cursorStartX,cursorTargetX,cursorMove)+cursorArc*(mobile?5:9);
     var cursorY=mix(cursorStartY,cursorTargetY,cursorMove)-cursorArc*(mobile?7:11);
     var transientAlpha=isReverse?0:1;
-    var cursorAlpha=phase(motion,.84,.86,.92,.95)*transientAlpha;
+    var cursorAlpha=phase(motion,.85,.875,.925,.95)*transientAlpha;
     setOpacity(launchCursor,cursorAlpha);
     setTransform(launchCursor,'translate3d('+(cursorX-4).toFixed(1)+'px,'+(cursorY-4).toFixed(1)+'px,0) rotate('+mix(-7,1,cursorMove).toFixed(2)+'deg) scale('+(1-Math.sin(clickPhase*Math.PI)*.1).toFixed(3)+')');
     var clickAlpha=Math.sin(clickPhase*Math.PI)*transientAlpha;
     setOpacity(launchClick,clickAlpha);
     setTransform(launchClick,'translate3d('+(cursorTargetX-14).toFixed(1)+'px,'+(cursorTargetY-14).toFixed(1)+'px,0) scale('+mix(.55,1.45,out(clickPhase)).toFixed(3)+')');
 
-    var routeAlpha=phase(motion,.895,.91,.965,.98)*transientAlpha;
+    var routeAlpha=phase(motion,.895,.91,.955,.972)*transientAlpha;
     setOpacity(deliveryRoute,routeAlpha);
     mailPath.style.strokeDashoffset=(1-routeMail).toFixed(4);
     telegramPath.style.strokeDashoffset=(1-routeTelegram).toFixed(4);
@@ -3392,8 +3481,8 @@ body.fx-enabled .fx-panel{
       telegramPacket.setAttribute('cy',telegramPoint.y.toFixed(2));
       setOpacity(telegramPacket,routeTelegram>0&&routeTelegram<.995?1:0);
     }
-    var mailIn=smooth(segment(motion,.91,.95))*(1-finalIn);
-    var telegramIn=smooth(segment(motion,.925,.965))*(1-finalIn);
+    var mailIn=smooth(segment(motion,.91,.945))*(1-finalIn);
+    var telegramIn=smooth(segment(motion,.925,.955))*(1-finalIn);
     setOpacity(mailTarget,mailIn);
     setOpacity(telegramTarget,telegramIn);
     setTransform(mailTarget,'translateX('+(18*(1-mailIn)).toFixed(1)+'px)');
@@ -3456,7 +3545,7 @@ body.fx-enabled .fx-panel{
     reverseGestureTimer=setTimeout(function(){
       reverseGestureActive=false;
       reverseGestureLimit=0;
-    },420);
+    },120);
     if(reverseGestureActive){
       if(reverseGestureLimit&&window.scrollY<reverseGestureLimit)window.scrollTo({top:reverseGestureLimit,behavior:'auto'});
       return;
@@ -3492,7 +3581,7 @@ body.fx-enabled .fx-panel{
       return;
     }
     if(launchFinished())return;
-    var maxLead=current<.25?.014:(current<.76?.011:(current<.84?.010:.005));
+    var maxLead=current<.25?.014:(current<.76?.009:(current<.84?.012:.016));
     var available=Math.max(0,(current+maxLead-state.progress)*state.launchDistance);
     var step=Math.min(event.deltaY,20,available);
     if(step+1<event.deltaY){
@@ -3540,7 +3629,7 @@ body.fx-enabled .fx-panel{
       var follow=1-Math.pow(difference<0?.00002:.0015,delta);
       var change=difference*follow;
       if(difference>0){
-        var maxRate=current<.24?.085:(current<.76?.065:(current<.84?.055:.018));
+        var maxRate=current<.24?.085:(current<.53?.065:(current<.76?.052:(current<.84?.060:.045)));
         change=Math.min(change,maxRate*Math.max(delta,1/240));
       }
       current+=change;
