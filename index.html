@@ -305,11 +305,6 @@ html:not(.dark) .work-visual::before{mix-blend-mode:multiply}
 .work-visual.is-hot::after{opacity:1;transform:translateX(230%) skewX(-16deg)}
 .work-visual>img{width:100%;height:100%;object-fit:cover;object-position:top center;will-change:transform;transition:transform 1s cubic-bezier(.22,1,.36,1)}
 a.work:hover .work-visual>img{transform:scale(1.035)}
-.work-tag{position:absolute;top:16px;left:16px;z-index:4;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;background:rgba(14,14,13,.82);color:#F3F1EC;padding:6px 12px;border-radius:100px;backdrop-filter:blur(6px)}
-.work-arrow{position:absolute;top:14px;right:14px;z-index:4;width:46px;height:46px;border-radius:50%;background:var(--bg);display:grid;place-items:center;transition:transform .45s cubic-bezier(.22,1,.36,1),background .25s,color .25s;border:1px solid var(--line)}
-.work-arrow svg{width:18px;height:18px;transition:transform .45s cubic-bezier(.22,1,.36,1)}
-.work-arrow:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-contrast);transform:scale(1.1);box-shadow:0 0 28px -15px rgb(var(--accent-rgb) / .8)}
-.work-arrow:hover svg{transform:translate(2px,-2px)}
 .work-meta{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:16px 4px 0;flex-wrap:wrap}
 .work-meta h3{font-weight:700;font-size:clamp(20px,2.2vw,27px);letter-spacing:-.02em}
 .work-meta .facts{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
@@ -669,8 +664,8 @@ html.fx .about-txt h2.frev{
 .case-carousel{position:relative;--case-width:clamp(540px,60vw,780px)}
 .case-carousel-viewport{
   overflow-x:auto;overflow-y:hidden;margin-right:calc(var(--pad)*-1);padding:12px var(--pad) 38px 0;
-  scroll-snap-type:x mandatory;scroll-padding-left:0;scrollbar-width:none;-ms-overflow-style:none;
-  overscroll-behavior-inline:contain;touch-action:pan-x pan-y;cursor:grab;-webkit-overflow-scrolling:touch;
+  scroll-snap-type:none;scroll-padding-left:0;scrollbar-width:none;-ms-overflow-style:none;
+  touch-action:pan-x pan-y;cursor:grab;-webkit-overflow-scrolling:touch;
 }
 .case-carousel-viewport::-webkit-scrollbar{display:none}
 .case-carousel-viewport.is-dragging{cursor:grabbing;scroll-snap-type:none;user-select:none;-webkit-user-select:none}
@@ -680,7 +675,7 @@ html.fx .about-txt h2.frev{
 }
 .case-slide{
   --case-y:0px;flex:0 0 var(--case-width);width:var(--case-width);margin:0;
-  scroll-snap-align:start;scroll-snap-stop:always;opacity:.48;
+  scroll-snap-align:start;scroll-snap-stop:normal;opacity:.48;
   transform:translate3d(0,calc(var(--case-y) + 10px),0);
   transition:opacity .42s ease,transform .55s cubic-bezier(.22,1,.36,1);
 }
@@ -694,8 +689,10 @@ html.fx .about-txt h2.frev{
   width:100%;height:auto;min-height:0;aspect-ratio:16/10;margin:0;border-radius:18px;
 }
 .case-slide .work-visual::before,.case-slide .work-visual::after{display:none}
-.case-slide.work-featured .work-visual{aspect-ratio:16/9}
-.case-slide.work-featured .leader-static{object-fit:contain;object-position:center}
+.case-slide.work-featured .leader-stage{padding:0;background:transparent}
+.case-slide.work-featured .leader-static{object-fit:cover;object-position:center top}
+.case-slide.work-mbm .work-visual{background:transparent}
+.case-slide.work-mbm .case-before,.case-slide.work-mbm .case-after{object-fit:cover;object-position:center top;background:transparent}
 .case-slide.work-featured,.case-slide.work-mbm,.case-slide.work-slot{
   grid-column:auto;width:var(--case-width);min-height:0;padding:0;
 }
@@ -737,22 +734,19 @@ html.fx .about-txt h2.frev{
 @media (max-width:760px){
   #works{padding-top:clamp(92px,13vh,126px)}
   .case-carousel{--case-width:82vw}
-  .case-carousel-viewport{margin-right:calc(var(--pad)*-1);padding-top:6px;padding-bottom:28px}
+  .case-carousel-viewport{margin-right:calc(var(--pad)*-1);padding-top:6px;padding-bottom:28px;scroll-snap-type:x mandatory}
   .case-carousel .works-grid{gap:14px;padding-right:36px}
   .case-slide{--case-y:0px!important;opacity:.52;transform:translate3d(0,6px,0)}
   .case-slide.is-active{transform:none}
   .case-slide .work-visual,.case-slide.work-featured .work-visual,.case-slide.work-mbm .work-visual,.case-slide.work-slot .work-visual{border-radius:14px;aspect-ratio:16/10}
-  .case-slide.work-featured .work-visual{aspect-ratio:16/9}
-  .case-slide .work-tag{top:10px;left:10px;max-width:calc(100% - 62px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .case-slide .work-arrow{top:9px;right:9px;width:39px;height:39px}
   .case-slide .work-meta,.case-slide.work-featured .work-meta{padding-top:13px}
   .case-slide .work-meta{display:grid;gap:9px}
   .case-slide .work-meta h3,.case-slide.work-featured .work-meta h3{font-size:25px}
   .case-slide .facts{font-size:9.5px;line-height:1.45}
-  .case-slide.work-slot .work-visual{padding:24px 18px;gap:12px;aspect-ratio:4/3}
-  .case-slide.work-slot .slot-t{font-size:31px;line-height:1.05}
-  .case-slide.work-slot p{font-size:13px;line-height:1.45}
-  .case-slide.work-slot .btn{padding:11px 18px;font-size:13px}
+  .case-slide.work-slot .work-visual{padding:16px 14px;gap:8px}
+  .case-slide.work-slot .slot-t{font-size:27px;line-height:1.03}
+  .case-slide.work-slot p{display:none}
+  .case-slide.work-slot .btn{padding:10px 16px;font-size:12.5px}
   .case-carousel-nav{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;padding-top:14px}
   .case-carousel-position{min-width:0}
   .case-carousel-position strong{font-size:30px}
@@ -1256,10 +1250,8 @@ function activateServiceRow(index){
         <div class="works-grid" id="caseCarouselTrack">
       <article class="work work-featured case-slide is-active" id="caseSlide1" data-case-title="Лидер Вино" role="group" aria-roledescription="слайд" aria-label="1 из 3: Лидер Вино" aria-current="true">
         <div class="work-visual">
-          <span class="work-tag">Корпоративный сайт · в работе</span>
-          <a class="work-arrow" href="https://maksim-site.github.io/lider/" target="_blank" rel="noopener" aria-label="Открыть сайт Лидер Вино"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
           <div class="leader-stage">
-            <img class="leader-static" src="assets/screens/lider-hero.png" alt="Первый экран сайта Лидер Вино" width="1280" height="720" loading="lazy">
+            <img class="leader-static" src="assets/screens/lider-hero-lab.png" alt="Первый экран сайта Лидер Вино" width="1280" height="800" loading="lazy">
           </div>
         </div>
         <div class="work-meta">
@@ -1275,8 +1267,6 @@ function activateServiceRow(index){
 
       <article class="work work-mbm case-slide" id="caseSlide2" data-case-title="MBM-Trans" role="group" aria-roledescription="слайд" aria-label="2 из 3: MBM-Trans" aria-current="false">
         <div class="work-visual">
-          <span class="work-tag">Редизайн · до / после</span>
-          <a class="work-arrow" href="https://mbm-trans.ru" target="_blank" rel="noopener" aria-label="Открыть сайт MBM-Trans"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
           <div class="case-compare" id="caseCompare" tabindex="0" role="slider" aria-label="Сравнение старого и нового сайта MBM-Trans" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="Старый сайт слева, новый справа; разделитель на 50 процентах">
             <img class="case-after" src="assets/screens/after.webp" alt="MBM-Trans - новый сайт" width="1280" height="860" loading="lazy">
             <div class="case-before-layer" id="caseBeforeLayer">
