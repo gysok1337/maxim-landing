@@ -1241,13 +1241,12 @@ body.fx-enabled .fx-panel{
   width:100%;
   height:100%;
   overflow:hidden;
-  border:1px solid rgba(255,255,255,.17);
-  background:#111;
-  box-shadow:0 38px 100px rgba(0,0,0,.52),inset 0 0 0 1px rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.24);
+  background:linear-gradient(145deg,#282827 0%,#0a0a0a 18%,#111 82%,#2b2b2a 100%);
+  box-shadow:0 38px 100px rgba(0,0,0,.52),inset 0 0 0 1px rgba(255,255,255,.06);
 }
-.adaptive-frame::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(255,255,255,.035);pointer-events:none}
+.adaptive-frame::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(0,0,0,.42),inset 0 0 0 2px rgba(255,255,255,.025);pointer-events:none}
 .adaptive-frame img{display:block;width:100%;height:100%;object-fit:cover;object-position:center top}
-.adaptive-camera{position:absolute;z-index:12;left:50%;top:1px;width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.24);transform:translateX(-50%)}
 .adaptive-desktop{width:min(61vw,840px);height:min(75vh,560px);aspect-ratio:auto;transform:translate3d(-50%,-50%,0) scale(.945)}
 .adaptive-desktop .adaptive-frame{border-radius:12px;padding:9px 9px 14px}
 .adaptive-desktop .adaptive-frame img{border-radius:5px}
@@ -1437,7 +1436,6 @@ body.fx-enabled .fx-panel{
   pointer-events:none;
   will-change:opacity;
 }
-.adaptive-morph .adaptive-camera{z-index:12;opacity:1;will-change:opacity}
 .adaptive-morph .dynamic-island{
   position:absolute;
   z-index:9;
@@ -1861,7 +1859,6 @@ body.fx-enabled .fx-panel{
           <div class="adaptive-stage" id="adaptiveStage">
             <div class="adaptive-device adaptive-morph" id="adaptiveDevice">
               <div class="adaptive-frame" id="adaptiveFrame">
-                <span class="adaptive-camera" id="adaptiveCamera"></span>
                 <span class="dynamic-island" id="adaptiveIsland"></span>
                 <div class="phone-system-bar" id="phoneSystemBar">
                   <span class="phone-time">16:42</span>
@@ -1906,7 +1903,7 @@ body.fx-enabled .fx-panel{
               <img src="assets/screens/lider-responsive-desktop.png?v=20260712-2" alt="" width="1280" height="800" loading="eager" decoding="sync">
               <div class="launch-page-shade" id="launchPageShade"></div>
               <div class="server-console" id="serverConsole">
-                <div class="server-console-head mono"><span>Публикация сайта</span><span>≈ 15 минут</span></div>
+                <div class="server-console-head mono"><span>Публикация сайта</span><span>срок · 10–15 минут</span></div>
                 <div class="server-check" data-server-check><span><b>Домен и DNS</b><small>2–3 минуты · адрес подключён</small></span><strong>готово</strong></div>
                 <div class="server-check" data-server-check><span><b>Сервер</b><small>5–10 минут · сайт опубликован</small></span><strong>готово</strong></div>
                 <div class="server-check" data-server-check><span><b>HTTPS</b><small>1–2 минуты · сертификат активен</small></span><strong>включён</strong></div>
@@ -2999,7 +2996,6 @@ body.fx-enabled .fx-panel{
   var adaptiveStage=document.getElementById('adaptiveStage');
   var adaptiveDevice=document.getElementById('adaptiveDevice');
   var adaptiveFrame=document.getElementById('adaptiveFrame');
-  var adaptiveCamera=document.getElementById('adaptiveCamera');
   var adaptiveIsland=document.getElementById('adaptiveIsland');
   var phoneSystemBar=document.getElementById('phoneSystemBar');
   var phoneBrowserBar=document.getElementById('phoneBrowserBar');
@@ -3052,10 +3048,8 @@ body.fx-enabled .fx-panel{
   var launchWheelFrame=0;
   var launchWheelStep=0;
   var launchExitFrame=0;
-  var reverseGestureActive=false;
-  var reverseGestureTimer=0;
-  var reverseGestureLimit=0;
-  var reverseGuardFrame=0;
+  var reverseWheelCarry=0;
+  var lastReverseStepAt=0;
   var lastSoundMotion=0;
   var launchTarget={x:0,y:0};
   var launchOrigin={x:0,y:0};
@@ -3082,13 +3076,14 @@ body.fx-enabled .fx-panel{
   }
   var launchMotionStops=[
     [0,0],
-    [.09,.22],[.13,.22],
-    [.23,.36],[.28,.36],
-    [.39,.50],[.44,.50],
-    [.53,.59],[.56,.59],
-    [.73,.79],[.76,.79],
-    [.82,.85],[.84,.85],
-    [.93,.965],[.95,.965],
+    [.045,.22],[.075,.22],
+    [.145,.36],[.18,.36],
+    [.25,.50],[.285,.50],
+    [.355,.59],[.38,.59],
+    [.61,.75],[.65,.79],[.68,.79],
+    [.72,.82],[.76,.86],[.84,.86],[.88,.90],
+    [.905,.925],[.935,.925],
+    [.98,.975],[.99,.975],
     [1,1]
   ];
   function forwardStageMotion(value){
@@ -3128,12 +3123,12 @@ body.fx-enabled .fx-panel{
       copySteps.forEach(function(step){setOpacity(step,0);step.setAttribute('aria-hidden','true');});
       return;
     }
-    var copyEntry=smooth(segment(progress,.004,.038));
+    var copyEntry=smooth(segment(progress,.002,.02));
     var values=[
       1-smooth(segment(motion,.515,.55)),
-      phase(motion,.515,.55,.85,.87),
-      phase(motion,.85,.87,.965,.98),
-      smooth(segment(motion,.965,.98))
+      phase(motion,.515,.55,.90,.925),
+      phase(motion,.90,.925,.985,.995),
+      smooth(segment(motion,.985,.995))
     ];
     var active=0;
     values.forEach(function(value,index){
@@ -3142,7 +3137,7 @@ body.fx-enabled .fx-panel{
       if(value>values[active])active=index;
       var step=copySteps[index];
       setOpacity(step,value);
-      var before=motion<[0,.515,.85,.965][index];
+      var before=motion<[0,.515,.90,.985][index];
       setTransform(step,'translate3d(0,'+((before?1:-1)*(1-value)*26).toFixed(1)+'px,0)');
       step.style.filter='blur('+((1-value)*3).toFixed(2)+'px)';
       step.setAttribute('aria-hidden',value>.45?'false':'true');
@@ -3238,10 +3233,10 @@ body.fx-enabled .fx-panel{
     progress=clamp(progress,0,1);
     var motion=Number.isFinite(motionOverride)?clamp(motionOverride,0,1):forwardStageMotion(progress);
     renderedMotion=motion;
-    var launchEntry=smooth(segment(progress,.001,.025));
+    var launchEntry=smooth(segment(progress,.0005,.012));
     var adaptiveTakeover=smooth(segment(motion,.185,.22));
-    window.__labLaunchActive=processReady&&progress>.006;
-    var processExit=smooth(segment(progress,.006,.055));
+    window.__labLaunchActive=processReady&&progress>.003;
+    var processExit=smooth(segment(progress,.003,.03));
     var desktopSettle=smooth(segment(motion,.14,.22));
     if(processVisualLayer){
       processVisualLayer.style.opacity=(1-adaptiveTakeover).toFixed(3);
@@ -3263,20 +3258,20 @@ body.fx-enabled .fx-panel{
     var browserIn=smooth(segment(motion,.51,.59));
     var browserLayerIn=smooth(segment(browserIn,.18,.82));
     var deviceLayerOut=1-browserLayerIn;
-    var secureZoomIn=smooth(segment(motion,.595,.64));
-    var secureZoomOut=smooth(segment(motion,.72,.79));
+    var secureZoomIn=smooth(segment(motion,.59,.625));
+    var secureZoomOut=smooth(segment(motion,.75,.79));
     var secureZoom=secureZoomIn*(1-secureZoomOut);
-    var warningOut=smooth(segment(motion,.64,.665));
-    var secureChange=smooth(segment(motion,.665,.72));
-    var secureMoment=smooth(segment(motion,.665,.72));
+    var warningOut=smooth(segment(motion,.645,.66));
+    var secureChange=smooth(segment(motion,.66,.735));
+    var secureMoment=smooth(segment(motion,.66,.735));
     var securePulse=Math.sin(secureMoment*Math.PI);
-    var serverPanel=phase(motion,.795,.815,.835,.85);
-    var leadIn=smooth(segment(motion,.85,.87));
-    var clickPhase=smooth(segment(motion,.895,.915));
-    var routeMail=smooth(segment(motion,.91,.945));
-    var routeTelegram=smooth(segment(motion,.925,.955));
-    var deliveryDone=smooth(segment(motion,.94,.96));
-    var finalIn=smooth(segment(motion,.965,.992));
+    var serverPanel=phase(motion,.80,.82,.88,.90);
+    var leadIn=out(segment(motion,.90,.925));
+    var clickPhase=smooth(segment(motion,.95,.962));
+    var routeMail=smooth(segment(motion,.958,.978));
+    var routeTelegram=smooth(segment(motion,.964,.984));
+    var deliveryDone=smooth(segment(motion,.978,.989));
+    var finalIn=smooth(segment(motion,.992,1));
     var tabletReveal=smooth(segment(motion,.292,.304));
     var phoneReveal=smooth(segment(motion,.425,.439));
     var activeShot=phoneReveal>=.5?2:(tabletReveal>=.5?1:0);
@@ -3284,9 +3279,9 @@ body.fx-enabled .fx-panel{
     if(!isReverse&&motion>=lastSoundMotion&&window.__labSound){
       if(lastSoundMotion<.30&&motion>=.30)window.__labSound.click('soft');
       if(lastSoundMotion<.43&&motion>=.43)window.__labSound.click('soft');
-      if(lastSoundMotion<.69&&motion>=.69)window.__labSound.lock();
-      if(lastSoundMotion<.905&&motion>=.905)window.__labSound.click('strong');
-      if(lastSoundMotion<.985&&motion>=.985)window.__labSound.success();
+      if(lastSoundMotion<.70&&motion>=.70)window.__labSound.lock();
+      if(lastSoundMotion<.956&&motion>=.956)window.__labSound.click('strong');
+      if(lastSoundMotion<.995&&motion>=.995)window.__labSound.success();
     }
     lastSoundMotion=motion;
 
@@ -3372,9 +3367,9 @@ body.fx-enabled .fx-panel{
       var desktopInsetX=mix(0,7,desktopSettle);
       var desktopInsetTop=mix(0,7,desktopSettle);
       var desktopInsetBottom=mix(0,7,desktopSettle);
-      var tabletInsetX=mix(desktopInsetX,5,tabletMorph);
-      var tabletInsetTop=mix(desktopInsetTop,1,tabletMorph);
-      var tabletInsetBottom=mix(desktopInsetBottom,5,tabletMorph);
+      var tabletInsetX=mix(desktopInsetX,4,tabletMorph);
+      var tabletInsetTop=mix(desktopInsetTop,4,tabletMorph);
+      var tabletInsetBottom=mix(desktopInsetBottom,4,tabletMorph);
       var phoneInsetX=mix(tabletInsetX,6,phoneMorph);
       var phoneInsetTop=mix(tabletInsetTop,6,phoneMorph);
       var phoneInsetBottom=mix(tabletInsetBottom,6,phoneMorph);
@@ -3392,7 +3387,7 @@ body.fx-enabled .fx-panel{
       adaptiveFrame.style.setProperty('--phone-top-h',(40*phoneUi).toFixed(2)+'px');
       adaptiveFrame.style.setProperty('--phone-bottom-h',(42*phoneUi).toFixed(2)+'px');
       adaptiveDevice.style.setProperty('--phone-ui-alpha',phoneUi.toFixed(3));
-      adaptiveFrame.style.background=phoneMorph>.55?'#050505':'#111';
+      adaptiveFrame.style.background=phoneMorph>.55?'#050505':'linear-gradient(145deg,#282827 0%,#0a0a0a 18%,#111 82%,#2b2b2a 100%)';
       browser.style.borderRadius=deviceRadius.toFixed(2)+'px';
       setOpacity(adaptiveDesktopChrome,(1-desktopSettle)*(1-browserIn));
 
@@ -3401,7 +3396,6 @@ body.fx-enabled .fx-panel{
       setOpacity(adaptiveShots[2],phoneReveal);
       setOpacity(adaptiveScreenShutter,0);
       setOpacity(browserMorphShutter,0);
-      setOpacity(adaptiveCamera,tabletMorph*(1-phoneMorph)*(1-browserIn));
       setOpacity(adaptiveIsland,phoneUi);
       setOpacity(phoneSystemBar,phoneUi);
       setOpacity(phoneBrowserBar,phoneUi);
@@ -3419,7 +3413,7 @@ body.fx-enabled .fx-panel{
 
     setOpacity(warning,1-warningOut);
     setTransform(warning,'translate3d('+(-8*warningOut).toFixed(1)+'px,-50%,0)');
-    setOpacity(lock,smooth(segment(motion,.645,.665)));
+    setOpacity(lock,smooth(segment(motion,.655,.675)));
     setTransform(lock,'scale('+mix(.8,1,secureChange).toFixed(3)+')');
     if(lockShackle)lockShackle.style.transform='rotate('+mix(-38,0,secureChange).toFixed(2)+'deg)';
     protocolS.style.opacity=secureChange.toFixed(3);
@@ -3427,23 +3421,23 @@ body.fx-enabled .fx-panel{
     protocolS.style.transform='none';
     address.classList.toggle('is-secure',secureChange>.96);
 
-    var focusAlpha=phase(motion,.59,.62,.73,.79);
+    var focusAlpha=phase(motion,.59,.62,.75,.79);
     setOpacity(secureFocus,focusAlpha);
     setTransform(secureFocus,'translate(-50%,-50%) scale('+(mix(.58,1,secureZoom)+securePulse*.22).toFixed(3)+')');
-    var captionAlpha=smooth(segment(motion,.69,.72));
+    var captionAlpha=smooth(segment(motion,.695,.735));
     setOpacity(secureCaption,captionAlpha);
     setTransform(secureCaption,'translate3d('+mix(6,0,captionAlpha).toFixed(1)+'px,0,0)');
 
     setOpacity(serverConsole,serverPanel);
     setTransform(serverConsole,'translate3d(0,'+(12*(1-serverPanel)).toFixed(1)+'px,18px) scale('+mix(.96,1,serverPanel).toFixed(3)+')');
     serverChecks.forEach(function(check,index){
-      var checkIn=smooth(segment(motion,.795+index*.009,.815+index*.009))*serverPanel;
+      var checkIn=smooth(segment(motion,.805+index*.008,.825+index*.008))*serverPanel;
       setOpacity(check,checkIn);
       setTransform(check,'translate3d('+(9*(1-checkIn)).toFixed(1)+'px,0,0)');
     });
 
     setOpacity(leadForm,leadIn*(1-finalIn));
-    setTransform(leadForm,'translate3d('+(18*(1-leadIn)).toFixed(1)+'px,'+(18*(1-leadIn)).toFixed(1)+'px,20px) scale('+mix(.94,1,leadIn).toFixed(3)+')');
+    setTransform(leadForm,'translate3d('+(26*(1-leadIn)).toFixed(1)+'px,'+(22*(1-leadIn)).toFixed(1)+'px,20px) scale('+mix(.92,1,leadIn).toFixed(3)+')');
     leadSend.textContent=deliveryDone>.7?'Отправлено ✓':'Отправить';
     leadSend.style.background=deliveryDone>.7?'#d9d7d0':'var(--accent)';
     pageShade.style.opacity=(secureZoom*.07+serverPanel*.04+leadIn*.08+finalIn*.22).toFixed(3);
@@ -3453,19 +3447,19 @@ body.fx-enabled .fx-panel{
     var cursorStartY=targetMeasured?launchOrigin.y:(mobile?height*.61:height*.55);
     var cursorTargetX=targetMeasured?launchTarget.x:(mobile?width*.70:width*.77);
     var cursorTargetY=targetMeasured?launchTarget.y:(mobile?height*.76:height*.79);
-    var cursorMove=smooth(segment(motion,.875,.90));
+    var cursorMove=out(segment(motion,.928,.948));
     var cursorArc=Math.sin(cursorMove*Math.PI);
     var cursorX=mix(cursorStartX,cursorTargetX,cursorMove)+cursorArc*(mobile?5:9);
     var cursorY=mix(cursorStartY,cursorTargetY,cursorMove)-cursorArc*(mobile?7:11);
     var transientAlpha=isReverse?0:1;
-    var cursorAlpha=phase(motion,.85,.875,.925,.95)*transientAlpha;
+    var cursorAlpha=phase(motion,.915,.932,.968,.982)*transientAlpha;
     setOpacity(launchCursor,cursorAlpha);
     setTransform(launchCursor,'translate3d('+(cursorX-4).toFixed(1)+'px,'+(cursorY-4).toFixed(1)+'px,0) rotate('+mix(-7,1,cursorMove).toFixed(2)+'deg) scale('+(1-Math.sin(clickPhase*Math.PI)*.1).toFixed(3)+')');
     var clickAlpha=Math.sin(clickPhase*Math.PI)*transientAlpha;
     setOpacity(launchClick,clickAlpha);
     setTransform(launchClick,'translate3d('+(cursorTargetX-14).toFixed(1)+'px,'+(cursorTargetY-14).toFixed(1)+'px,0) scale('+mix(.55,1.45,out(clickPhase)).toFixed(3)+')');
 
-    var routeAlpha=phase(motion,.895,.91,.955,.972)*transientAlpha;
+    var routeAlpha=phase(motion,.952,.96,.985,.994)*transientAlpha;
     setOpacity(deliveryRoute,routeAlpha);
     mailPath.style.strokeDashoffset=(1-routeMail).toFixed(4);
     telegramPath.style.strokeDashoffset=(1-routeTelegram).toFixed(4);
@@ -3481,12 +3475,12 @@ body.fx-enabled .fx-panel{
       telegramPacket.setAttribute('cy',telegramPoint.y.toFixed(2));
       setOpacity(telegramPacket,routeTelegram>0&&routeTelegram<.995?1:0);
     }
-    var mailIn=smooth(segment(motion,.91,.945))*(1-finalIn);
-    var telegramIn=smooth(segment(motion,.925,.955))*(1-finalIn);
+    var mailIn=smooth(segment(motion,.958,.978))*(1-finalIn);
+    var telegramIn=smooth(segment(motion,.964,.984))*(1-finalIn);
     setOpacity(mailTarget,mailIn);
     setOpacity(telegramTarget,telegramIn);
-    setTransform(mailTarget,'translateX('+(18*(1-mailIn)).toFixed(1)+'px)');
-    setTransform(telegramTarget,'translateX('+(18*(1-telegramIn)).toFixed(1)+'px)');
+    setTransform(mailTarget,'translateX('+(24*(1-mailIn)).toFixed(1)+'px)');
+    setTransform(telegramTarget,'translateX('+(24*(1-telegramIn)).toFixed(1)+'px)');
     mailTarget.style.borderColor=deliveryDone>.35?'rgba(var(--accent-rgb),.42)':'';
     telegramTarget.style.borderColor=deliveryDone>.55?'rgba(var(--accent-rgb),.42)':'';
 
@@ -3535,36 +3529,20 @@ body.fx-enabled .fx-panel{
   }
 
   function governReverseWheel(event){
-    if(reduced||event.deltaY>=0)return;
+    if(reduced)return;
+    if(event.deltaY>=0){reverseWheelCarry=0;return;}
     var rect=section.getBoundingClientRect();
-    if(rect.top>1||rect.bottom<window.innerHeight)return;
+    if(rect.top>1||rect.bottom<window.innerHeight){reverseWheelCarry=0;return;}
     var state=launchScrollState();
-    if(state.overall<=.0005)return;
+    if(state.overall<=.0005){reverseWheelCarry=0;return;}
     event.preventDefault();
-    clearTimeout(reverseGestureTimer);
-    reverseGestureTimer=setTimeout(function(){
-      reverseGestureActive=false;
-      reverseGestureLimit=0;
-    },120);
-    if(reverseGestureActive){
-      if(reverseGestureLimit&&window.scrollY<reverseGestureLimit)window.scrollTo({top:reverseGestureLimit,behavior:'auto'});
-      return;
-    }
-    reverseGestureActive=true;
+    reverseWheelCarry+=Math.min(60,Math.abs(event.deltaY));
+    var now=performance.now();
+    if(reverseWheelCarry<6||now-lastReverseStepAt<85)return;
+    reverseWheelCarry=0;
+    lastReverseStepAt=now;
     var nextOverall=reverseAnchorOverall(state);
-    reverseGestureLimit=Math.round(state.top+state.distance*nextOverall);
-    window.scrollTo({top:reverseGestureLimit,behavior:'auto'});
-  }
-
-  function guardReverseGesture(){
-    if(!reverseGestureActive||!reverseGestureLimit||window.scrollY>=reverseGestureLimit-1)return;
-    if(reverseGuardFrame)return;
-    reverseGuardFrame=requestAnimationFrame(function(){
-      reverseGuardFrame=0;
-      if(reverseGestureActive&&reverseGestureLimit&&window.scrollY<reverseGestureLimit-1){
-        window.scrollTo({top:reverseGestureLimit,behavior:'auto'});
-      }
-    });
+    window.scrollTo({top:Math.round(state.top+state.distance*nextOverall),behavior:'auto'});
   }
 
   function governLaunchWheel(event){
@@ -3581,7 +3559,7 @@ body.fx-enabled .fx-panel{
       return;
     }
     if(launchFinished())return;
-    var maxLead=current<.25?.014:(current<.76?.009:(current<.84?.012:.016));
+    var maxLead=current<.38?.022:(current<.68?.012:(current<.88?.014:.02));
     var available=Math.max(0,(current+maxLead-state.progress)*state.launchDistance);
     var step=Math.min(event.deltaY,20,available);
     if(step+1<event.deltaY){
@@ -3629,7 +3607,7 @@ body.fx-enabled .fx-panel{
       var follow=1-Math.pow(difference<0?.00002:.0015,delta);
       var change=difference*follow;
       if(difference>0){
-        var maxRate=current<.24?.085:(current<.53?.065:(current<.76?.052:(current<.84?.060:.045)));
+        var maxRate=current<.38?.13:(current<.68?.07:(current<.88?.055:.08));
         change=Math.min(change,maxRate*Math.max(delta,1/240));
       }
       current+=change;
@@ -3663,7 +3641,6 @@ body.fx-enabled .fx-panel{
   }
   window.addEventListener('wheel',governReverseWheel,{passive:false});
   window.addEventListener('wheel',governLaunchWheel,{passive:false});
-  window.addEventListener('scroll',guardReverseGesture,{passive:true});
   window.addEventListener('scroll',guardLaunchExit,{passive:true});
 
   var recordLaunchControl=document.getElementById('recordLaunchControl');
