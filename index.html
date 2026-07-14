@@ -122,12 +122,9 @@ header{
   position:fixed;top:0;left:0;right:0;z-index:90;
   padding-top:env(safe-area-inset-top,0px);
   transition:transform .45s cubic-bezier(.22,1,.36,1), background .3s ease, border-color .3s ease;
-  border-bottom:1px solid transparent;contain:paint;will-change:transform;
+  border-bottom:1px solid transparent;
 }
-header.solid{
-  background:color-mix(in srgb,var(--bg) 94%,transparent);
-  backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom-color:var(--line);
-}
+header.solid{background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:var(--line)}
 header.hide{transform:translateY(-100%)}
 .nav{display:flex;align-items:center;justify-content:space-between;height:76px;gap:14px}
 .logo{font-weight:700;font-size:19px;letter-spacing:-.02em;display:inline-flex;align-items:center;gap:10px}
@@ -151,8 +148,8 @@ header.hide{transform:translateY(-100%)}
   padding:14px 26px;border-radius:100px;cursor:pointer;border:1px solid var(--ink);
   background:var(--ink);color:var(--bg);white-space:nowrap;
   transition:background .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease;
+  will-change:transform;
 }
-.magnetic{will-change:transform}
 .btn:hover{background:var(--accent);color:var(--accent-contrast);border-color:var(--accent);box-shadow:0 12px 38px -22px rgb(var(--accent-rgb) / .8)}
 .btn-o{background:transparent;color:var(--ink)}
 .btn-o:hover{background:var(--ink);border-color:var(--ink);color:var(--bg);box-shadow:none}
@@ -243,7 +240,7 @@ html.dark .tswitch .moon{display:block}
 }
 .hero h1 .serif{font-weight:600;font-size:.96em;letter-spacing:-.01em}
 .line{display:block;overflow:hidden;padding-bottom:.06em;margin-bottom:-.06em}
-.line-in{display:block}
+.line-in{display:block;will-change:transform}
 .hero-scroll{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--muted-2)}
 .hero-scroll svg{width:16px;height:16px;animation:bob 2s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(6px)}}
@@ -1055,7 +1052,7 @@ html.fx .code-rift{opacity:0}
 .code-rift-plane{
   position:fixed;left:var(--rift-plane-left,54vw);top:var(--rift-plane-top,-24vh);
   width:var(--rift-plane-width,52vw);height:var(--rift-plane-height,220vh);z-index:1;
-  isolation:isolate;contain:layout paint style;transform:translateZ(0);backface-visibility:hidden;
+  isolation:isolate;
   background:linear-gradient(118deg,rgba(255,255,255,.025),transparent 28% 70%,rgba(255,255,255,.018)),#050607;
 }
 .code-rift-plane::before{
@@ -1982,17 +1979,11 @@ function activateServiceRow(index){
     if(!ctx)return;
     var dpr=1,cw=0,ch=0,raf=0,lastGridFrame=0;
     var gridInterval=1000/30,animateGrid=fine&&!reduce&&innerWidth>760;
-    var gridVisible=true,gridScrolling=false,gridResumeTimer=0,gridObserver=null;
     var mouse={x:.68,y:.48,tx:.68,ty:.48,active:false};
     var ripples=[];
     function css(name){return getComputedStyle(document.documentElement).getPropertyValue(name).trim();}
     function rgb(){return (css('--iso-rgb')||'243 241 236').split(/\s+/).join(',');}
     function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
-    function stopGrid(){if(raf){cancelAnimationFrame(raf);raf=0;}}
-    function startGrid(){
-      if(!animateGrid||!gridVisible||gridScrolling||document.hidden||raf)return;
-      lastGridFrame=0;raf=requestAnimationFrame(draw);
-    }
     function resize(){
       var r=canvas.getBoundingClientRect();
       animateGrid=fine&&!reduce&&innerWidth>760;
@@ -2000,9 +1991,9 @@ function activateServiceRow(index){
       cw=Math.max(1,r.width);ch=Math.max(1,r.height);
       canvas.width=Math.round(cw*dpr);canvas.height=Math.round(ch*dpr);
       ctx.setTransform(dpr,0,0,dpr,0,0);
-      stopGrid();
+      cancelAnimationFrame(raf);
       draw(performance.now(),true);
-      startGrid();
+      if(animateGrid)raf=requestAnimationFrame(draw);
     }
     function point(i,j,t,mx,my,lineRgb){
       var cell=clamp(cw/19,42,78);
@@ -2043,10 +2034,8 @@ function activateServiceRow(index){
       ctx.fill();
     }
     function draw(t,once){
-      raf=0;
-      if(!once&&(!animateGrid||!gridVisible||gridScrolling||document.hidden))return;
       if(!once&&t-lastGridFrame<gridInterval){
-        raf=requestAnimationFrame(draw);
+        if(animateGrid)raf=requestAnimationFrame(draw);
         return;
       }
       lastGridFrame=t;
@@ -2078,28 +2067,10 @@ function activateServiceRow(index){
         }
       }
       ripples=ripples.filter(function(r){return t-r.t<1300;});
-      if(animateGrid&&!once&&gridVisible&&!gridScrolling&&!document.hidden)raf=requestAnimationFrame(draw);
+      if(animateGrid&&!once)raf=requestAnimationFrame(draw);
     }
     resize();
     addEventListener('resize',resize,{passive:true});
-    if('IntersectionObserver' in window){
-      gridObserver=new IntersectionObserver(function(entries){
-        gridVisible=!!entries[0].isIntersecting;
-        if(gridVisible)startGrid();else stopGrid();
-      },{rootMargin:'120px 0px'});
-      gridObserver.observe(canvas.closest('.hero'));
-    }
-    addEventListener('scroll',function(){
-      if(!gridVisible||!animateGrid)return;
-      gridScrolling=true;stopGrid();clearTimeout(gridResumeTimer);
-      gridResumeTimer=setTimeout(function(){
-        gridScrolling=false;
-        if(gridVisible&&!document.hidden){draw(performance.now(),true);startGrid();}
-      },140);
-    },{passive:true});
-    document.addEventListener('visibilitychange',function(){
-      if(document.hidden)stopGrid();else startGrid();
-    });
     if(fine){
       addEventListener('pointermove',function(e){
         mouse.tx=e.clientX/innerWidth;
@@ -2112,9 +2083,7 @@ function activateServiceRow(index){
         if(ripples.length>4)ripples.shift();
       },{passive:true});
     }
-    addEventListener('beforeunload',function(){
-      stopGrid();clearTimeout(gridResumeTimer);if(gridObserver)gridObserver.disconnect();
-    });
+    addEventListener('beforeunload',function(){cancelAnimationFrame(raf);});
   })();
 
   /* ---------- тема: переключатель + волна ---------- */
@@ -2144,7 +2113,7 @@ function activateServiceRow(index){
     var open=mmenu.classList.toggle('open');
     burger.classList.toggle('open',open);
     document.documentElement.classList.toggle('loading',open);
-    setHeaderHidden(false); // шапка с крестиком всегда видна над меню
+    header.classList.remove('hide'); // шапка с крестиком всегда видна над меню
   });
   mmenu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){
     mmenu.classList.remove('open');burger.classList.remove('open');
@@ -2153,27 +2122,16 @@ function activateServiceRow(index){
 
   /* ---------- header: скрывать при скролле вниз ---------- */
   var header=document.getElementById('header'),lastY=0,idleT;
-  var headerSolid=false,headerHidden=false;
-  function setHeaderSolid(value){
-    if(headerSolid===value)return;
-    headerSolid=value;header.classList.toggle('solid',value);
-  }
-  function setHeaderHidden(value){
-    if(headerHidden===value)return;
-    headerHidden=value;header.classList.toggle('hide',value);
-  }
   function onScrollDir(y){
-    setHeaderSolid(y>30);
+    header.classList.toggle('solid',y>30);
     var menuOpen=document.getElementById('mmenu').classList.contains('open');
     if(!menuOpen&&innerWidth>760){
-      if(y>140&&y>lastY+4)setHeaderHidden(true);
-      else if(y<lastY-4)setHeaderHidden(false);
-    }else setHeaderHidden(false);
+      if(y>140&&y>lastY+4)header.classList.add('hide');
+      else if(y<lastY-4)header.classList.remove('hide');
+    }else header.classList.remove('hide');
     lastY=y;
-    if(headerHidden){
-      clearTimeout(idleT); // скролл остановился - показать шапку
-      idleT=setTimeout(function(){setHeaderHidden(false);},420);
-    }
+    clearTimeout(idleT); // скролл остановился - показать шапку
+    idleT=setTimeout(function(){header.classList.remove('hide');},420);
   }
 
   /* ---------- Lenis ---------- */
@@ -2245,11 +2203,9 @@ function activateServiceRow(index){
 
     function heroIn(delay){
       var tl=gsap.timeline({delay:delay||0});
-      tl.set(heroLines,{willChange:'transform'})
-        .to(heroLines,{yPercent:0,duration:1.15,ease:'power4.out',stagger:.09})
+      tl.to(heroLines,{yPercent:0,duration:1.15,ease:'power4.out',stagger:.09})
         .to(heroRift,{opacity:1,duration:.88,ease:'power2.out'},'-=.94')
-        .to('.hero .frev',{opacity:1,y:0,duration:.9,ease:'power3.out',stagger:.1},'-=.72')
-        .set(heroLines,{willChange:'auto'});
+        .to('.hero .frev',{opacity:1,y:0,duration:.9,ease:'power3.out',stagger:.1},'-=.72');
       return tl;
     }
     function revealHeroFallback(){
@@ -2287,8 +2243,7 @@ function activateServiceRow(index){
     addEventListener('load',function(){ScrollTrigger.refresh();},{once:true});
 
     gsap.utils.toArray('.contact .line-in').forEach(function(el){
-      gsap.fromTo(el,{yPercent:120,willChange:'transform'},{yPercent:0,duration:1.1,ease:'power4.out',
-        onComplete:function(){gsap.set(el,{willChange:'auto'});},
+      gsap.fromTo(el,{yPercent:120},{yPercent:0,duration:1.1,ease:'power4.out',
         scrollTrigger:{trigger:el,start:'top 88%'}});
     });
 
@@ -2664,45 +2619,26 @@ function activateServiceRow(index){
       track.style.flexWrap='wrap';set.style.flexWrap='wrap';set.style.justifyContent='center';track.style.width='auto';
       return;
     }
-    var x=0,last=0,setW=0,SPEED=42,raf=0,resizeFrame=0,lastWidth=innerWidth;
-    var visible=true,observer=null;
     function build(){
       // клонов столько, чтобы покрыть 2 экрана + запас
       track.querySelectorAll('.tape-set:not(:first-child)').forEach(function(c){c.remove();});
-      setW=set.offsetWidth;
-      var need=Math.max(2,Math.ceil((innerWidth*2)/Math.max(1,setW))+1);
+      var need=Math.max(2,Math.ceil((innerWidth*2)/set.offsetWidth)+1);
       for(var i=0;i<need;i++)track.appendChild(set.cloneNode(true));
-      x=setW?-((-x)%setW):0;last=0;
     }
-    function stop(){if(raf){cancelAnimationFrame(raf);raf=0;}last=0;}
-    function start(){if(!visible||document.hidden||raf)return;raf=requestAnimationFrame(loop);}
-    function rebuild(){resizeFrame=0;stop();build();start();}
-    function scheduleRebuild(){
-      var nextWidth=innerWidth;if(Math.abs(nextWidth-lastWidth)<2)return;lastWidth=nextWidth;
-      cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(rebuild);
-    }
+    var x=0,last=0,setW=0,SPEED=42; // px/сек
+    function measure(){setW=set.offsetWidth;}
+    build();measure();
+    addEventListener('resize',function(){build();measure();},{passive:true});
+    (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){build();measure();});
     function loop(t){
-      raf=0;if(!visible||document.hidden){last=0;return;}
       if(!last)last=t;
       var dt=Math.min(64,t-last);last=t;
       x-=SPEED*dt/1000;
       if(setW>0&&x<=-setW)x+=setW; // бесшовный сброс ровно на ширину набора
       track.style.transform='translate3d('+x.toFixed(2)+'px,0,0)';
-      raf=requestAnimationFrame(loop);
+      requestAnimationFrame(loop);
     }
-    build();start();
-    addEventListener('resize',scheduleRebuild,{passive:true});
-    (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(rebuild);
-    if('IntersectionObserver' in window){
-      observer=new IntersectionObserver(function(entries){
-        visible=!!entries[0].isIntersecting;if(visible)start();else stop();
-      },{rootMargin:'160px 0px'});
-      observer.observe(track);
-    }
-    document.addEventListener('visibilitychange',function(){if(document.hidden)stop();else start();});
-    addEventListener('beforeunload',function(){
-      stop();cancelAnimationFrame(resizeFrame);if(observer)observer.disconnect();
-    });
+    requestAnimationFrame(loop);
   })();
 
   /* ---------- страховка ---------- */
