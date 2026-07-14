@@ -572,11 +572,13 @@ html.fx .about-txt h2.frev{
 .case-after{z-index:1;filter:saturate(.96) contrast(1.015)}
 .case-before-layer{
   position:absolute;inset:0;z-index:2;overflow:hidden;
-  clip-path:inset(0 calc(100% - var(--split)) 0 0);
-  -webkit-clip-path:inset(0 calc(100% - var(--split)) 0 0);
-  will-change:clip-path;
+  transform:translate3d(calc(var(--split) - 100%),0,0);
+  will-change:transform;
 }
-.case-before{filter:saturate(.78) contrast(1.025) brightness(.94)}
+.case-before{
+  filter:saturate(.78) contrast(1.025) brightness(.94);
+  transform:translate3d(calc(100% - var(--split)),0,0);will-change:transform;
+}
 .case-before-layer::after{
   content:"";position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(90deg,rgb(var(--accent-rgb) / .07),transparent 22%);mix-blend-mode:screen;
@@ -599,18 +601,6 @@ html.fx .about-txt h2.frev{
 }
 .case-side-before{left:18px;background:rgba(10,10,10,.76);color:#F3F1EC;opacity:var(--before-tag)}
 .case-side-after{right:18px;background:#F3F1EC;color:#0E0E0D;opacity:var(--after-tag)}
-.case-modes{
-  position:absolute;z-index:10;left:50%;bottom:16px;transform:translateX(-50%);
-  display:flex;gap:3px;padding:4px;border:1px solid rgba(255,255,255,.20);border-radius:8px;
-  background:rgba(10,10,10,.70);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  box-shadow:0 12px 36px rgba(0,0,0,.20);
-}
-.case-mode{
-  min-width:84px;border:0;border-radius:5px;padding:8px 11px;background:transparent;color:rgba(255,255,255,.60);
-  font-family:var(--mono);font-size:9.5px;letter-spacing:.10em;text-transform:uppercase;cursor:pointer;
-  transition:background .22s ease,color .22s ease;
-}
-.case-mode:hover,.case-mode[aria-pressed="true"]{background:#F3F1EC;color:#0E0E0D}
 .work-featured .work-meta{position:relative;left:auto;right:auto;bottom:auto;padding:22px 4px 0}
 .work-featured .work-meta h3{font-size:clamp(28px,4vw,48px)}
 .work-featured .facts{display:inline-block;margin-top:3px}
@@ -651,8 +641,6 @@ html.fx .about-txt h2.frev{
   .case-divider-knob{width:42px;height:42px}
   .case-side-tag{bottom:66px}
   .case-side-before{left:12px}.case-side-after{right:12px}
-  .case-modes{bottom:12px;width:calc(100% - 24px)}
-  .case-mode{flex:1;min-width:0;padding-inline:7px}
   .work-soon,.work-slot{grid-column:1/-1}
 }
 @media (prefers-reduced-motion:reduce){
@@ -743,6 +731,9 @@ html.fx .about-txt h2.frev{
   .case-slide .work-meta{display:grid;gap:9px}
   .case-slide .work-meta h3,.case-slide.work-featured .work-meta h3{font-size:25px}
   .case-slide .facts{font-size:9.5px;line-height:1.45}
+  .case-slide .case-side-tag{display:none}
+  .case-slide .case-divider-knob{width:36px;height:36px;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+  .case-slide .case-divider-knob svg{width:17px;height:17px}
   .case-slide.work-slot .work-visual{padding:16px 14px;gap:8px}
   .case-slide.work-slot .slot-t{font-size:27px;line-height:1.03}
   .case-slide.work-slot p{display:none}
@@ -1251,7 +1242,7 @@ function activateServiceRow(index){
       <article class="work work-featured case-slide is-active" id="caseSlide1" data-case-title="Лидер Вино" role="group" aria-roledescription="слайд" aria-label="1 из 3: Лидер Вино" aria-current="true">
         <div class="work-visual">
           <div class="leader-stage">
-            <img class="leader-static" src="assets/screens/lider-hero-lab.png" alt="Первый экран сайта Лидер Вино" width="1280" height="800" loading="lazy">
+            <img class="leader-static" src="assets/screens/lider-hero-lab.webp" alt="Первый экран сайта Лидер Вино" width="1280" height="800" loading="eager" fetchpriority="low" decoding="async">
           </div>
         </div>
         <div class="work-meta">
@@ -1279,11 +1270,6 @@ function activateServiceRow(index){
             </div>
             <span class="case-side-tag case-side-before">Было</span>
             <span class="case-side-tag case-side-after">Стало</span>
-            <div class="case-modes" role="group" aria-label="Режим сравнения">
-              <button class="case-mode" type="button" data-case-pct="0" aria-pressed="false">Было</button>
-              <button class="case-mode" type="button" data-case-pct="50" aria-pressed="true">Сравнить</button>
-              <button class="case-mode" type="button" data-case-pct="100" aria-pressed="false">Стало</button>
-            </div>
           </div>
         </div>
         <div class="work-meta">
@@ -1943,35 +1929,48 @@ function activateServiceRow(index){
   /* ---------- MBM: компактное ручное сравнение ---------- */
   (function(){
     var compare=document.getElementById('caseCompare');
-    var modes=compare?Array.from(compare.querySelectorAll('.case-mode')):[];
     if(!compare)return;
-    var current=50,dragging=false;
+    var current=50,dragging=false,pointerId=null,rectLeft=0,rectWidth=0,frame=0,pending=null;
     function clampPct(value){return Math.max(0,Math.min(100,value));}
-    function modeFor(value){return value>75?0:(value<25?100:50);}
-    function render(value){
-      var pct=clampPct(value),rounded=Math.round(pct);
+    function paint(value){
+      var pct=clampPct(value);current=pct;
       compare.style.setProperty('--split',pct.toFixed(2)+'%');
       compare.style.setProperty('--divider-opacity',pct>1&&pct<99?'1':'0');
       compare.style.setProperty('--before-tag',Math.max(0,Math.min(1,(pct-2)/14)).toFixed(3));
       compare.style.setProperty('--after-tag',Math.max(0,Math.min(1,(98-pct)/14)).toFixed(3));
+    }
+    function announce(){
+      var pct=current,rounded=Math.round(pct);
       compare.setAttribute('aria-valuenow',rounded);
       compare.setAttribute('aria-valuetext',pct>=99?'Показан старый сайт':(pct<=1?'Показан новый сайт':'Старый сайт слева, новый справа; разделитель на '+rounded+' процентах'));
-      var selected=modeFor(pct);
-      modes.forEach(function(button){button.setAttribute('aria-pressed',Number(button.dataset.casePct)===selected?'true':'false');});
     }
-    function setTarget(value){current=clampPct(value);render(current);}
-    function setFromClient(clientX){
-      var rect=compare.getBoundingClientRect();if(rect.width)setTarget((clientX-rect.left)/rect.width*100);
+    function commit(value){paint(value);announce();}
+    function cacheRect(){var rect=compare.getBoundingClientRect();rectLeft=rect.left;rectWidth=rect.width;}
+    function valueFromClient(clientX){return rectWidth?clampPct((clientX-rectLeft)/rectWidth*100):current;}
+    function flush(){
+      frame=0;if(pending===null)return;
+      paint(pending);pending=null;
+    }
+    function schedule(clientX){
+      pending=valueFromClient(clientX);
+      if(!frame)frame=requestAnimationFrame(flush);
     }
     compare.addEventListener('pointerdown',function(e){
       if(e.button!==undefined&&e.button!==0)return;if(e.target.closest('button,a'))return;
-      dragging=true;compare.classList.add('is-dragging');if(e.pointerType==='mouse')e.preventDefault();
-      try{compare.setPointerCapture(e.pointerId);}catch(_){}setFromClient(e.clientX);
+      dragging=true;pointerId=e.pointerId;cacheRect();compare.classList.add('is-dragging');
+      e.stopPropagation();if(e.pointerType==='mouse')e.preventDefault();
+      try{compare.setPointerCapture(pointerId);}catch(_){}
+      compare.focus({preventScroll:true});paint(valueFromClient(e.clientX));
     });
-    compare.addEventListener('pointermove',function(e){if(!dragging)return;e.preventDefault();setFromClient(e.clientX);});
+    compare.addEventListener('pointermove',function(e){
+      if(!dragging||e.pointerId!==pointerId)return;
+      e.stopPropagation();if(e.cancelable)e.preventDefault();schedule(e.clientX);
+    });
     function release(e){
-      if(!dragging)return;dragging=false;compare.classList.remove('is-dragging');
-      if(e&&e.pointerId!==undefined){try{compare.releasePointerCapture(e.pointerId);}catch(_){}}
+      if(!dragging||e.pointerId!==pointerId)return;
+      if(frame){cancelAnimationFrame(frame);frame=0;}if(pending!==null){paint(pending);pending=null;}
+      dragging=false;compare.classList.remove('is-dragging');announce();
+      try{compare.releasePointerCapture(pointerId);}catch(_){}pointerId=null;
     }
     compare.addEventListener('pointerup',release);compare.addEventListener('pointercancel',release);
     compare.addEventListener('dragstart',function(e){e.preventDefault();});
@@ -1980,12 +1979,9 @@ function activateServiceRow(index){
       if(e.key==='ArrowLeft'||e.key==='ArrowDown')next-=4;
       else if(e.key==='ArrowRight'||e.key==='ArrowUp')next+=4;
       else if(e.key==='Home')next=0;else if(e.key==='End')next=100;else return;
-      e.preventDefault();setTarget(next);
+      e.preventDefault();commit(next);
     });
-    modes.forEach(function(button){button.addEventListener('click',function(e){
-      e.stopPropagation();var mode=Number(button.dataset.casePct);setTarget(mode===0?100:(mode===100?0:50));compare.focus({preventScroll:true});
-    });});
-    render(current);
+    commit(current);
   })();
 
   /* ---------- FAQ: плавное раскрытие (height в px - стабильно) ---------- */
