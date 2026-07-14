@@ -1958,17 +1958,15 @@ function activateServiceRow(index){
       output+=escapeCode(source.slice(cursor));
       block.innerHTML=output;
     });
-    if(innerWidth<=760){
-      var stream=document.querySelector('.code-rift-stream');
-      if(stream&&!stream.dataset.mobileBands){
-        stream.dataset.mobileBands='2';
-        for(var band=0;band<2;band++){
-          Array.prototype.slice.call(blocks).forEach(function(block){
-            var copy=block.parentElement.cloneNode(true);
-            copy.classList.add('code-rift-mobile-band');
-            stream.appendChild(copy);
-          });
-        }
+    var stream=document.querySelector('.code-rift-stream');
+    if(stream&&!stream.dataset.fillBands){
+      stream.dataset.fillBands='2';
+      for(var band=0;band<2;band++){
+        Array.prototype.slice.call(blocks).forEach(function(block){
+          var copy=block.parentElement.cloneNode(true);
+          copy.classList.add('code-rift-fill-band');
+          stream.appendChild(copy);
+        });
       }
     }
   })();
