@@ -394,21 +394,103 @@ html.dark .ba-handle{background:#F3F1EC}
 .ap-row.is-active p{color:var(--ink-2)}
 
 /* ---------- services ---------- */
-.svc-row{
-  display:grid;grid-template-columns:56px 1fr auto;gap:20px;align-items:center;
-  padding:clamp(24px,3.6vh,36px) 6px;border-bottom:1px solid var(--line);
-  transition:padding .35s cubic-bezier(.22,1,.36,1);
+.services-shell{
+  display:grid;grid-template-columns:minmax(300px,.78fr) minmax(0,1.22fr);
+  gap:clamp(32px,5vw,78px);align-items:stretch;
 }
-.svc-row:first-of-type{border-top:1px solid var(--line)}
-.svc-row:hover{padding-left:18px}
-.svc-num{font-family:var(--mono);font-size:12px;color:var(--muted-2);transition:color .25s ease}
-.svc-row h3{font-weight:700;font-size:clamp(22px,3.2vw,38px);letter-spacing:-.03em}
-.svc-row h3 .serif{font-weight:600}
-.svc-row p{color:var(--muted);font-size:15px;max-width:44em;margin-top:6px}
-.svc-go{display:inline-flex;align-items:center;gap:9px;font-weight:600;font-size:15px;white-space:nowrap;border:1px solid var(--line-2);padding:12px 22px;border-radius:100px;transition:background .25s,color .25s,border-color .25s,box-shadow .25s}
-.svc-row:hover .svc-num{color:var(--accent)}
-.svc-row:hover .svc-go{background:var(--accent);border-color:var(--accent);color:var(--accent-contrast);box-shadow:0 0 30px -18px rgb(var(--accent-rgb) / .75)}
-.svc-note{margin-top:26px;color:var(--muted);font-size:15px;max-width:46em}
+.service-tabs{display:flex;flex-direction:column;justify-content:center;min-width:0}
+.service-tab{
+  --svc-offset:0px;position:relative;width:calc(100% - var(--svc-offset));margin-left:var(--svc-offset);
+  display:grid;grid-template-columns:42px minmax(0,1fr) 24px;align-items:center;gap:12px;
+  padding:17px 4px 17px 0;border:0;border-bottom:1px solid var(--line);background:transparent;
+  color:var(--ink);font:inherit;text-align:left;cursor:pointer;opacity:.38;
+  transition:opacity .28s ease,transform .5s cubic-bezier(.22,1,.36,1),border-color .28s ease;
+}
+.service-tab:first-child{border-top:1px solid var(--line)}
+.service-tab:nth-child(2){--svc-offset:clamp(8px,1.5vw,20px)}
+.service-tab:nth-child(3){--svc-offset:clamp(2px,.5vw,8px)}
+.service-tab:nth-child(4){--svc-offset:clamp(14px,2.2vw,30px)}
+.service-tab:nth-child(5){--svc-offset:clamp(5px,1vw,14px)}
+.service-tab::before{
+  content:"";position:absolute;left:0;bottom:-1px;width:64px;height:1px;background:var(--accent);
+  transform:scaleX(0);transform-origin:left;transition:transform .48s cubic-bezier(.22,1,.36,1);
+}
+.service-tab:hover{opacity:.72}
+.service-tab.is-active{opacity:1;transform:translate3d(9px,0,0);border-color:color-mix(in srgb,var(--line) 60%,var(--ink))}
+.service-tab.is-active::before{transform:scaleX(1)}
+.service-tab-no{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted-2);transition:color .28s ease}
+.service-tab.is-active .service-tab-no{color:var(--accent)}
+.service-tab-name{font-weight:720;font-size:clamp(21px,2.2vw,31px);letter-spacing:-.035em;line-height:1.02}
+.service-tab-name em{display:block;font-family:var(--serif);font-weight:500;color:var(--muted);transition:color .28s ease}
+.service-tab.is-active .service-tab-name em{color:var(--ink-2)}
+.service-tab-arrow{font-size:20px;font-weight:300;color:var(--muted-2);transition:color .28s ease,transform .48s cubic-bezier(.22,1,.36,1)}
+.service-tab.is-active .service-tab-arrow{color:var(--accent);transform:rotate(45deg)}
+
+.service-stage{
+  position:relative;min-height:610px;overflow:hidden;isolation:isolate;border:1px solid var(--line);
+  border-radius:24px;background:
+    radial-gradient(circle at 82% 16%,rgb(var(--accent-rgb) / .10),transparent 29%),
+    linear-gradient(145deg,color-mix(in srgb,var(--card) 96%,var(--ink)),var(--bg-2));
+  box-shadow:0 55px 120px -92px rgb(var(--iso-rgb) / .58);
+}
+.service-stage::before{
+  content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;opacity:.34;
+  background-image:
+    linear-gradient(rgb(var(--iso-rgb) / .07) 1px,transparent 1px),
+    linear-gradient(90deg,rgb(var(--iso-rgb) / .07) 1px,transparent 1px);
+  background-size:42px 42px;
+  -webkit-mask-image:linear-gradient(135deg,#000,transparent 78%);mask-image:linear-gradient(135deg,#000,transparent 78%);
+}
+.service-stage::after{
+  content:"";position:absolute;right:-8%;bottom:-18%;z-index:-1;width:54%;aspect-ratio:1;border-radius:50%;
+  background:rgb(var(--accent-rgb) / .08);filter:blur(62px);pointer-events:none;
+}
+.service-detail{
+  position:absolute;inset:0;padding:clamp(24px,3vw,38px);display:flex;flex-direction:column;
+  opacity:0;visibility:hidden;transform:translate3d(0,18px,0);pointer-events:none;
+  transition:opacity .24s ease,visibility 0s linear .34s,transform .48s cubic-bezier(.22,1,.36,1);
+}
+.service-detail.is-active{
+  opacity:1;visibility:visible;transform:none;pointer-events:auto;
+  transition:opacity .34s ease,visibility 0s,transform .62s cubic-bezier(.22,1,.36,1);
+}
+.service-detail-top{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:clamp(22px,3vh,34px)}
+.service-code{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;color:var(--muted-2);text-transform:uppercase}
+.service-ready{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.service-ready::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 18px rgb(var(--accent-rgb) / .72)}
+.service-detail-copy{max-width:590px}
+.service-detail-copy h3{font-size:clamp(31px,4vw,54px);font-weight:760;letter-spacing:-.045em;line-height:.98;text-wrap:balance}
+.service-detail-copy h3 em{font-family:var(--serif);font-weight:500}
+.service-detail-copy p{max-width:37em;margin-top:15px;color:var(--muted);font-size:clamp(14px,1.3vw,16px);line-height:1.55}
+
+.service-anatomy{position:relative;min-height:246px;margin-top:auto;padding-top:18px}
+.service-layer{
+  position:absolute;width:82%;min-height:82px;display:grid;grid-template-columns:116px minmax(0,1fr);align-items:center;gap:18px;
+  padding:17px 24px;border:1px solid var(--line-2);background:color-mix(in srgb,var(--card) 90%,transparent);
+  clip-path:polygon(0 0,calc(100% - 15px) 0,100% 15px,100% 100%,15px 100%,0 calc(100% - 15px));
+  box-shadow:0 24px 54px -45px rgb(var(--iso-rgb) / .7);opacity:0;will-change:transform,opacity;
+  transition:opacity .28s ease,transform .62s cubic-bezier(.22,1,.36,1);
+}
+.service-layer:nth-child(1){left:0;top:12px;transform:translate3d(-30px,12px,0)}
+.service-layer:nth-child(2){left:9%;top:88px;transform:translate3d(30px,12px,0)}
+.service-layer:nth-child(3){left:18%;top:164px;transform:translate3d(-24px,12px,0);border-color:color-mix(in srgb,var(--accent) 38%,var(--line-2))}
+.service-detail.is-active .service-layer{opacity:1;transform:none}
+.service-detail.is-active .service-layer:nth-child(1){transition-delay:.08s}
+.service-detail.is-active .service-layer:nth-child(2){transition-delay:.15s}
+.service-detail.is-active .service-layer:nth-child(3){transition-delay:.22s}
+.service-layer small{font-family:var(--mono);font-size:8.5px;letter-spacing:.13em;color:var(--muted-2);text-transform:uppercase}
+.service-layer strong{font-size:clamp(15px,1.6vw,19px);font-weight:620;line-height:1.25;color:var(--ink-2)}
+.service-layer:nth-child(3) strong{color:var(--ink)}
+.service-layer:nth-child(3)::after{content:"";position:absolute;right:18px;top:18px;width:7px;height:7px;background:var(--accent);transform:rotate(45deg)}
+
+.service-detail-foot{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:24px;padding-top:18px;border-top:1px solid var(--line)}
+.service-tags{display:flex;gap:7px;flex-wrap:wrap}
+.service-tags span{font-family:var(--mono);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.service-tags span+span::before{content:"·";margin-right:7px;color:var(--accent)}
+.service-cta{display:inline-flex;align-items:center;gap:9px;font-weight:650;font-size:13.5px;white-space:nowrap;transition:color .24s ease,transform .35s cubic-bezier(.22,1,.36,1)}
+.service-cta::after{content:"↗";font-size:15px;color:var(--accent)}
+.service-cta:hover{color:var(--accent);transform:translate3d(3px,0,0)}
+.svc-note{margin:26px 0 0 auto;color:var(--muted);font-size:14px;max-width:min(62%,720px)}
 .svc-note b{color:color-mix(in srgb,var(--ink) 72%,var(--accent));font-weight:600}
 
 /* ---------- about ---------- */
@@ -474,9 +556,21 @@ html.fx .about-txt h2.frev{
   .about-grid{grid-template-columns:1fr;gap:30px;justify-items:center}
   .about-ph{width:100%;max-width:300px;margin:0 auto} /* фото по центру, натуральный размер, без обрезки */
   .about-txt{width:100%}
-  .svc-row{grid-template-columns:1fr}
-  .svc-num{display:none}
-  .svc-go{justify-self:start}
+  .services-shell{grid-template-columns:1fr;gap:18px}
+  .service-tabs{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .service-tab,.service-tab:nth-child(n){
+    --svc-offset:0px;width:auto;margin:0;display:grid;grid-template-columns:1fr;padding:14px 4px;
+    border:0;border-right:1px solid var(--line);text-align:center;transform:none;
+  }
+  .service-tab:first-child{border-top:0}
+  .service-tab:last-child{border-right:0}
+  .service-tab::before{left:50%;bottom:0;width:22px;transform:translateX(-50%) scaleX(0);transform-origin:center}
+  .service-tab.is-active{transform:none;background:color-mix(in srgb,var(--card) 72%,transparent)}
+  .service-tab.is-active::before{transform:translateX(-50%) scaleX(1)}
+  .service-tab-no{font-size:11px;text-align:center}
+  .service-tab-name,.service-tab-arrow{display:none}
+  .service-stage{min-height:590px}
+  .svc-note{max-width:100%;margin-left:0}
 }
 @media (min-width:921px){
   .approach .sec-head{width:62%}
@@ -488,6 +582,27 @@ html.fx .about-txt h2.frev{
     background:var(--bg);border-bottom-color:var(--line);
     backdrop-filter:none;-webkit-backdrop-filter:none;
   }
+  .service-stage{min-height:585px;border-radius:18px}
+  .service-detail{padding:19px 16px 18px}
+  .service-detail-top{margin-bottom:19px}
+  .service-code{font-size:8px}
+  .service-ready{font-size:7.5px}
+  .service-detail-copy h3{font-size:clamp(29px,8.6vw,38px);line-height:1}
+  .service-detail-copy p{font-size:13.5px;line-height:1.48;margin-top:11px}
+  .service-anatomy{min-height:220px;padding-top:10px}
+  .service-layer{width:92%;min-height:68px;grid-template-columns:78px minmax(0,1fr);gap:9px;padding:12px 14px}
+  .service-layer:nth-child(1){left:0;top:8px}
+  .service-layer:nth-child(2){left:4%;top:73px}
+  .service-layer:nth-child(3){left:8%;top:138px}
+  .service-layer small{font-size:7px;line-height:1.4}
+  .service-layer strong{font-size:13.5px;line-height:1.22}
+  .service-layer:nth-child(3)::after{right:12px;top:12px;width:5px;height:5px}
+  .service-detail-foot{align-items:flex-start;flex-direction:column;gap:11px;margin-top:15px;padding-top:14px}
+  .service-tags{gap:5px}
+  .service-tags span{font-size:7.5px}
+  .service-tags span+span::before{margin-right:5px}
+  .service-cta{font-size:13px}
+  .svc-note{font-size:13px;line-height:1.55}
   header.hide{transform:none}
   .nav{height:72px}
   .nav-links{display:none}
@@ -507,6 +622,7 @@ html.fx .about-txt h2.frev{
   .tape-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}
   .ba.smooth .ba-after,.ba.smooth .ba-handle{transition:none}
   .q .aw{transition:none}
+  .service-tab,.service-detail,.service-layer{transition:none}
 }
 /* ---------- пространственная композиция ---------- */
 .journey-zone{overflow:clip}
@@ -610,23 +726,19 @@ html.fx .about-txt h2.frev{
 }
 .approach .ap-row{backdrop-filter:blur(2px)}
 #services{
-  min-height:115svh;background:linear-gradient(90deg,var(--bg) 0 57%,color-mix(in srgb,var(--bg) 76%,transparent) 68%,transparent 83%);
+  min-height:auto;background:
+    radial-gradient(ellipse at 78% 52%,rgb(var(--accent-rgb) / .035),transparent 34%),
+    linear-gradient(90deg,var(--bg) 0 48%,color-mix(in srgb,var(--bg) 88%,transparent) 74%,transparent 100%);
 }
-#services .sec-head,#services .svc-row,#services .svc-note{width:min(68%,820px)}
-.svc-row{position:relative;opacity:.72;transition:padding .35s cubic-bezier(.22,1,.36,1),opacity .35s ease}
-.svc-row::before{content:"";position:absolute;left:0;top:-1px;width:76px;height:1px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.22,1,.36,1)}
-.svc-row.is-active{opacity:1}
-.svc-row.is-active::before{transform:scaleX(1)}
-.svc-row.is-active .svc-num{color:var(--accent)}
+#services .sec-head{width:100%}
 .about-grid{position:relative;z-index:4}
 
 @media (max-width:920px){
   .hero{min-height:100svh;padding-top:106px}
   .hero h1 .line:nth-child(2){transform:translateX(clamp(0px,3vw,24px))}
   .work-mbm{width:100%}
-  #services .sec-head,#services .svc-row,#services .svc-note{width:100%}
   .approach{background:linear-gradient(90deg,var(--card) 0 78%,color-mix(in srgb,var(--card) 94%,transparent) 92%,transparent 100%)}
-  #services{background:linear-gradient(90deg,var(--bg) 0 78%,color-mix(in srgb,var(--bg) 94%,transparent) 92%,transparent 100%)}
+  #services{background:linear-gradient(90deg,var(--bg),color-mix(in srgb,var(--bg) 94%,transparent))}
 }
 @media (max-width:760px){
   .hero{min-height:94svh;padding-bottom:58px}
@@ -1325,48 +1437,124 @@ function activateServiceRow(index){
   <div class="wrap">
     <div class="sec-head">
       <h2 class="frev">Что я <span class="serif">делаю</span></h2>
-      <span class="count frev">( услуги )</span>
+      <span class="count frev">( 01 — 05 )</span>
     </div>
 
-    <div class="svc-row frev">
-      <span class="svc-num">/ 01</span>
-      <div>
-        <h3>Продающий лендинг</h3>
-        <p>Одностраничник под услугу или рекламу: сильный первый экран, выгоды, доверие и форма заявки.</p>
+    <div class="services-shell frev" id="servicesShell">
+      <div class="service-tabs" role="tablist" aria-label="Услуги" aria-orientation="vertical">
+        <button class="service-tab is-active" id="serviceTab1" type="button" role="tab" aria-selected="true" aria-controls="serviceDetail1" aria-label="Продающий лендинг" tabindex="0">
+          <span class="service-tab-no">/ 01</span>
+          <span class="service-tab-name">Продающий <em>лендинг</em></span>
+          <span class="service-tab-arrow" aria-hidden="true">+</span>
+        </button>
+        <button class="service-tab" id="serviceTab2" type="button" role="tab" aria-selected="false" aria-controls="serviceDetail2" aria-label="Редизайн старого сайта" tabindex="-1">
+          <span class="service-tab-no">/ 02</span>
+          <span class="service-tab-name">Редизайн <em>старого сайта</em></span>
+          <span class="service-tab-arrow" aria-hidden="true">+</span>
+        </button>
+        <button class="service-tab" id="serviceTab3" type="button" role="tab" aria-selected="false" aria-controls="serviceDetail3" aria-label="Интернет-магазин и каталог" tabindex="-1">
+          <span class="service-tab-no">/ 03</span>
+          <span class="service-tab-name">Магазин <em>и каталог</em></span>
+          <span class="service-tab-arrow" aria-hidden="true">+</span>
+        </button>
+        <button class="service-tab" id="serviceTab4" type="button" role="tab" aria-selected="false" aria-controls="serviceDetail4" aria-label="Воронка и автоматизация" tabindex="-1">
+          <span class="service-tab-no">/ 04</span>
+          <span class="service-tab-name">Воронка <em>и автоматизация</em></span>
+          <span class="service-tab-arrow" aria-hidden="true">+</span>
+        </button>
+        <button class="service-tab" id="serviceTab5" type="button" role="tab" aria-selected="false" aria-controls="serviceDetail5" aria-label="Боты и ИИ-помощники" tabindex="-1">
+          <span class="service-tab-no">/ 05</span>
+          <span class="service-tab-name">Боты и <em>ИИ-помощники</em></span>
+          <span class="service-tab-arrow" aria-hidden="true">+</span>
+        </button>
       </div>
-      <a class="svc-go" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить →</a>
-    </div>
-    <div class="svc-row frev">
-      <span class="svc-num">/ 02</span>
-      <div>
-        <h3>Редизайн старого сайта</h3>
-        <p>Разбираю старую структуру, переношу контент, собираю современный быстрый сайт. Как в кейсе MBM-Trans.</p>
+
+      <div class="service-stage" id="serviceStage">
+        <article class="service-detail is-active" id="serviceDetail1" role="tabpanel" aria-labelledby="serviceTab1" aria-hidden="false">
+          <div class="service-detail-top"><span class="service-code">PROJECT / LANDING / 01</span><span class="service-ready">assembly ready</span></div>
+          <div class="service-detail-copy">
+            <h3>Лендинг, который <em>ведёт к заявке</em></h3>
+            <p>Собираю одну ясную историю: человек быстро понимает предложение, видит доказательства и без лишних шагов выходит на связь.</p>
+          </div>
+          <div class="service-anatomy" aria-label="Состав услуги">
+            <div class="service-layer"><small>01 / на входе</small><strong>Продукт, аудитория и цель</strong></div>
+            <div class="service-layer"><small>02 / собираю</small><strong>Оффер · структура · дизайн</strong></div>
+            <div class="service-layer"><small>03 / результат</small><strong>Заявка в Telegram или CRM</strong></div>
+          </div>
+          <div class="service-detail-foot">
+            <div class="service-tags"><span>1 страница</span><span>адаптив</span><span>аналитика</span></div>
+            <a class="service-cta" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить задачу</a>
+          </div>
+        </article>
+
+        <article class="service-detail" id="serviceDetail2" role="tabpanel" aria-labelledby="serviceTab2" aria-hidden="true" inert>
+          <div class="service-detail-top"><span class="service-code">PROJECT / REDESIGN / 02</span><span class="service-ready">assembly ready</span></div>
+          <div class="service-detail-copy">
+            <h3>Старый сайт становится <em>новым инструментом</em></h3>
+            <p>Сохраняю полезный контент, убираю лишнее и пересобираю логику. На выходе — современный, быстрый и понятный сайт вместо косметического ремонта.</p>
+          </div>
+          <div class="service-anatomy" aria-label="Состав услуги">
+            <div class="service-layer"><small>01 / на входе</small><strong>Старый сайт и накопленный контент</strong></div>
+            <div class="service-layer"><small>02 / собираю</small><strong>Аудит · новая логика · перенос</strong></div>
+            <div class="service-layer"><small>03 / результат</small><strong>Быстрый сайт без старых проблем</strong></div>
+          </div>
+          <div class="service-detail-foot">
+            <div class="service-tags"><span>аудит</span><span>перенос</span><span>ускорение</span></div>
+            <a class="service-cta" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить редизайн</a>
+          </div>
+        </article>
+
+        <article class="service-detail" id="serviceDetail3" role="tabpanel" aria-labelledby="serviceTab3" aria-hidden="true" inert>
+          <div class="service-detail-top"><span class="service-code">PROJECT / COMMERCE / 03</span><span class="service-ready">assembly ready</span></div>
+          <div class="service-detail-copy">
+            <h3>Магазин, в котором <em>легко купить</em></h3>
+            <p>Выстраиваю путь от каталога до заказа: понятные категории, карточки товаров, корзина или быстрый запрос — под реальный процесс вашего бизнеса.</p>
+          </div>
+          <div class="service-anatomy" aria-label="Состав услуги">
+            <div class="service-layer"><small>01 / на входе</small><strong>Товары, услуги и правила продажи</strong></div>
+            <div class="service-layer"><small>02 / собираю</small><strong>Каталог · карточки · оплата</strong></div>
+            <div class="service-layer"><small>03 / результат</small><strong>Заказ без лишних шагов</strong></div>
+          </div>
+          <div class="service-detail-foot">
+            <div class="service-tags"><span>каталог</span><span>корзина</span><span>доставка</span></div>
+            <a class="service-cta" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить магазин</a>
+          </div>
+        </article>
+
+        <article class="service-detail" id="serviceDetail4" role="tabpanel" aria-labelledby="serviceTab4" aria-hidden="true" inert>
+          <div class="service-detail-top"><span class="service-code">PROJECT / AUTOMATION / 04</span><span class="service-ready">assembly ready</span></div>
+          <div class="service-detail-copy">
+            <h3>Заявка сама попадает <em>куда нужно</em></h3>
+            <p>Связываю сайт с Telegram, почтой или CRM. Команда сразу видит нового клиента, а человек получает подтверждение — без ручного копирования.</p>
+          </div>
+          <div class="service-anatomy" aria-label="Состав услуги">
+            <div class="service-layer"><small>01 / на входе</small><strong>Формы и разные каналы заявок</strong></div>
+            <div class="service-layer"><small>02 / собираю</small><strong>CRM · уведомления · автоответы</strong></div>
+            <div class="service-layer"><small>03 / результат</small><strong>Ни один клиент не теряется</strong></div>
+          </div>
+          <div class="service-detail-foot">
+            <div class="service-tags"><span>Telegram</span><span>CRM</span><span>интеграции</span></div>
+            <a class="service-cta" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить автоматизацию</a>
+          </div>
+        </article>
+
+        <article class="service-detail" id="serviceDetail5" role="tabpanel" aria-labelledby="serviceTab5" aria-hidden="true" inert>
+          <div class="service-detail-top"><span class="service-code">PROJECT / AI ASSISTANT / 05</span><span class="service-ready">assembly ready</span></div>
+          <div class="service-detail-copy">
+            <h3>Помощник отвечает, <em>пока вы заняты</em></h3>
+            <p>Настраиваю Telegram-бота или ИИ-консультанта на сайте: он отвечает на частые вопросы, принимает заявку и передаёт живому человеку нужный контекст.</p>
+          </div>
+          <div class="service-anatomy" aria-label="Состав услуги">
+            <div class="service-layer"><small>01 / на входе</small><strong>Вопросы клиентов и база знаний</strong></div>
+            <div class="service-layer"><small>02 / собираю</small><strong>Сценарий · бот · интеллект</strong></div>
+            <div class="service-layer"><small>03 / результат</small><strong>Ответы и заявки 24 / 7</strong></div>
+          </div>
+          <div class="service-detail-foot">
+            <div class="service-tags"><span>Telegram</span><span>ИИ</span><span>24 / 7</span></div>
+            <a class="service-cta" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить помощника</a>
+          </div>
+        </article>
       </div>
-      <a class="svc-go" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить →</a>
-    </div>
-    <div class="svc-row frev">
-      <span class="svc-num">/ 03</span>
-      <div>
-        <h3>Интернет-магазин <span class="serif">и каталог</span></h3>
-        <p>Каталог товаров или услуг, корзина или кнопка заказа, оплата и доставка. Для магазинов, шоурумов и производств.</p>
-      </div>
-      <a class="svc-go" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить →</a>
-    </div>
-    <div class="svc-row frev">
-      <span class="svc-num">/ 04</span>
-      <div>
-        <h3>Воронка и автоматизация</h3>
-        <p>Заявки с сайта в Telegram, на почту или в CRM. Автоответы, уведомления, учёт клиентов: ничего не теряется.</p>
-      </div>
-      <a class="svc-go" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить →</a>
-    </div>
-    <div class="svc-row frev">
-      <span class="svc-num">/ 05</span>
-      <div>
-        <h3>Боты и <span class="serif">ИИ-помощники</span></h3>
-        <p>Telegram-бот для приёма заявок и записи, ИИ-консультант на сайт, который отвечает клиентам за вас.</p>
-      </div>
-      <a class="svc-go" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить →</a>
     </div>
 
     <p class="svc-note frev">Цены не вывешиваю на витрину: стоимость зависит от объёма и задач. <b>Сначала бесплатный разбор и макет</b>, потом точная сумма. Фиксирую её до старта, без доплат по ходу.</p>
@@ -1764,19 +1952,6 @@ function activateServiceRow(index){
       });
     });
 
-    var serviceRows=gsap.utils.toArray('.svc-row');
-    function activateServiceRow(index){
-      serviceRows.forEach(function(row,rowIndex){row.classList.toggle('is-active',rowIndex===index);});
-    }
-    activateServiceRow(0);
-    serviceRows.forEach(function(row,index){
-      ScrollTrigger.create({
-        trigger:row,start:'top 60%',end:'bottom 40%',
-        onEnter:function(){activateServiceRow(index);},
-        onEnterBack:function(){activateServiceRow(index);}
-      });
-      if(fine)row.addEventListener('pointerenter',function(){activateServiceRow(index);},{passive:true});
-    });
     addEventListener('load',function(){ScrollTrigger.refresh();},{once:true});
 
     gsap.utils.toArray('.contact .line-in').forEach(function(el){
@@ -1803,6 +1978,57 @@ function activateServiceRow(index){
     killLoader();
     document.querySelectorAll('.frev,.line-in').forEach(function(el){el.style.opacity='1';el.style.transform='none';});
   }
+
+  /* ---------- услуги: один интерактивный стенд без scroll-scrub ---------- */
+  (function(){
+    var serviceShell=document.getElementById('servicesShell');
+    if(!serviceShell)return;
+    var serviceTabs=Array.from(serviceShell.querySelectorAll('.service-tab'));
+    var serviceDetails=Array.from(serviceShell.querySelectorAll('.service-detail'));
+    var serviceStage=document.getElementById('serviceStage');
+    var serviceTabList=serviceShell.querySelector('.service-tabs');
+    var activeService=0,serviceHoverTimer=0;
+    function syncServiceOrientation(){
+      if(serviceTabList)serviceTabList.setAttribute('aria-orientation',innerWidth<=920?'horizontal':'vertical');
+    }
+    function activateService(index,moveFocus){
+      index=Math.max(0,Math.min(serviceTabs.length-1,index));activeService=index;
+      serviceTabs.forEach(function(tab,tabIndex){
+        var selected=tabIndex===index;
+        tab.classList.toggle('is-active',selected);
+        tab.setAttribute('aria-selected',selected?'true':'false');
+        tab.tabIndex=selected?0:-1;
+        if(selected&&moveFocus)tab.focus({preventScroll:true});
+      });
+      serviceDetails.forEach(function(detail,detailIndex){
+        var selected=detailIndex===index;
+        detail.classList.toggle('is-active',selected);
+        detail.setAttribute('aria-hidden',selected?'false':'true');
+        detail.inert=!selected;
+      });
+      if(serviceStage)serviceStage.setAttribute('aria-labelledby',serviceTabs[index].id);
+    }
+    serviceTabs.forEach(function(tab,index){
+      tab.addEventListener('click',function(){activateService(index,false);});
+      tab.addEventListener('focus',function(){activateService(index,false);});
+      if(fine)tab.addEventListener('pointerenter',function(){
+        clearTimeout(serviceHoverTimer);serviceHoverTimer=setTimeout(function(){activateService(index,false);},65);
+      },{passive:true});
+      tab.addEventListener('pointerleave',function(){clearTimeout(serviceHoverTimer);},{passive:true});
+      tab.addEventListener('keydown',function(e){
+        var next=activeService;
+        if(e.key==='ArrowDown'||e.key==='ArrowRight')next=(activeService+1)%serviceTabs.length;
+        else if(e.key==='ArrowUp'||e.key==='ArrowLeft')next=(activeService-1+serviceTabs.length)%serviceTabs.length;
+        else if(e.key==='Home')next=0;
+        else if(e.key==='End')next=serviceTabs.length-1;
+        else return;
+        e.preventDefault();activateService(next,true);
+      });
+    });
+    syncServiceOrientation();
+    addEventListener('resize',syncServiceOrientation,{passive:true});
+    activateService(0,false);
+  })();
 
   /* ---------- кейсы: ручная карусель без связи с вертикальным скроллом ---------- */
   (function(){
