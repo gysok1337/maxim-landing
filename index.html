@@ -690,30 +690,9 @@ html.fx .about-txt h2.frev{
 .hero{min-height:100dvh}
 .hero>.wrap{width:100%;max-width:none;isolation:isolate}
 .hero-status,.hero h1{position:relative;z-index:3}
-.hero .iso-scene::before{
-  inset:-5%;opacity:.56;filter:none;animation:none;
-  background-image:
-    url("assets/hero-noise.svg"),
-    radial-gradient(ellipse at 13% 31%,rgb(var(--iso-rgb) / .11),transparent 27%),
-    radial-gradient(ellipse at 37% 73%,rgb(var(--iso-rgb) / .07),transparent 25%),
-    radial-gradient(ellipse at 48% 19%,rgb(var(--iso-rgb) / .045),transparent 20%),
-    radial-gradient(ellipse at 26% 53%,rgb(var(--iso-rgb) / .035),transparent 17%);
-  background-size:512px 384px,auto,auto,auto,auto;
-  background-position:23px 17px,center,center,center,center;
-  background-repeat:repeat,no-repeat,no-repeat,no-repeat,no-repeat;
-  mix-blend-mode:screen;
-  -webkit-mask-image:linear-gradient(90deg,#000 0 53%,rgba(0,0,0,.42) 73%,transparent 97%);
-  mask-image:linear-gradient(90deg,#000 0 53%,rgba(0,0,0,.42) 73%,transparent 97%);
-}
-.hero .iso-scene::after{
-  content:"";position:absolute;inset:-8%;pointer-events:none;opacity:.42;
-  background:
-    radial-gradient(ellipse at 9% 67%,rgb(var(--iso-rgb) / .09),transparent 19%),
-    radial-gradient(ellipse at 31% 14%,rgb(var(--iso-rgb) / .055),transparent 17%),
-    radial-gradient(ellipse at 45% 57%,rgb(var(--iso-rgb) / .045),transparent 21%);
-  filter:blur(34px);
-  -webkit-mask-image:linear-gradient(90deg,#000 0 49%,rgba(0,0,0,.24) 76%,transparent 96%);
-  mask-image:linear-gradient(90deg,#000 0 49%,rgba(0,0,0,.24) 76%,transparent 96%);
+.hero .iso-canvas{
+  -webkit-mask-image:linear-gradient(90deg,#000 0 58%,rgba(0,0,0,.42) 76%,transparent 98%);
+  mask-image:linear-gradient(90deg,#000 0 58%,rgba(0,0,0,.42) 76%,transparent 98%);
 }
 .hero-signature{
   position:absolute;left:var(--pad);bottom:clamp(48px,7.5vh,72px);z-index:5;
@@ -953,6 +932,7 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
 <!-- HERO -->
 <section class="hero">
   <div class="iso-scene" aria-hidden="true">
+    <canvas class="iso-canvas" id="isoWave"></canvas>
     <div class="iso-vignette"></div>
   </div>
   <div class="wrap">
