@@ -514,7 +514,7 @@ html.dark .ba-handle{background:#F3F1EC}
 /* ---------- faq ---------- */
 .faq{max-width:none;margin:0 auto}
 .faq-scene{
-  position:relative;min-height:820px;overflow:hidden;isolation:isolate;border:1px solid var(--line);
+  position:relative;min-height:clamp(590px,68vh,640px);overflow:hidden;isolation:isolate;border:1px solid var(--line);
   border-radius:28px;background:
     radial-gradient(circle at 20% 18%,rgb(var(--accent-rgb) / .055),transparent 23%),
     radial-gradient(circle at 78% 72%,rgb(var(--iso-rgb) / .045),transparent 26%),
@@ -571,24 +571,27 @@ html.dark .ba-handle{background:#F3F1EC}
 .faq-question-text{display:block;font-size:clamp(14px,1.25vw,17px);font-weight:620;letter-spacing:-.018em;line-height:1.3;text-wrap:balance}
 .faq-inline-reply{
   position:relative;width:calc(100% - 28px);max-height:0;margin:0 0 0 auto;padding:0 16px;overflow:hidden;
-  border:1px solid transparent;border-radius:18px 18px 6px 18px;background:var(--ink);color:var(--bg);
+  border:1px solid transparent;border-radius:18px 18px 6px 18px;
+  background:linear-gradient(135deg,#171A20,#202630);color:#F3F1EC;
   opacity:0;visibility:hidden;transform:translate3d(18px,-8px,0) scale(.985);pointer-events:none;
-  box-shadow:0 28px 68px -48px rgb(var(--iso-rgb) / .78);
+  box-shadow:0 28px 68px -48px rgba(0,0,0,.84);
   transition:max-height .52s cubic-bezier(.22,1,.36,1),margin .42s ease,padding .42s ease,
     opacity .24s ease,visibility 0s linear .52s,transform .52s cubic-bezier(.22,1,.36,1),border-color .24s ease;
 }
 .faq-node.is-open .faq-inline-reply{
-  max-height:290px;margin-top:11px;padding:15px 16px 16px;border-color:rgb(var(--accent-rgb) / .28);
+  max-height:250px;margin-top:11px;padding:14px 16px 10px;border-color:rgb(var(--accent-rgb) / .25);
   opacity:1;visibility:visible;transform:none;pointer-events:auto;
   transition:max-height .58s cubic-bezier(.22,1,.36,1),margin .42s ease,padding .42s ease,
     opacity .3s ease .06s,visibility 0s,transform .58s cubic-bezier(.22,1,.36,1),border-color .24s ease;
 }
-.faq-inline-top{display:flex;align-items:center;justify-content:flex-end;gap:8px;color:color-mix(in srgb,var(--bg) 72%,transparent)}
-.faq-inline-top .faq-avatar{width:28px;height:28px;border:0;background:var(--accent);color:var(--accent-contrast);font-family:var(--serif);font-size:15px;font-style:italic;order:2}
-.faq-inline-author{font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase}
-.faq-inline-text{margin-top:11px;color:var(--bg);font-size:13.5px;line-height:1.48;letter-spacing:-.008em}
+.faq-inline-text{margin:0;color:#F3F1EC;font-size:13.5px;line-height:1.48;letter-spacing:-.008em}
 .faq-inline-text::after{content:"";display:inline-block;width:1px;height:1em;margin-left:3px;background:currentColor;vertical-align:-.12em;opacity:0}
 .faq-inline-reply.is-typing .faq-inline-text::after{opacity:1;animation:faqCaret .7s steps(1,end) infinite}
+.faq-inline-meta{
+  display:flex;justify-content:flex-end;align-items:center;gap:5px;margin-top:6px;color:rgba(243,241,236,.46);
+  font-family:var(--mono);font-size:8px;line-height:1;letter-spacing:.06em;text-transform:uppercase;
+}
+.faq-inline-meta span{color:rgb(var(--accent-rgb) / .86);font-size:9px;letter-spacing:-.18em}
 .faq-inline-accessible{
   position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;
   overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
@@ -618,7 +621,7 @@ html.dark .ba-handle{background:#F3F1EC}
   .faq-question{grid-template-columns:34px minmax(0,1fr);gap:10px;padding:13px 14px;min-height:98px}
   .faq-question .faq-avatar{width:34px;height:34px}
   .faq-inline-reply{width:calc(100% - 18px)}
-  .faq-node.is-open .faq-inline-reply{padding:14px 15px 15px}
+  .faq-node.is-open .faq-inline-reply{padding:13px 15px 9px}
   .faq-inline-text{font-size:13px;line-height:1.5}
 }
 
@@ -1811,8 +1814,8 @@ function activateServiceRow(index){
               </span>
             </button>
             <div class="faq-inline-reply" id="faqAnswer1" role="status" aria-labelledby="faqQuestion1" aria-hidden="true">
-              <div class="faq-inline-top"><span class="faq-inline-author">Максим / ответ</span><span class="faq-avatar" aria-hidden="true">М</span></div>
               <p class="faq-inline-text" aria-hidden="true"></p>
+              <span class="faq-inline-meta" aria-hidden="true">сейчас <span>✓✓</span></span>
               <p class="faq-inline-accessible"></p>
             </div>
           </div>
@@ -1826,8 +1829,8 @@ function activateServiceRow(index){
               </span>
             </button>
             <div class="faq-inline-reply" id="faqAnswer2" role="status" aria-labelledby="faqQuestion2" aria-hidden="true">
-              <div class="faq-inline-top"><span class="faq-inline-author">Максим / ответ</span><span class="faq-avatar" aria-hidden="true">М</span></div>
               <p class="faq-inline-text" aria-hidden="true"></p>
+              <span class="faq-inline-meta" aria-hidden="true">сейчас <span>✓✓</span></span>
               <p class="faq-inline-accessible"></p>
             </div>
           </div>
@@ -1841,8 +1844,8 @@ function activateServiceRow(index){
               </span>
             </button>
             <div class="faq-inline-reply" id="faqAnswer3" role="status" aria-labelledby="faqQuestion3" aria-hidden="true">
-              <div class="faq-inline-top"><span class="faq-inline-author">Максим / ответ</span><span class="faq-avatar" aria-hidden="true">М</span></div>
               <p class="faq-inline-text" aria-hidden="true"></p>
+              <span class="faq-inline-meta" aria-hidden="true">сейчас <span>✓✓</span></span>
               <p class="faq-inline-accessible"></p>
             </div>
           </div>
@@ -1856,8 +1859,8 @@ function activateServiceRow(index){
               </span>
             </button>
             <div class="faq-inline-reply" id="faqAnswer4" role="status" aria-labelledby="faqQuestion4" aria-hidden="true">
-              <div class="faq-inline-top"><span class="faq-inline-author">Максим / ответ</span><span class="faq-avatar" aria-hidden="true">М</span></div>
               <p class="faq-inline-text" aria-hidden="true"></p>
+              <span class="faq-inline-meta" aria-hidden="true">сейчас <span>✓✓</span></span>
               <p class="faq-inline-accessible"></p>
             </div>
           </div>
@@ -1871,8 +1874,8 @@ function activateServiceRow(index){
               </span>
             </button>
             <div class="faq-inline-reply" id="faqAnswer5" role="status" aria-labelledby="faqQuestion5" aria-hidden="true">
-              <div class="faq-inline-top"><span class="faq-inline-author">Максим / ответ</span><span class="faq-avatar" aria-hidden="true">М</span></div>
               <p class="faq-inline-text" aria-hidden="true"></p>
+              <span class="faq-inline-meta" aria-hidden="true">сейчас <span>✓✓</span></span>
               <p class="faq-inline-accessible"></p>
             </div>
           </div>
