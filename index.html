@@ -125,6 +125,7 @@ header{
   border-bottom:1px solid transparent;
 }
 header.solid{background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:var(--line)}
+html.safari-engine header.solid{background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:none;-webkit-backdrop-filter:none}
 header.hide{transform:translateY(-100%)}
 .nav{display:flex;align-items:center;justify-content:space-between;height:76px;gap:14px}
 .logo{font-weight:700;font-size:19px;letter-spacing:-.02em;display:inline-flex;align-items:center;gap:10px}
@@ -1914,6 +1915,8 @@ function activateServiceRow(index){
 
   var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   var fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
+  var safariEngine=/Safari\//.test(navigator.userAgent)&&!/Chrome\/|Chromium\/|CriOS\/|Edg\//.test(navigator.userAgent);
+  if(safariEngine)document.documentElement.classList.add('safari-engine');
   var hasFX=!!(window.gsap&&window.ScrollTrigger)&&!reduce;
   if(hasFX)gsap.registerPlugin(ScrollTrigger);
 
@@ -2136,7 +2139,7 @@ function activateServiceRow(index){
 
   /* ---------- Lenis ---------- */
   var lenis=null;
-  if(window.Lenis&&!reduce&&fine&&innerWidth>760){
+  if(window.Lenis&&!reduce&&fine&&innerWidth>760&&!safariEngine){
     lenis=new Lenis({duration:1.15,easing:function(t){return Math.min(1,1.001-Math.pow(2,-10*t));}});
     document.documentElement.classList.add('lenis');
     lenis.on('scroll',function(e){onScrollDir(e.scroll);});
