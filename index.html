@@ -765,10 +765,22 @@ html.fx .code-rift{opacity:0}
   position:absolute;top:clamp(14px,1.25vw,22px);right:clamp(10px,.9vw,15px);
   bottom:clamp(9px,.8vw,14px);left:clamp(13px,1.1vw,19px);overflow:hidden;
   -webkit-clip-path:url(#code-rift-inner-cut);clip-path:url(#code-rift-inner-cut);
-  background:linear-gradient(118deg,rgba(255,255,255,.025),transparent 28% 70%,rgba(255,255,255,.018)),#050607;
+  background:#050607;
   box-shadow:inset 38px 31px 58px rgba(0,0,0,.98),inset -22px -19px 42px rgba(0,0,0,.9),inset 0 0 0 1px rgba(255,255,255,.018),-10px -12px 24px rgba(0,0,0,.9);
 }
-.code-rift-well::before{
+.code-rift-well::after{
+  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:
+    radial-gradient(ellipse at 54% 51%,transparent 0 44%,rgba(0,0,0,.15) 62%,rgba(0,0,0,.78) 100%),
+    linear-gradient(137deg,rgba(0,0,0,.48),transparent 23% 66%,rgba(0,0,0,.58));
+}
+.code-rift-plane{
+  position:fixed;left:var(--rift-plane-left,54vw);top:var(--rift-plane-top,-24vh);
+  width:var(--rift-plane-width,52vw);height:var(--rift-plane-height,220vh);z-index:1;
+  isolation:isolate;
+  background:linear-gradient(118deg,rgba(255,255,255,.025),transparent 28% 70%,rgba(255,255,255,.018)),#050607;
+}
+.code-rift-plane::before{
   content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
   background-image:
     url("assets/rift-grain.svg"),
@@ -780,18 +792,8 @@ html.fx .code-rift{opacity:0}
   background-repeat:repeat,repeat,no-repeat,no-repeat,no-repeat;
   mix-blend-mode:screen;opacity:.48;
 }
-.code-rift-well::after{
-  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
-  background:
-    radial-gradient(ellipse at 54% 51%,transparent 0 44%,rgba(0,0,0,.15) 62%,rgba(0,0,0,.78) 100%),
-    linear-gradient(137deg,rgba(0,0,0,.48),transparent 23% 66%,rgba(0,0,0,.58));
-}
-.code-rift-plane{
-  position:fixed;left:var(--rift-plane-left,54vw);top:var(--rift-plane-top,-24vh);
-  width:var(--rift-plane-width,52vw);height:var(--rift-plane-height,220vh);z-index:1;
-}
 .code-rift-stream{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
+  position:relative;z-index:3;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
   width:100%;min-height:100%;align-items:start;
   color:rgba(207,210,212,.76);font-family:var(--mono);font-size:clamp(9.2px,.82vw,12.2px);
   line-height:1.48;letter-spacing:-.022em;white-space:pre;tab-size:2;
