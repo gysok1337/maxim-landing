@@ -717,13 +717,13 @@ function holdExperienceScrollAt(top){
       /* Keep the scene close to the physical scroll. The old cinematic caps made
          a fast swipe reach the end while the visuals were still several seconds
          behind, which felt like the page had skipped the whole interaction. */
-      var catchup=1-Math.exp(-8*deltaTime);
+      var catchup=1-Math.exp(-6.4*deltaTime);
       var visualDelta=(gatedTarget-visual)*Math.max(follow,catchup);
       var messageCorridor=visual>.255&&visual<.42;
       var codeCorridor=visual>.42&&visual<buildStart;
       var buildCorridor=visual>buildStart&&visual<buildEnd;
       var buildIntro=visual>buildStart&&visual<buildStart+.15;
-      var maxVisualRate=messageCorridor?1.02:(codeCorridor?.90:(buildCorridor?(buildIntro?1.12:1.00):1.16));
+      var maxVisualRate=messageCorridor?.82:(codeCorridor?.74:(buildCorridor?(buildIntro?.88:.80):.92));
       var maxVisualStep=maxVisualRate*Math.max(deltaTime,1/120);
       visual+=clamp(visualDelta,-maxVisualStep,maxVisualStep);
     }
@@ -734,17 +734,17 @@ function holdExperienceScrollAt(top){
 
     var cursorDx=cursorTarget.x-cursor.x;
     var cursorDy=cursorTarget.y-cursor.y;
-    var cursorFollow=reduced?1:.2;
+    var cursorFollow=reduced?1:.14;
     cursor.x+=cursorDx*cursorFollow;
     cursor.y+=cursorDy*cursorFollow;
-    cursor.angle+=(clamp(cursorDx*.035,-7,7)-cursor.angle)*(reduced?1:.14);
+    cursor.angle+=(clamp(cursorDx*.035,-7,7)-cursor.angle)*(reduced?1:.10);
 
     var noticeDistance=Math.hypot(cursor.x-cursorMetrics.noticeX,cursor.y-cursorMetrics.noticeY);
     var noticeActionTarget=noticeAction;
     if(target<.13&&visual<.13)noticeActionTarget=0;
     else if(noticeAction<.96)noticeActionTarget=target>.16&&visual>.145&&noticeDistance<13?1:0;
     else noticeActionTarget=1;
-    noticeAction+=(noticeActionTarget-noticeAction)*(reduced?1:.1);
+    noticeAction+=(noticeActionTarget-noticeAction)*(reduced?1:.075);
     if(soundForward&&noticeAction>=.55&&lastNoticeSound<.55&&window.__labSound)window.__labSound.click('soft');
     lastNoticeSound=noticeAction;
 
@@ -762,7 +762,7 @@ function holdExperienceScrollAt(top){
     }else{
       runActionTarget=1;
     }
-    runAction+=(runActionTarget-runAction)*(reduced?1:.18);
+    runAction+=(runActionTarget-runAction)*(reduced?1:.11);
     if(soundForward&&runAction>=.55&&lastRunSound<.55&&window.__labSound)window.__labSound.click('strong');
     lastRunSound=runAction;
     if(soundForward&&visual>=.46&&visual<.90){
@@ -2060,7 +2060,7 @@ function holdExperienceScrollAt(top){
       var follow=1-Math.pow(difference<0?.00002:.00035,delta);
       var change=difference*follow;
       if(difference>0){
-        var maxRate=current<.38?.42:(current<.55?.34:(current<.78?.28:(current<.985?.13:.22)));
+        var maxRate=current<.38?.32:(current<.55?.27:(current<.78?.22:(current<.985?.105:.18)));
         change=Math.min(change,maxRate*Math.max(delta,1/120));
       }
       current+=change;
