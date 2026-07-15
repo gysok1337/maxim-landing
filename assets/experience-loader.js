@@ -48,6 +48,7 @@
   window.addEventListener('scroll',updateActivity,{passive:true});
   window.addEventListener('load',measureActivityRange,{once:true});
   window.addEventListener('resize',function(){
+    if(window.__portfolioHeightOnlyResize)return;
     clearTimeout(activationResize);
     activationResize=setTimeout(measureActivityRange,120);
   },{passive:true});

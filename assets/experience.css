@@ -84,13 +84,14 @@
 .lab-back:hover{border-color:var(--line-bright);color:var(--ink)}
 .lab-back:active{transform:scale(.97)}
 
-.lab-scroll{position:relative;height:100svh;min-height:640px}
+.lab-scroll{
+  --experience-runway:clamp(240px,42svh,380px);
+  position:relative;height:calc(100svh + var(--experience-runway));min-height:640px;
+}
 .lab-scroll.is-passed{height:100svh!important}
 .lab-scroll.is-passed .lab-sticky{position:relative}
 html.experience-virtual-active,
-html.experience-virtual-active body{overscroll-behavior:none;scrollbar-width:none}
-html.experience-virtual-active::-webkit-scrollbar,
-html.experience-virtual-active body::-webkit-scrollbar{width:0;height:0}
+html.experience-virtual-active body{overscroll-behavior:none}
 .lab-sticky{
   position:sticky;
   top:0;
@@ -1063,7 +1064,7 @@ html.experience-virtual-active body::-webkit-scrollbar{width:0;height:0}
   .lab-brand img{width:34px;height:34px}
   .lab-brand em{display:none}
   .lab-back{min-height:36px;padding:0 13px;font-size:12px}
-  .lab-scroll{height:100svh;min-height:620px}
+  .lab-scroll{--experience-runway:clamp(220px,40svh,340px);height:calc(100svh + var(--experience-runway));min-height:620px}
   .lab-sticky{min-height:620px}
   .stage-layout{grid-template-columns:1fr;align-items:start;padding:91px 18px 28px}
   .stage-copy{justify-content:flex-start;max-width:none;height:36%;padding:0 2px}

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>Максим - делаю сайты и редизайн</title>
 <meta name="description" content="Делаю сайты под ключ. Разбираюсь в задаче, показываю бесплатный макет, собираю и запускаю сайт. Лендинги, магазины, боты, автоматизация.">
 
@@ -41,7 +41,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/ice-loader.css?v=20260714-3">
-  <link rel="stylesheet" href="assets/experience.css?v=20260715-14">
+  <link rel="stylesheet" href="assets/experience.css?v=20260715-15">
 
 <style>
 :root{
@@ -104,6 +104,7 @@ body::before{
   background-image:radial-gradient(rgb(var(--iso-rgb) / .52) .45px,transparent .65px);
   background-size:4px 4px;opacity:.035;mix-blend-mode:soft-light;
 }
+html.safari-scrolling body::before{opacity:0;mix-blend-mode:normal}
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 ::selection{background:rgb(var(--accent-rgb) / .24);color:var(--ink)}
@@ -125,8 +126,14 @@ header{
   transition:transform .45s cubic-bezier(.22,1,.36,1), background .3s ease, border-color .3s ease;
   border-bottom:1px solid transparent;
 }
+.mobile-safe-cover{display:none}
 header.solid{background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:var(--line)}
 header.hide{transform:translateY(-100%)}
+html.safari-scrolling header.solid{
+  background:color-mix(in srgb,var(--bg) 94%,transparent);
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  transition:transform .32s cubic-bezier(.22,1,.36,1),border-color .3s ease;
+}
 .nav{display:flex;align-items:center;justify-content:space-between;height:76px;gap:14px}
 .logo{font-weight:700;font-size:19px;letter-spacing:-.02em;display:inline-flex;align-items:center;gap:10px}
 .logo-mark{
@@ -220,6 +227,7 @@ html.dark .tswitch .moon{display:block}
   filter:drop-shadow(0 38px 80px rgb(var(--iso-rgb) / .16));
   transform:translateZ(0);
 }
+html.safari-scrolling .iso-scene::before{animation-play-state:paused}
 .iso-vignette{
   position:absolute;inset:0;
   background:
@@ -682,7 +690,14 @@ html.fx .about-txt h2.frev{
   header,header.solid{
     background:var(--bg);border-bottom-color:var(--line);
     backdrop-filter:none;-webkit-backdrop-filter:none;
+    box-shadow:none;top:0;transform:translate3d(0,0,0);
   }
+  .mobile-safe-cover{
+    display:block;position:fixed;z-index:91;top:0;left:0;right:0;
+    height:env(safe-area-inset-top,0px);background:var(--bg);pointer-events:none;
+  }
+  html.safari-engine header{padding-top:max(env(safe-area-inset-top,0px),46px)}
+  html.safari-engine .mobile-safe-cover{height:max(env(safe-area-inset-top,0px),46px)}
   .service-stage{min-height:585px;border-radius:18px}
   .service-detail{padding:19px 16px 18px}
   .service-detail-top{margin-bottom:19px}
@@ -1056,6 +1071,9 @@ html.fx .code-rift{opacity:0}
   isolation:isolate;
   background:linear-gradient(118deg,rgba(255,255,255,.025),transparent 28% 70%,rgba(255,255,255,.018)),#050607;
 }
+html.safari-engine .code-rift-plane{
+  transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden;contain:paint;
+}
 .code-rift-plane::before{
   content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
   background-image:
@@ -1164,12 +1182,13 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
       <span class="ice-word ice-base">Максим</span>
       <span class="ice-word ice-fill" id="iceWordFill">Максим</span>
     </div>
-    <div class="ice-loader-sub"><span id="iceLoaderSub">sites</span></div>
+    <div class="ice-loader-sub"><span id="iceLoaderSub">site</span></div>
   </div>
   <span class="ice-impact-streak" id="iceImpactStreak"></span>
   <span class="ice-impact-spark" id="iceImpactSpark"></span>
 </div>
 
+<div class="mobile-safe-cover" aria-hidden="true"></div>
 <header id="header">
   <div class="wrap nav">
     <a href="#" class="logo" aria-label="Максим - на главную">
@@ -2179,8 +2198,27 @@ function activateServiceRow(index){
 
   var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   var fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
+  var safariEngine=/Safari\//.test(navigator.userAgent)&&!/(Chrome|Chromium|CriOS|Edg|EdgiOS|OPR|OPiOS|FxiOS|Android)/.test(navigator.userAgent);
+  var safariScrollIdle=0;
+  var stableViewportWidth=innerWidth;
+  window.__portfolioHeightOnlyResize=false;
+  addEventListener('resize',function(){
+    var nextWidth=innerWidth;
+    window.__portfolioHeightOnlyResize=nextWidth<=760&&Math.abs(nextWidth-stableViewportWidth)<3;
+    if(!window.__portfolioHeightOnlyResize)stableViewportWidth=nextWidth;
+  },{passive:true,capture:true});
+  if(safariEngine)document.documentElement.classList.add('safari-engine');
+  function markSafariScrolling(){
+    if(!safariEngine)return;
+    document.documentElement.classList.add('safari-scrolling');
+    clearTimeout(safariScrollIdle);
+    safariScrollIdle=setTimeout(function(){document.documentElement.classList.remove('safari-scrolling');},150);
+  }
   var hasFX=!!(window.gsap&&window.ScrollTrigger)&&!reduce;
-  if(hasFX)gsap.registerPlugin(ScrollTrigger);
+  if(hasFX){
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.config({ignoreMobileResize:true});
+  }
 
   /* ---------- зафиксированные параметры визуальной сцены ---------- */
   var fxDefaults={accent:'signal',grid:36};
@@ -2299,6 +2337,11 @@ function activateServiceRow(index){
       ctx.fill();
     }
     function draw(t,once){
+      if(!once&&safariEngine&&document.documentElement.classList.contains('safari-scrolling')){
+        lastGridFrame=t;
+        if(animateGrid)raf=requestAnimationFrame(draw);
+        return;
+      }
       if(!once&&t-lastGridFrame<gridInterval){
         if(animateGrid)raf=requestAnimationFrame(draw);
         return;
@@ -2335,7 +2378,10 @@ function activateServiceRow(index){
       if(animateGrid&&!once)raf=requestAnimationFrame(draw);
     }
     resize();
-    addEventListener('resize',resize,{passive:true});
+    addEventListener('resize',function(){
+      if(window.__portfolioHeightOnlyResize)return;
+      resize();
+    },{passive:true});
     if(fine){
       addEventListener('pointermove',function(e){
         mouse.tx=e.clientX/innerWidth;
@@ -2386,7 +2432,7 @@ function activateServiceRow(index){
   });});
 
   /* ---------- header: скрывать при скролле вниз ---------- */
-  var header=document.getElementById('header'),lastY=0,idleT;
+  var header=document.getElementById('header'),lastY=0,idleT,headerDownTravel=0,headerUpTravel=0;
   var experienceHeaderSection=document.getElementById('labExperience');
   var experienceHeaderStart=Infinity,experienceHeaderEnd=-Infinity,experienceHeaderResize=0;
   function measureExperienceHeaderRange(){
@@ -2398,18 +2444,31 @@ function activateServiceRow(index){
   }
   window.__measureExperienceHeaderRange=measureExperienceHeaderRange;
   function onScrollDir(y){
+    markSafariScrolling();
     header.classList.toggle('solid',y>30);
     if(y>=experienceHeaderStart&&y<=experienceHeaderEnd){
       header.classList.remove('hide');
+      headerDownTravel=headerUpTravel=0;
       lastY=y;
       clearTimeout(idleT);
       return;
     }
     var menuOpen=document.getElementById('mmenu').classList.contains('open');
     if(!menuOpen&&innerWidth>760){
-      if(y>140&&y>lastY+4)header.classList.add('hide');
-      else if(y<lastY-4)header.classList.remove('hide');
-    }else header.classList.remove('hide');
+      var delta=y-lastY;
+      if(delta<-.75){
+        headerDownTravel=0;
+        headerUpTravel+=-delta;
+        if(headerUpTravel>3)header.classList.remove('hide');
+      }else if(delta>.75){
+        headerUpTravel=0;
+        headerDownTravel+=delta;
+        if(y>140&&headerDownTravel>22)header.classList.add('hide');
+      }
+    }else{
+      headerDownTravel=headerUpTravel=0;
+      header.classList.remove('hide');
+    }
     lastY=y;
     clearTimeout(idleT); // скролл остановился - показать шапку
     idleT=setTimeout(function(){header.classList.remove('hide');},420);
@@ -2417,6 +2476,7 @@ function activateServiceRow(index){
   measureExperienceHeaderRange();
   addEventListener('load',measureExperienceHeaderRange,{once:true});
   addEventListener('resize',function(){
+    if(window.__portfolioHeightOnlyResize)return;
     clearTimeout(experienceHeaderResize);
     experienceHeaderResize=setTimeout(measureExperienceHeaderRange,120);
   },{passive:true});
@@ -2425,7 +2485,9 @@ function activateServiceRow(index){
   /* ---------- Lenis ---------- */
   var lenis=null;
   window.__portfolioLenis=null;
-  if(window.Lenis&&!reduce&&fine&&innerWidth>760){
+  /* Safari already has good native momentum. Running Lenis on top of it causes
+     visible hesitation around fixed and sticky scenes, so keep it native there. */
+  if(window.Lenis&&!reduce&&fine&&innerWidth>760&&!safariEngine){
     lenis=new Lenis({duration:1.15,easing:function(t){return Math.min(1,1.001-Math.pow(2,-10*t));}});
     window.__portfolioLenis=lenis;
     document.documentElement.classList.add('lenis');
@@ -2437,16 +2499,26 @@ function activateServiceRow(index){
     }else{
       (function raf(t){lenis.raf(t);requestAnimationFrame(raf);})(0);
     }
-    document.querySelectorAll('a[href^="#"]').forEach(function(a){
-      a.addEventListener('click',function(e){
-        var id=a.getAttribute('href');if(id.length<2)return;
-        var el=document.querySelector(id);if(!el)return;
-        e.preventDefault();lenis.scrollTo(el,{offset:-90}); // долистываем ближе к блоку, но заголовок не липнет к шапке
-      });
-    });
   }else{
     addEventListener('scroll',function(){onScrollDir(scrollY);},{passive:true});
   }
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      var id=a.getAttribute('href');
+      var el=id==='#'?document.body:document.querySelector(id);
+      if(!el)return;
+      e.preventDefault();
+      if(typeof window.__experienceReleaseForNavigation==='function')window.__experienceReleaseForNavigation();
+      var offset=id==='#'?0:(innerWidth>760?90:72);
+      var top=id==='#'?0:Math.max(0,el.getBoundingClientRect().top+window.scrollY-offset);
+      requestAnimationFrame(function(){
+        if(lenis){
+          lenis.start();
+          lenis.scrollTo(top,{offset:0,force:true,duration:.9});
+        }else window.scrollTo({top:top,behavior:reduce?'auto':'smooth'});
+      });
+    });
+  });
 
   /* ---------- production ice intro ---------- */
   var loader=document.getElementById('loader');
@@ -2590,7 +2662,10 @@ function activateServiceRow(index){
       });
     });
     syncServiceOrientation();
-    addEventListener('resize',syncServiceOrientation,{passive:true});
+    addEventListener('resize',function(){
+      if(window.__portfolioHeightOnlyResize)return;
+      syncServiceOrientation();
+    },{passive:true});
     activateService(0,false);
   })();
 
@@ -2667,7 +2742,10 @@ function activateServiceRow(index){
     }
     viewport.addEventListener('pointerup',release);
     viewport.addEventListener('pointercancel',release);
-    addEventListener('resize',function(){update(nearest());},{passive:true});
+    addEventListener('resize',function(){
+      if(window.__portfolioHeightOnlyResize)return;
+      update(nearest());
+    },{passive:true});
     update(0);
   })();
 
@@ -2683,7 +2761,10 @@ function activateServiceRow(index){
       if(inn)inn.style.width=rectW+'px'; // фикс: нижний слой не сжимается при драге
     }
     function setFromX(x){pct=Math.max(0,Math.min(100,(x-rectL)/rectW*100));apply();}
-    addEventListener('resize',function(){cacheRect();apply();},{passive:true});
+    addEventListener('resize',function(){
+      if(window.__portfolioHeightOnlyResize)return;
+      cacheRect();apply();
+    },{passive:true});
     cacheRect();apply();
     ba.addEventListener('pointerdown',function(e){
       e.preventDefault();dragging=true;ba.classList.remove('smooth');ba.classList.add('grabbing');
@@ -2904,7 +2985,10 @@ function activateServiceRow(index){
     var x=0,last=0,setW=0,SPEED=42; // px/сек
     function measure(){setW=set.offsetWidth;}
     build();measure();
-    addEventListener('resize',function(){build();measure();},{passive:true});
+    addEventListener('resize',function(){
+      if(window.__portfolioHeightOnlyResize)return;
+      build();measure();
+    },{passive:true});
     (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){build();measure();});
     function loop(t){
       if(!last)last=t;
@@ -2921,7 +3005,7 @@ function activateServiceRow(index){
   setTimeout(killLoader,6000);
 })();
 </script>
-<script src="assets/experience-loader.js?v=20260714-4"></script>
-<script src="assets/experience.js?v=20260715-18"></script>
+<script src="assets/experience-loader.js?v=20260715-5"></script>
+<script src="assets/experience.js?v=20260715-22"></script>
 </body>
 </html>
