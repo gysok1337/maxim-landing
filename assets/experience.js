@@ -7,6 +7,7 @@ window.__experienceLabSchedule=window.__experienceLabSchedule||function(callback
   }
 };
 window.__experienceLabSuspended=false;
+window.__experienceVirtualMode=true;
 
 function experienceScrollTo(top,smooth){
   top=Math.max(0,Math.round(top));
@@ -210,6 +211,9 @@ function holdExperienceScrollAt(top){
     runHoverTime=0;
   };
   window.__labProcessProgress=function(){return clamp(visual/storyUnits,0,1);};
+  window.__setExperienceProcessOverall=function(overall){
+    setProcessTarget(clamp(overall/labPhaseEnd(),0,1)*storyUnits);
+  };
   function syncStagePicker(tabs,active){
     tabs.forEach(function(tab,index){
       tab.style.setProperty('--stage-shift',((index-active)*118)+'%');
@@ -861,6 +865,10 @@ function holdExperienceScrollAt(top){
   function scrollToProgress(progress){
     manual=false;
     runAutoAdvanced=progress>.935;
+    if(typeof window.__experienceVirtualSeek==='function'){
+      window.__experienceVirtualSeek(labPhaseEnd()*clamp(progress/storyUnits,0,1));
+      return;
+    }
     if(progress<visual){
       visual=progress;
       noticeAction=progress>.16?1:0;
@@ -875,6 +883,11 @@ function holdExperienceScrollAt(top){
   stageTabs.forEach(function(tab){tab.addEventListener('click',function(){scrollToProgress(parseFloat(tab.dataset.jump)||0);});});
   if(launchJump)launchJump.addEventListener('click',function(){
     manual=false;
+    if(typeof window.__experienceVirtualSeek==='function'){
+      var virtualSplit=labPhaseEnd();
+      window.__experienceVirtualSeek(virtualSplit+(1-virtualSplit)*.018);
+      return;
+    }
     var sectionTop=section.getBoundingClientRect().top+window.scrollY;
     var distance=Math.max(1,section.offsetHeight-window.innerHeight);
     var split=labPhaseEnd();
@@ -882,7 +895,7 @@ function holdExperienceScrollAt(top){
   });
 
   function fallbackScroll(){
-    if(manual)return;
+    if(manual||window.__experienceVirtualMode)return;
     var rect=section.getBoundingClientRect();
     var distance=Math.max(1,section.offsetHeight-window.innerHeight);
     var overall=clamp(-rect.top/distance,0,1);
@@ -956,21 +969,23 @@ function holdExperienceScrollAt(top){
     }
   }
 
-  window.addEventListener('wheel',governWheel,{passive:false,capture:true});
-  var processTouchY=0;
-  window.addEventListener('touchstart',function(event){
-    if(event.touches&&event.touches[0])processTouchY=event.touches[0].clientY;
-  },{passive:true});
-  window.addEventListener('touchmove',function(event){
-    if(!event.touches||!event.touches[0])return;
-    var nextY=event.touches[0].clientY;
-    var delta=processTouchY-nextY;
-    processTouchY=nextY;
-    if(delta<=0)return;
-    governWheel({deltaY:delta,preventDefault:function(){event.preventDefault();}});
-  },{passive:false,capture:true});
-  window.addEventListener('scroll',fallbackScroll,{passive:true});
-  window.addEventListener('scroll',guardSectionExit,{passive:true});
+  if(!window.__experienceVirtualMode){
+    window.addEventListener('wheel',governWheel,{passive:false,capture:true});
+    var processTouchY=0;
+    window.addEventListener('touchstart',function(event){
+      if(event.touches&&event.touches[0])processTouchY=event.touches[0].clientY;
+    },{passive:true});
+    window.addEventListener('touchmove',function(event){
+      if(!event.touches||!event.touches[0])return;
+      var nextY=event.touches[0].clientY;
+      var delta=processTouchY-nextY;
+      processTouchY=nextY;
+      if(delta<=0)return;
+      governWheel({deltaY:delta,preventDefault:function(){event.preventDefault();}});
+    },{passive:false,capture:true});
+    window.addEventListener('scroll',fallbackScroll,{passive:true});
+    window.addEventListener('scroll',guardSectionExit,{passive:true});
+  }
   fallbackScroll();
   document.addEventListener('visibilitychange',function(){
     if(document.hidden)return;
@@ -1063,6 +1078,227 @@ function holdExperienceScrollAt(top){
   }
 })();
 
+/* Safari-safe virtual scroll controller. The scene itself stays on one native
+   viewport; wheel/touch input advances a bounded internal progress instead of
+   dragging the document through a multi-thousand-pixel spacer. */
+(function(){
+  'use strict';
+
+  if(!window.__experienceVirtualMode)return;
+  var section=document.getElementById('labExperience');
+  if(!section)return;
+
+  var reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var coarse=window.matchMedia('(pointer:coarse)').matches;
+  var active=false;
+  var overall=0;
+  var touchY=0;
+  var upwardIntent=0;
+  var inputCredit=0;
+  var inputFrame=0;
+  var lastScrollY=window.scrollY;
+  var transitionUntil=0;
+
+  function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
+  function splitPoint(){return reduced?.60:(window.innerWidth<=700?.469:.447);}
+  function sectionTop(){var rect=section.getBoundingClientRect();return rect.top+window.scrollY;}
+  function stopPageScroller(){
+    var lenis=window.__portfolioLenis;
+    if(lenis&&typeof lenis.stop==='function')lenis.stop();
+  }
+  function startPageScroller(){
+    var lenis=window.__portfolioLenis;
+    if(lenis&&typeof lenis.start==='function')lenis.start();
+  }
+  function visualOverall(){
+    var split=splitPoint();
+    if(window.__labProcessReady===true){
+      var launch=typeof window.__labLaunchProgress==='function'?window.__labLaunchProgress():0;
+      return split+(1-split)*clamp(launch,0,1);
+    }
+    var process=typeof window.__labProcessProgress==='function'?window.__labProcessProgress():0;
+    return split*clamp(process,0,1);
+  }
+  function applyOverall(value){
+    overall=clamp(Math.max(overall,value),0,1);
+    if(typeof window.__setExperienceProcessOverall==='function')window.__setExperienceProcessOverall(overall);
+    if(typeof window.__setExperienceLaunchOverall==='function')window.__setExperienceLaunchOverall(overall);
+  }
+  function allowedOverall(){
+    var split=splitPoint();
+    if(window.__labProcessReady!==true){
+      var process=typeof window.__labProcessProgress==='function'?window.__labProcessProgress():0;
+      return split*clamp(process+.028,0,1);
+    }
+    var launch=typeof window.__labLaunchProgress==='function'?window.__labLaunchProgress():0;
+    var lead=launch<.78?.018:(launch<.985?.007:.012);
+    return split+(1-split)*clamp(launch+lead,0,1);
+  }
+  function pinScene(){
+    transitionUntil=performance.now()+180;
+    holdExperienceScrollAt(sectionTop());
+  }
+  function activateScene(){
+    if(window.__experiencePassed)return;
+    overall=Math.max(overall,visualOverall());
+    active=true;
+    upwardIntent=0;
+    window.__experienceLabSuspended=false;
+    document.documentElement.classList.add('experience-virtual-active');
+    stopPageScroller();
+    pinScene();
+    if(typeof window.__resumeExperienceProcess==='function')window.__resumeExperienceProcess();
+    if(typeof window.__resumeExperienceLaunch==='function')window.__resumeExperienceLaunch();
+    applyOverall(overall);
+  }
+  function freezeScene(){
+    inputCredit=0;
+    overall=visualOverall();
+    if(typeof window.__labFreezeProcess==='function')window.__labFreezeProcess();
+    if(typeof window.__labFreezeLaunch==='function')window.__labFreezeLaunch();
+    window.__experienceLabSuspended=true;
+  }
+  function leaveUp(amount){
+    if(!active)return;
+    freezeScene();
+    active=false;
+    upwardIntent=0;
+    document.documentElement.classList.remove('experience-virtual-active');
+    startPageScroller();
+    var distance=clamp(150+Math.abs(amount)*2.2,180,window.innerHeight*.72);
+    transitionUntil=performance.now()+220;
+    holdExperienceScrollAt(Math.max(0,sectionTop()-distance));
+  }
+  function advance(amount){
+    if(window.__experiencePassed)return;
+    var pixels=clamp(Math.abs(amount),5,coarse?64:84);
+    inputCredit=clamp(inputCredit+pixels/(coarse?820:1080),0,
+      window.__labProcessReady===true?.085:.12);
+    if(!inputFrame)inputFrame=requestAnimationFrame(pumpInput);
+  }
+  function pumpInput(){
+    inputFrame=0;
+    if(!active||window.__experiencePassed||inputCredit<=.00005){inputCredit=0;return;}
+    var allowed=allowedOverall();
+    var step=Math.min(inputCredit,Math.max(0,allowed-overall));
+    if(step>.00005){
+      applyOverall(overall+step);
+      inputCredit=Math.max(0,inputCredit-step);
+    }
+    if(inputCredit>.00005)inputFrame=requestAnimationFrame(pumpInput);
+  }
+  function normalizedWheel(event){
+    var amount=event.deltaY;
+    if(event.deltaMode===1)amount*=16;
+    else if(event.deltaMode===2)amount*=window.innerHeight;
+    return amount;
+  }
+  function canEnter(rect){return rect.top<=2&&rect.bottom>Math.min(window.innerHeight,section.offsetHeight)*.72;}
+
+  function onWheel(event){
+    if(window.__experiencePassed)return;
+    var amount=normalizedWheel(event);
+    if(Math.abs(amount)<.1)return;
+    var rect=section.getBoundingClientRect();
+    if(active){
+      event.preventDefault();
+      if(amount<0){
+        upwardIntent+=Math.min(48,-amount);
+        if(upwardIntent>=18)leaveUp(amount);
+      }else{
+        upwardIntent=0;
+        advance(amount);
+      }
+      return;
+    }
+    if(amount<=0)return;
+    if(canEnter(rect)||(rect.top>2&&rect.top<window.innerHeight&&amount>=rect.top-2)||
+       (rect.top<0&&rect.bottom>0)){
+      event.preventDefault();
+      activateScene();
+    }
+  }
+
+  function onTouchStart(event){
+    if(event.touches&&event.touches[0])touchY=event.touches[0].clientY;
+    upwardIntent=0;
+  }
+  function onTouchMove(event){
+    if(!event.touches||!event.touches[0])return;
+    var nextY=event.touches[0].clientY;
+    var amount=touchY-nextY;
+    touchY=nextY;
+    if(Math.abs(amount)<.2)return;
+    var rect=section.getBoundingClientRect();
+    if(active){
+      event.preventDefault();
+      if(amount<0){
+        upwardIntent+=Math.min(36,-amount);
+        if(upwardIntent>=14)leaveUp(amount*3);
+      }else{
+        upwardIntent=0;
+        advance(amount*2.2);
+      }
+      return;
+    }
+    if(amount>0&&(canEnter(rect)||(rect.top>2&&rect.top<window.innerHeight&&amount>=rect.top-2)||
+       (rect.top<0&&rect.bottom>0))){
+      event.preventDefault();
+      activateScene();
+    }
+  }
+
+  function onKeyDown(event){
+    if(!active||window.__experiencePassed)return;
+    var forward=event.key==='ArrowDown'||event.key==='PageDown'||event.key===' ';
+    var backward=event.key==='ArrowUp'||event.key==='PageUp';
+    if(forward){event.preventDefault();upwardIntent=0;advance(event.key==='ArrowDown'?70:180);}
+    else if(backward){event.preventDefault();leaveUp(event.key==='ArrowUp'?90:220);}
+  }
+
+  function onScroll(){
+    var now=performance.now();
+    var scrollY=window.scrollY;
+    var scrollDelta=scrollY-lastScrollY;
+    var movingDown=scrollDelta>.5;
+    lastScrollY=scrollY;
+    if(now<transitionUntil)return;
+    var rect=section.getBoundingClientRect();
+    if(active){
+      /* Safari may still apply a fragment of trackpad momentum even after the
+         wheel/touch event was cancelled. Turn that fragment into scene input
+         before restoring the exact pinned position. */
+      if(scrollDelta>1.5){advance(scrollDelta);pinScene();return;}
+      if(scrollDelta<-1.5){leaveUp(scrollDelta);return;}
+      if(Math.abs(rect.top)>2)pinScene();
+      return;
+    }
+    if(!window.__experiencePassed&&movingDown&&rect.top<=0&&rect.bottom>0)activateScene();
+  }
+
+  window.__experienceVirtualSeek=function(value){
+    if(window.__experiencePassed)return;
+    if(!active)activateScene();
+    applyOverall(value);
+  };
+  window.__experienceVirtualState=function(){return {active:active,overall:overall,visual:visualOverall()};};
+
+  window.addEventListener('wheel',onWheel,{passive:false,capture:true});
+  window.addEventListener('touchstart',onTouchStart,{passive:true,capture:true});
+  window.addEventListener('touchmove',onTouchMove,{passive:false,capture:true});
+  window.addEventListener('keydown',onKeyDown,{capture:true});
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('experience:passed',function(){
+    active=false;
+    overall=1;
+    inputCredit=0;
+    window.__experienceLabSuspended=false;
+    document.documentElement.classList.remove('experience-virtual-active');
+    startPageScroller();
+  });
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&active)pinScene();});
+})();
+
 (function(){
   'use strict';
 
@@ -1138,6 +1374,9 @@ function holdExperienceScrollAt(top){
   var sectionNavTimer=0;
   var lastSoundMotion=0;
   var launchLoopRunning=false;
+  var secureCaptionShown=false;
+  var secureCaptionExpired=false;
+  var secureCaptionTimer=0;
   var launchTarget={x:0,y:0};
   var launchOrigin={x:0,y:0};
   var targetMeasured=false;
@@ -1191,6 +1430,13 @@ function holdExperienceScrollAt(top){
     window.__experienceLabSchedule(frame);
   }
   window.__wakeExperienceLaunch=wakeLaunchFrame;
+  window.__labLaunchProgress=function(){return current;};
+  window.__labFreezeLaunch=function(){target=current;launchFrozen=true;};
+  window.__resumeExperienceLaunch=function(){launchFrozen=false;wakeLaunchFrame();};
+  window.__setExperienceLaunchOverall=function(overall){
+    var split=labPhaseEnd();
+    setLaunchTarget(clamp((overall-split)/(1-split),0,1));
+  };
   function setLaunchTarget(value){
     if(window.__experiencePassed)return;
     value=clamp(value,0,1);
@@ -1209,6 +1455,7 @@ function holdExperienceScrollAt(top){
 
   function renderCopy(progress,processReady,motion){
     if(!processReady||progress<=.0001){
+      section.classList.remove('is-stage-switching');
       copySteps.forEach(function(step){setOpacity(step,0);step.setAttribute('aria-hidden','true');});
       return;
     }
@@ -1237,6 +1484,7 @@ function holdExperienceScrollAt(top){
     resultCopy.setAttribute('aria-hidden',copyEntry>.55?'true':'false');
     if(sharedStageCount)sharedStageCount.textContent=copyEntry>.5?'04 / 04':'03 / 04';
     if(sharedStageTrack)sharedStageTrack.style.transform='scaleX('+mix(.968,1,progress).toFixed(4)+')';
+    section.classList.toggle('is-stage-switching',progress>.0005&&progress<.08);
     syncLaunchPicker(copyEntry>.5?3:2);
     if(headerStatus)headerStatus.textContent=copyEntry<=.5?defaultHeaderStatus:(active===0?'Запуск · Адаптив':active===1?'Запуск · Сервер':active===2?'Запуск · Заявки':'Запуск · Готово');
   }
@@ -1524,9 +1772,24 @@ function holdExperienceScrollAt(top){
     var focusAlpha=phase(motion,.59,.62,.75,.79);
     setOpacity(secureFocus,focusAlpha);
     setTransform(secureFocus,'translate(-50%,-50%) scale('+(mix(.58,1,secureZoom)+securePulse*.22).toFixed(3)+')');
-    var captionAlpha=smooth(segment(motion,.695,.735));
+    if(motion<.65&&secureCaptionShown){
+      clearTimeout(secureCaptionTimer);
+      secureCaptionShown=false;
+      secureCaptionExpired=false;
+    }
+    if(secureChange>.96&&!secureCaptionShown){
+      secureCaptionShown=true;
+      secureCaptionExpired=false;
+      clearTimeout(secureCaptionTimer);
+      secureCaptionTimer=setTimeout(function(){
+        secureCaptionExpired=true;
+        setOpacity(secureCaption,0);
+        setTransform(secureCaption,'translate3d(-4px,0,0)');
+      },2300);
+    }
+    var captionAlpha=secureCaptionExpired?0:smooth(segment(motion,.695,.735));
     setOpacity(secureCaption,captionAlpha);
-    setTransform(secureCaption,'translate3d('+mix(6,0,captionAlpha).toFixed(1)+'px,0,0)');
+    setTransform(secureCaption,'translate3d('+mix(6,secureCaptionExpired?-4:0,captionAlpha).toFixed(1)+'px,0,0)');
 
     setOpacity(serverConsole,serverPanel);
     setTransform(serverConsole,'translate3d(0,'+(12*(1-serverPanel)).toFixed(1)+'px,18px) scale('+mix(.96,1,serverPanel).toFixed(3)+')');
@@ -1769,6 +2032,8 @@ function holdExperienceScrollAt(top){
     render(1,1,false);
     window.__experiencePassed=true;
     section.classList.add('is-passed');
+    document.documentElement.classList.remove('experience-virtual-active');
+    if(window.__portfolioLenis&&typeof window.__portfolioLenis.start==='function')window.__portfolioLenis.start();
     var removedHeight=Math.max(0,oldHeight-section.offsetHeight);
     if(removedHeight>0)experienceScrollTo(oldScroll-removedHeight,false);
     requestAnimationFrame(function(){
@@ -1776,10 +2041,11 @@ function holdExperienceScrollAt(top){
       if(typeof window.__measureExperienceHeaderRange==='function')window.__measureExperienceHeaderRange();
       if(window.ScrollTrigger)window.ScrollTrigger.refresh();
     });
+    window.dispatchEvent(new CustomEvent('experience:passed'));
     return true;
   }
 
-  function fallback(){setLaunchTarget(sectionProgress());}
+  function fallback(){if(!window.__experienceVirtualMode)setLaunchTarget(sectionProgress());}
 
   function frame(now){
     if(window.__experiencePassed||window.__experienceLabSuspended){launchLoopRunning=false;return;}
@@ -1794,7 +2060,7 @@ function holdExperienceScrollAt(top){
       var follow=1-Math.pow(difference<0?.00002:.00035,delta);
       var change=difference*follow;
       if(difference>0){
-        var maxRate=current<.38?.58:(current<.55?.54:(current<.815?.50:(current<.945?.46:.42)));
+        var maxRate=current<.38?.42:(current<.55?.34:(current<.78?.28:(current<.985?.13:.22)));
         change=Math.min(change,maxRate*Math.max(delta,1/120));
       }
       current+=change;
@@ -1806,21 +2072,23 @@ function holdExperienceScrollAt(top){
     window.__experienceLabSchedule(frame);
   }
 
-  window.addEventListener('wheel',governLaunchWheel,{passive:false,capture:true});
-  var launchTouchY=0;
-  window.addEventListener('touchstart',function(event){
-    if(event.touches&&event.touches[0])launchTouchY=event.touches[0].clientY;
-  },{passive:true});
-  window.addEventListener('touchmove',function(event){
-    if(!event.touches||!event.touches[0])return;
-    var nextY=event.touches[0].clientY;
-    var delta=launchTouchY-nextY;
-    launchTouchY=nextY;
-    if(delta<=0)return;
-    governLaunchWheel({deltaY:delta,preventDefault:function(){event.preventDefault();}});
-  },{passive:false,capture:true});
-  window.addEventListener('scroll',fallback,{passive:true});
-  window.addEventListener('scroll',guardLaunchExit,{passive:true});
+  if(!window.__experienceVirtualMode){
+    window.addEventListener('wheel',governLaunchWheel,{passive:false,capture:true});
+    var launchTouchY=0;
+    window.addEventListener('touchstart',function(event){
+      if(event.touches&&event.touches[0])launchTouchY=event.touches[0].clientY;
+    },{passive:true});
+    window.addEventListener('touchmove',function(event){
+      if(!event.touches||!event.touches[0])return;
+      var nextY=event.touches[0].clientY;
+      var delta=launchTouchY-nextY;
+      launchTouchY=nextY;
+      if(delta<=0)return;
+      governLaunchWheel({deltaY:delta,preventDefault:function(){event.preventDefault();}});
+    },{passive:false,capture:true});
+    window.addEventListener('scroll',fallback,{passive:true});
+    window.addEventListener('scroll',guardLaunchExit,{passive:true});
+  }
   fallback();
   document.addEventListener('visibilitychange',function(){
     if(document.hidden)return;

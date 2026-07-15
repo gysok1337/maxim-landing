@@ -84,9 +84,13 @@
 .lab-back:hover{border-color:var(--line-bright);color:var(--ink)}
 .lab-back:active{transform:scale(.97)}
 
-.lab-scroll{position:relative;height:900svh}
+.lab-scroll{position:relative;height:100svh;min-height:640px}
 .lab-scroll.is-passed{height:100svh!important}
 .lab-scroll.is-passed .lab-sticky{position:relative}
+html.experience-virtual-active,
+html.experience-virtual-active body{overscroll-behavior:none;scrollbar-width:none}
+html.experience-virtual-active::-webkit-scrollbar,
+html.experience-virtual-active body::-webkit-scrollbar{width:0;height:0}
 .lab-sticky{
   position:sticky;
   top:0;
@@ -1059,7 +1063,7 @@
   .lab-brand img{width:34px;height:34px}
   .lab-brand em{display:none}
   .lab-back{min-height:36px;padding:0 13px;font-size:12px}
-  .lab-scroll{height:650svh}
+  .lab-scroll{height:100svh;min-height:620px}
   .lab-sticky{min-height:620px}
   .stage-layout{grid-template-columns:1fr;align-items:start;padding:91px 18px 28px}
   .stage-copy{justify-content:flex-start;max-width:none;height:36%;padding:0 2px}
@@ -1168,7 +1172,9 @@
   width:min(174px,100%);
   height:38px;
   overflow:hidden;
+  transition:opacity .18s ease,transform .18s ease;
 }
+.lab-scroll.is-stage-switching .stage-copy > .stage-tabs{opacity:0;transform:translate3d(0,-4px,0)}
 .stage-tab{
   position:absolute;
   inset:0;
@@ -1336,11 +1342,13 @@
 }
 .adaptive-morph #adaptiveShotDesktop{opacity:1;filter:none;transform:scale(var(--desktop-shot-scale,1));transform-origin:64% 42%}
 .adaptive-morph .adaptive-tablet-screen{
+  top:calc(var(--device-inset-top) + var(--chrome-h) + var(--phone-top-h) - 9px);
+  height:calc(100% - var(--device-inset-top) - var(--device-inset-bottom) - var(--chrome-h) - var(--phone-top-h) - var(--phone-bottom-h) + 9px);
   object-fit:fill;
   object-position:center top;
   transform:none;
 }
-.adaptive-morph #adaptiveShotPhone{object-fit:cover;object-position:center top}
+.adaptive-morph #adaptiveShotPhone{border-radius:0;object-fit:cover;object-position:center top}
 .adaptive-morph .adaptive-desktop-chrome{
   position:absolute;
   z-index:4;
@@ -1386,7 +1394,7 @@
   align-items:center;
   justify-content:space-between;
   overflow:hidden;
-  padding:0 14px;
+  padding:0 10px;
   border-radius:var(--screen-radius) var(--screen-radius) 0 0;
   background:#f3efe6;
   color:#080808;
@@ -1395,11 +1403,11 @@
   pointer-events:none;
   will-change:opacity;
 }
-.phone-status-icons{display:flex;align-items:center;gap:4px}
+.phone-status-icons{display:flex;align-items:center;gap:2px}
 .phone-status-icons svg{display:block;overflow:visible;color:#080808}
-.phone-status-icons .phone-signal{width:14px;height:10px}
-.phone-status-icons .phone-wifi{width:14px;height:10px}
-.phone-status-icons .phone-battery{width:20px;height:10px}
+.phone-status-icons .phone-signal{width:10px;height:9px}
+.phone-status-icons .phone-wifi{width:10px;height:9px}
+.phone-status-icons .phone-battery{width:16px;height:9px}
 .phone-browser-bar{
   position:absolute;
   z-index:7;
@@ -1496,7 +1504,7 @@
   top:50%;
   display:flex;
   align-items:center;
-  gap:6px;
+  gap:4px;
   transform:translateY(-50%);
   white-space:nowrap;
 }
@@ -1537,8 +1545,15 @@
   border:0;
   border-radius:0;
   background:transparent;
-  font-size:7px;
+  max-width:88px;
+  overflow:hidden;
+  color:rgba(226,224,218,.66);
+  font-size:6px;
+  font-weight:400;
+  letter-spacing:.055em;
+  text-overflow:ellipsis;
   transform:translate3d(6px,0,0);
+  transition:opacity .28s ease,transform .28s ease;
 }
 .launch-page img{object-position:center top}
 .lead-form{right:6%;bottom:8%;width:min(300px,36%)}
@@ -1557,8 +1572,8 @@
   .launch-stage-tabs .stage-tab{min-height:32px;padding:0 9px;font-size:8px}
   .launch-address{padding:0 10px}
   .launch-security{left:8px;gap:4px}
-  .secure-caption{max-width:100px;overflow:hidden;font-size:6px;text-overflow:ellipsis}
-  .launch-url{left:66%;font-size:9px}
+  .secure-caption{max-width:74px;font-size:5.5px}
+  .launch-url{left:64%;max-width:58%;overflow:hidden;font-size:9px;text-overflow:ellipsis;white-space:nowrap}
 }
 
 @media (min-width:701px) and (max-width:1200px){
@@ -1611,14 +1626,14 @@
   .adaptive-tablet .adaptive-frame{padding:7px;border-radius:15px}
   .adaptive-phone{width:min(43vw,185px)}
   .adaptive-phone .adaptive-frame{padding:7px;border-radius:28px}
-  .adaptive-phone .adaptive-frame img{border-radius:22px}
+  .adaptive-phone .adaptive-frame img{border-radius:0}
   .adaptive-phone .dynamic-island{top:11px;height:13px}
   .launch-browser{width:calc(100vw - 26px);aspect-ratio:1.56;top:48%}
   .launch-address{padding:0 8px}
   .launch-security{left:6px;gap:3px}
-  .launch-url{left:63%}
+  .launch-url{left:61%;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .secure-lock{left:auto;width:14px;height:14px}
-  .secure-caption{max-width:68px;padding:0;font-size:4.6px;line-height:1;letter-spacing:.04em;white-space:nowrap}
+  .secure-caption{max-width:52px;padding:0;font-size:4.2px;line-height:1;letter-spacing:.035em;white-space:nowrap}
   .lead-form{right:5%;bottom:6%;width:55%;padding:9px}
   .delivery-targets{right:5%;top:14%}
   .delivery-target{min-width:102px}
@@ -1665,7 +1680,7 @@
 
 @media (prefers-reduced-motion:reduce){
   #experienceMount{scroll-behavior:auto}
-  .lab-scroll{height:400svh}
+  .lab-scroll{height:100svh}
   .world-grid{opacity:.16}
   .lab-back,.stage-tab{transition:none}
   .scroll-cue{transition:none}.scroll-cue.is-nudging i{animation:none}
