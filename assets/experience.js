@@ -719,11 +719,12 @@ function holdExperienceScrollAt(top){
       var catchup=1-Math.exp(-6.4*deltaTime);
       var visualDelta=(gatedTarget-visual)*Math.max(follow,catchup);
       var messageCorridor=visual>.18&&visual<.485;
-      var scanCorridor=visual>.485&&visual<.705;
-      var codeCorridor=visual>.42&&visual<buildStart;
+      var scanCorridor=visual>.485&&visual<.685;
+      var scanToCode=visual>=.685&&visual<.735;
+      var codeCorridor=visual>=.735&&visual<buildStart;
       var buildCorridor=visual>buildStart&&visual<buildEnd;
       var buildIntro=visual>buildStart&&visual<buildStart+.15;
-      var maxVisualRate=scanCorridor?.105:(messageCorridor?.19:(codeCorridor?.28:(buildCorridor?(buildIntro?.42:.36):.50)));
+      var maxVisualRate=scanCorridor?.105:(scanToCode?mix(.105,.14,smooth(segment(visual,.685,.735))):(messageCorridor?.19:(codeCorridor?.14:(buildCorridor?(buildIntro?.34:.31):.46))));
       var maxVisualStep=maxVisualRate*Math.max(deltaTime,1/120);
       visual+=clamp(visualDelta,-maxVisualStep,maxVisualStep);
     }
@@ -1067,6 +1068,11 @@ function holdExperienceScrollAt(top){
     });
   }
 
+  window.__remeasureExperienceProcess=function(){
+    measure();
+    render(visual);
+  };
+
   measure();
   if(fxEnabled&&Number.isFinite(fxScene)){
     manual=true;
@@ -1105,15 +1111,21 @@ function holdExperienceScrollAt(top){
   var anchorY=window.scrollY;
   var clampFrame=0;
   var navigationBypassUntil=0;
+  var cachedBounds={top:0,end:0,height:0,stickyHeight:0};
 
   function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
   function splitPoint(){return reduced?.60:(window.innerWidth<=700?.469:.447);}
-  function sectionTop(){var rect=section.getBoundingClientRect();return rect.top+window.scrollY;}
-  function sectionBounds(){
-    var top=sectionTop();
+  function refreshSectionBounds(){
+    var rect=section.getBoundingClientRect();
+    var top=rect.top+window.scrollY;
     var stickyHeight=sticky?sticky.offsetHeight:window.innerHeight;
-    return {top:top,end:top+Math.max(0,section.offsetHeight-stickyHeight)};
+    var height=section.offsetHeight;
+    cachedBounds={top:top,end:top+Math.max(0,height-stickyHeight),height:height,stickyHeight:stickyHeight};
+    return cachedBounds;
   }
+  function sectionTop(){return cachedBounds.top;}
+  function sectionBounds(){return cachedBounds;}
+  function sectionRect(){return {top:cachedBounds.top-window.scrollY,bottom:cachedBounds.top+cachedBounds.height-window.scrollY};}
   function stopPageScroller(){
     var lenis=window.__portfolioLenis;
     if(lenis&&typeof lenis.stop==='function')lenis.stop();
@@ -1160,10 +1172,21 @@ function holdExperienceScrollAt(top){
     entrySettleTimer=0;
     if(!active||!entrySettling)return;
     var bounds=sectionBounds();
-    anchorY=clamp(window.scrollY,bounds.top,bounds.end);
+    /* The sticky frame looks identical anywhere inside the runway. Anchor it
+       to one deterministic document position after momentum settles so a
+       down/up/down re-entry cannot leave the whole composition a few pixels
+       lower in Safari. */
+    anchorY=Math.round(bounds.top);
     entrySettling=false;
     stopPageScroller();
-    if(Math.abs(window.scrollY-anchorY)>1)clampScene();
+    clampScene();
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        if(!active||entrySettling)return;
+        if(typeof window.__remeasureExperienceProcess==='function')window.__remeasureExperienceProcess();
+        if(typeof window.__remeasureExperienceLaunch==='function')window.__remeasureExperienceLaunch();
+      });
+    });
   }
   function scheduleEntrySettle(delay){
     clearTimeout(entrySettleTimer);
@@ -1171,7 +1194,7 @@ function holdExperienceScrollAt(top){
   }
   function activateScene(){
     if(window.__experiencePassed||active||performance.now()<navigationBypassUntil)return;
-    var bounds=sectionBounds();
+    var bounds=refreshSectionBounds();
     overall=Math.max(overall,visualOverall());
     active=true;
     entrySettling=true;
@@ -1231,13 +1254,13 @@ function holdExperienceScrollAt(top){
     else if(event.deltaMode===2)amount*=window.innerHeight;
     return amount;
   }
-  function canEnter(rect){return rect.top<=1&&rect.bottom>Math.min(window.innerHeight,section.offsetHeight)*.72;}
+  function canEnter(rect){return rect.top<=1&&rect.bottom>Math.min(window.innerHeight,cachedBounds.height)*.72;}
 
   function onWheel(event){
     if(window.__experiencePassed)return;
     var amount=normalizedWheel(event);
     if(Math.abs(amount)<.1)return;
-    var rect=section.getBoundingClientRect();
+    var rect=sectionRect();
     if(active){
       if(amount<0){
         event.preventDefault();
@@ -1273,7 +1296,7 @@ function holdExperienceScrollAt(top){
     var amount=touchY-nextY;
     touchY=nextY;
     if(Math.abs(amount)<.2)return;
-    var rect=section.getBoundingClientRect();
+    var rect=sectionRect();
     if(active){
       if(amount<0){
         event.preventDefault();
@@ -1327,7 +1350,7 @@ function holdExperienceScrollAt(top){
     var movingDown=scrollDelta>.5;
     lastScrollY=scrollY;
     if(now<transitionUntil)return;
-    var rect=section.getBoundingClientRect();
+    var rect=sectionRect();
     if(active){
       if(entrySettling){
         var bounds=sectionBounds();
@@ -1380,6 +1403,13 @@ function holdExperienceScrollAt(top){
     document.documentElement.classList.remove('experience-virtual-active');
     startPageScroller();
   });
+  refreshSectionBounds();
+  window.addEventListener('load',refreshSectionBounds,{once:true});
+  window.addEventListener('resize',function(){
+    if(window.__portfolioHeightOnlyResize)return;
+    refreshSectionBounds();
+  },{passive:true});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(refreshSectionBounds);
   document.addEventListener('visibilitychange',function(){
     if(document.hidden||!active)return;
     if(entrySettling)settleEntry();
@@ -1437,6 +1467,7 @@ function holdExperienceScrollAt(top){
   var mailTarget=document.getElementById('mailTarget');
   var telegramTarget=document.getElementById('telegramTarget');
   var ready=document.getElementById('launchReady');
+  var launchScrollCue=document.getElementById('launchScrollCue');
   var launchProgress=document.getElementById('launchProgress');
   var sharedStageTrack=document.getElementById('stageTrack');
   var sharedStageCount=document.getElementById('stageCount');
@@ -1462,6 +1493,7 @@ function holdExperienceScrollAt(top){
   var sectionNavTimer=0;
   var lastSoundMotion=0;
   var launchLoopRunning=false;
+  var launchCueDismissed=false;
   var secureCaptionShown=false;
   var secureCaptionExpired=false;
   var secureCaptionTimer=0;
@@ -1547,7 +1579,8 @@ function holdExperienceScrollAt(top){
       copySteps.forEach(function(step){setOpacity(step,0);step.setAttribute('aria-hidden','true');});
       return;
     }
-    var copyEntry=smooth(segment(progress,.002,.02));
+    /* Let the 04 marker land before the launch copy replaces stage 03. */
+    var copyEntry=smooth(segment(progress,.035,.065));
     var values=[
       1-smooth(segment(motion,.515,.55)),
       phase(motion,.515,.55,.87,.895),
@@ -1572,7 +1605,7 @@ function holdExperienceScrollAt(top){
     resultCopy.setAttribute('aria-hidden',copyEntry>.55?'true':'false');
     if(sharedStageCount)sharedStageCount.textContent=copyEntry>.5?'04 / 04':'03 / 04';
     if(sharedStageTrack)sharedStageTrack.style.transform='scaleX('+mix(.968,1,progress).toFixed(4)+')';
-    section.classList.toggle('is-stage-switching',progress>.0005&&progress<.08);
+    section.classList.toggle('is-stage-switching',progress>.0005&&progress<.035);
     syncLaunchPicker(copyEntry>.5?3:2);
     if(headerStatus)headerStatus.textContent=copyEntry<=.5?defaultHeaderStatus:(active===0?'Запуск · Адаптив':active===1?'Запуск · Сервер':active===2?'Запуск · Заявки':'Запуск · Готово');
   }
@@ -1591,38 +1624,45 @@ function holdExperienceScrollAt(top){
     var mobile=viewportWidth<=700;
     var compact=viewportWidth<=900;
     var shortMobile=mobile&&window.innerHeight<=700;
-    var deviceHeightReserve=shortMobile?6:24;
+    var deviceHeightReserve=mobile?34:24;
+    var deviceSideReserve=mobile?24:14;
+    var maxDeviceHeight=Math.max(96,visualRect.height-deviceHeightReserve);
+    var maxDeviceWidth=Math.max(96,visualRect.width-deviceSideReserve);
+    var browserChromeHeight=mobile?42:54;
     var desktopWidth=mobile
-      ?Math.min(sourceRect.width,shortMobile?visualRect.width-12:viewportWidth-28)
+      ?Math.min(sourceRect.width,viewportWidth-28,maxDeviceWidth,(maxDeviceHeight-browserChromeHeight)*1.6)
       :(compact?Math.min(sourceRect.width,visualRect.width-28):Math.min(sourceRect.width,viewportWidth*.50,860));
-    desktopWidth=Math.min(desktopWidth,Math.max(shortMobile?220:260,(visualRect.height-deviceHeightReserve)*1.6));
+    desktopWidth=Math.max(96,Math.min(desktopWidth,maxDeviceHeight*1.6));
     var desktopHeight=desktopWidth/1.6;
     var tabletWidth=mobile
-      ?Math.min(viewportWidth*(shortMobile?.60:.72),500,shortMobile?visualRect.width-12:Infinity)
+      ?Math.min(viewportWidth*(shortMobile?.60:.72),500,maxDeviceWidth,(maxDeviceHeight-10)*(1024/702)+10)
       :(compact?Math.min(viewportWidth*.68,500,visualRect.width-14):Math.min(viewportWidth*.36,540));
     if(compact&&!mobile)tabletWidth=Math.min(tabletWidth,desktopWidth*.92);
     var phoneWidth=mobile
-      ?Math.min(viewportWidth*(shortMobile?.32:.48),200,Math.max(shortMobile?132:116,(visualRect.height-deviceHeightReserve)/2.32))
+      ?Math.min(viewportWidth*.46,186,maxDeviceWidth,maxDeviceHeight/2.32)
       :(compact?Math.min(viewportWidth*.34,220):Math.min(viewportWidth*.185,250));
     var tabletHeight=(tabletWidth-10)/(1024/702)+10;
-    var tabletHeightLimit=Math.max(shortMobile?150:180,visualRect.height-deviceHeightReserve);
+    var tabletHeightLimit=maxDeviceHeight;
     if(tabletHeight>tabletHeightLimit){
       tabletHeight=tabletHeightLimit;
       tabletWidth=(tabletHeight-10)*(1024/702)+10;
     }
     var phoneHeight=phoneWidth*2.32;
+    if(phoneHeight>maxDeviceHeight){
+      phoneHeight=maxDeviceHeight;
+      phoneWidth=phoneHeight/2.32;
+    }
     if(!mobile){
-      phoneHeight=Math.min(phoneHeight,tabletHeight*1.38,Math.max(180,visualRect.height-24));
+      phoneHeight=Math.min(phoneHeight,tabletHeight*1.38,maxDeviceHeight);
       phoneWidth=phoneHeight/2.32;
       if(compact){
-        var compactPhoneMin=Math.min(180,desktopWidth*.45,Math.max(80,(visualRect.height-deviceHeightReserve)/2.32));
+        var compactPhoneMin=Math.min(180,desktopWidth*.45,maxDeviceHeight/2.32);
         if(phoneWidth<compactPhoneMin){
           phoneWidth=compactPhoneMin;
           phoneHeight=phoneWidth*2.32;
         }
       }
     }
-    var browserChromeHeight=mobile?42:54;
     var sourceX=sourceRect.left-visualRect.left+sourceRect.width/2;
     var sourceY=sourceRect.top-visualRect.top+sourceRect.height/2;
     var stageX=compact?visualRect.width/2:sourceX;
@@ -1937,6 +1977,8 @@ function holdExperienceScrollAt(top){
 
     setOpacity(ready,finalIn);
     setTransform(ready,'translate(-50%,-46%) scale('+mix(.96,1,finalIn).toFixed(3)+')');
+    if(progress>.008)launchCueDismissed=true;
+    setOpacity(launchScrollCue,launchCueDismissed?0:.8);
     setOpacity(camera,1);
     sticky.style.setProperty('--launch-progress',progress.toFixed(4));
   }
@@ -2119,8 +2161,12 @@ function holdExperienceScrollAt(top){
     render(1,1,false);
     window.__experiencePassed=true;
     section.classList.add('is-passed');
+    document.documentElement.classList.add('experience-passed');
     document.documentElement.classList.remove('experience-virtual-active');
-    if(window.__portfolioLenis&&typeof window.__portfolioLenis.start==='function')window.__portfolioLenis.start();
+    if(window.__portfolioLenis){
+      if(typeof window.__portfolioLenis.resize==='function')window.__portfolioLenis.resize();
+      if(typeof window.__portfolioLenis.start==='function')window.__portfolioLenis.start();
+    }
     if(window.__experienceVirtualMode)experienceScrollTo(topBefore,false);
     requestAnimationFrame(function(){
       if(typeof window.__measureExperienceActivity==='function')window.__measureExperienceActivity();
@@ -2146,7 +2192,7 @@ function holdExperienceScrollAt(top){
       var follow=1-Math.pow(difference<0?.00002:.00035,delta);
       var change=difference*follow;
       if(difference>0){
-        var maxRate=current<.38?.26:(current<.55?.23:(current<.78?.20:(current<.985?.105:.14)));
+        var maxRate=current<.38?.22:(current<.55?.20:(current<.78?.18:(current<.985?.105:.14)));
         change=Math.min(change,maxRate*Math.max(delta,1/120));
       }
       current+=change;
@@ -2203,5 +2249,10 @@ function holdExperienceScrollAt(top){
     deviceMetrics=null;
     render(current,forwardStageMotion(current),false);
   },{passive:true});
+  window.__remeasureExperienceLaunch=function(){
+    targetMeasured=false;
+    deviceMetrics=null;
+    render(current,forwardStageMotion(current),false);
+  };
   render(0,0,false);
 })();
