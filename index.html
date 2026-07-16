@@ -128,13 +128,13 @@ header{
 header.solid{background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:var(--line)}
 header.hide{transform:translateY(-100%)}
 html.safari-scrolling header.solid{
-  background:rgba(14,14,13,.88);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  background:rgba(14,14,13,.95);
+  backdrop-filter:none;-webkit-backdrop-filter:none;
   transition:transform .32s cubic-bezier(.22,1,.36,1),border-color .3s ease;
 }
 html.safari-engine header.solid{
-  background:rgba(14,14,13,.88);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  background:rgba(14,14,13,.95);
+  backdrop-filter:none;-webkit-backdrop-filter:none;
 }
 .nav{display:flex;align-items:center;justify-content:space-between;height:76px;gap:14px}
 .logo{font-weight:700;font-size:19px;letter-spacing:-.02em;display:inline-flex;align-items:center;gap:10px}
@@ -2635,7 +2635,9 @@ function activateServiceRow(index){
   function measureRiftPaint(){
     if(!heroRift)return;
     var rect=heroRift.getBoundingClientRect();
-    riftPaintEnd=rect.top+window.scrollY+rect.height+innerHeight*.18;
+    /* Once the hole has left the viewport, WebKit should not keep its fixed
+       clipped texture in the paint tree while the tape/about section scrolls. */
+    riftPaintEnd=rect.top+window.scrollY+rect.height;
     updateRiftPaint();
   }
   function lockRiftPlane(){
@@ -2720,7 +2722,10 @@ function activateServiceRow(index){
     });
 
     var ph=document.querySelector('.about-ph img');
-    if(ph)gsap.fromTo(ph,{y:-14},{y:14,ease:'none',
+    /* The 28px scrub is barely visible, but Safari repaints the large rounded
+       portrait on every smooth-scroll frame. Keep the same final composition
+       there and reserve the parallax for Chromium. */
+    if(ph&&!safariEngine)gsap.fromTo(ph,{y:-14},{y:14,ease:'none',
       scrollTrigger:{trigger:'.about-ph',start:'top bottom',end:'bottom top',scrub:true}});
   }else if(!iceIntroActive){
     killLoader();
