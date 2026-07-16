@@ -43,7 +43,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/ice-loader.css?v=20260714-3">
-  <link rel="stylesheet" href="assets/experience.css?v=20260715-18">
+  <link rel="stylesheet" href="assets/experience.css?v=20260716-4">
 
 <style>
 :root{
@@ -634,7 +634,7 @@ html.dark .contact{background:var(--card);border-top:1px solid var(--line)}
 .contact p{color:rgba(243,241,236,.66);font-size:clamp(16px,1.8vw,19px);max-width:36em;margin:0 auto 40px}
 .contact .mono{color:rgba(243,241,236,.5)}
 .contact .btn{font-size:16px;padding:17px 34px}
-.contact-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.12);padding:26px 0 34px;font-family:var(--mono);font-size:12px;color:rgba(243,241,236,.45)}
+.contact-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.12);padding:26px 0 34px;font-family:var(--mono);font-size:12px;color:rgba(243,241,236,.52)}
 .foot-brand{display:inline-flex;align-items:center;gap:10px}
 .foot-brand .logo-mark{width:28px;height:28px;border-radius:7px;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
 .contact-foot a{transition:color .2s}
@@ -724,6 +724,13 @@ html.fx .about-txt h2.frev{
   .work-meta{flex-direction:column;gap:6px}
   .hero-scroll{display:none}
 }
+@media (min-width:761px) and (max-width:900px){
+  /* Keep the tablet header on one line. The full desktop navigation starts
+     wrapping around 768 px, while the compact menu still has ample room for
+     the brand and primary action. */
+  .nav-links{display:none}
+  .burger{display:block}
+}
 @media (prefers-reduced-motion:reduce){
   html.fx .frev{opacity:1;transform:none}
   html.fx .sec-head h2.frev,html.fx .about-txt h2.frev{clip-path:none;transform:none}
@@ -784,7 +791,7 @@ html.fx .about-txt h2.frev{
 .case-compare{
   --split:50%;--divider-opacity:1;--before-tag:1;--after-tag:1;
   position:absolute;inset:0;overflow:hidden;cursor:ew-resize;isolation:isolate;
-  touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
+  touch-action:pan-y pinch-zoom;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;-webkit-tap-highlight-color:transparent;
 }
 .case-compare::before{
   content:"";position:absolute;inset:0;z-index:5;pointer-events:none;
@@ -922,7 +929,7 @@ html.fx .about-txt h2.frev{
 }
 .case-carousel-position{display:flex;align-items:baseline;gap:8px;min-width:86px;font-family:var(--mono)}
 .case-carousel-position strong{font-size:clamp(28px,3vw,40px);font-weight:400;line-height:1;color:var(--ink)}
-.case-carousel-position span{font-size:11px;letter-spacing:.12em;color:var(--muted-2)}
+.case-carousel-position span{font-size:11px;letter-spacing:.12em;color:var(--muted)}
 .case-carousel-status{display:grid;grid-template-columns:minmax(120px,auto) minmax(120px,280px) auto;align-items:center;gap:clamp(16px,2.5vw,34px)}
 .case-carousel-active{font-weight:650;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .case-carousel-dots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -1218,7 +1225,7 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
   <a href="https://t.me/maksim_site" target="_blank" rel="noopener">Telegram ↗</a>
 </nav>
 
-<div class="journey-zone" id="journeyZone">
+<div class="journey-zone" id="journeyZone" role="main">
 <!-- HERO -->
 <section class="hero">
   <div class="iso-scene" aria-hidden="true">
@@ -2213,7 +2220,7 @@ function activateServiceRow(index){
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
-<script src="assets/ice-loader.js?v=20260715-5"></script>
+<script src="assets/ice-loader.js?v=20260716-1"></script>
 <script>
 (function(){
   var TG='https://t.me/maksim_site';
@@ -2616,7 +2623,10 @@ function activateServiceRow(index){
     gsap.registerPlugin(ScrollTrigger);
 
     var heroLines=gsap.utils.toArray('.hero .line-in');
-    gsap.set(heroLines,{yPercent:120});
+    /* Only the first ice intro owns the hidden hero frame. On a later visit
+       Safari may suspend a background tab before GSAP gets its first tick;
+       keeping that revisit visible prevents a frozen empty hero. */
+    if(iceIntroActive)gsap.set(heroLines,{yPercent:120});
 
     function heroIn(delay){
       var tl=gsap.timeline({delay:delay||0});
@@ -2638,9 +2648,8 @@ function activateServiceRow(index){
       if(heroRift)heroRift.style.opacity='1';
     }
     if(!iceIntroActive){
-      setTimeout(revealHeroFallback,4200);
       killLoader();
-      heroIn(.15);
+      revealHeroFallback();
     }
 
     addEventListener('load',function(){ScrollTrigger.refresh();},{once:true});
@@ -2745,6 +2754,8 @@ function activateServiceRow(index){
         var selected=slideIndex===active;
         slide.classList.toggle('is-active',selected);
         slide.setAttribute('aria-current',selected?'true':'false');
+        slide.setAttribute('aria-hidden',selected?'false':'true');
+        slide.toggleAttribute('inert',!selected);
       });
       dots.forEach(function(dot,dotIndex){dot.setAttribute('aria-current',dotIndex===active?'true':'false');});
       if(currentLabel)currentLabel.textContent=formatIndex(active);
@@ -2858,6 +2869,7 @@ function activateServiceRow(index){
     if(!compare)return;
     var viewport=compare.closest('.case-carousel-viewport');
     var current=50,tracking=false,dragging=false,pointerId=null,rectLeft=0,rectWidth=0,frame=0,pending=null,startX=0,startY=0;
+    var touchTracking=false,touchDragging=false,touchId=null,touchStartX=0,touchStartY=0;
     function clampPct(value){return Math.max(0,Math.min(100,value));}
     function paint(value){
       var pct=clampPct(value);current=pct;
@@ -2891,6 +2903,10 @@ function activateServiceRow(index){
       if(e.cancelable)e.preventDefault();
     }
     compare.addEventListener('pointerdown',function(e){
+      /* Mobile Safari can cancel a horizontal PointerEvent sequence while the
+         carousel still owns the surrounding scroll area. Touch input has a
+         dedicated non-passive path below; pointer input stays for mouse/pen. */
+      if(e.pointerType==='touch')return;
       if(e.button!==undefined&&e.button!==0)return;if(e.target.closest('button,a'))return;
       tracking=true;dragging=false;pointerId=e.pointerId;startX=e.clientX;startY=e.clientY;cacheRect();
       e.stopPropagation();
@@ -2914,6 +2930,46 @@ function activateServiceRow(index){
       try{compare.releasePointerCapture(pointerId);}catch(_){}pointerId=null;
     }
     compare.addEventListener('pointerup',release);compare.addEventListener('pointercancel',release);
+    function findTouch(list,id){
+      for(var i=0;i<list.length;i++)if(list[i].identifier===id)return list[i];
+      return null;
+    }
+    function beginTouchDrag(){
+      touchDragging=true;compare.classList.add('is-dragging');
+      if(viewport)viewport.classList.add('is-comparing');
+    }
+    function finishTouch(touch,cancelled){
+      if(!touchTracking)return;
+      if(!cancelled&&!touchDragging&&touch)paint(valueFromClient(touch.clientX));
+      if(frame){cancelAnimationFrame(frame);frame=0;}
+      if(pending!==null){paint(pending);pending=null;}
+      touchTracking=false;touchDragging=false;touchId=null;
+      compare.classList.remove('is-dragging');if(viewport)viewport.classList.remove('is-comparing');
+      announce();
+    }
+    compare.addEventListener('touchstart',function(e){
+      if(touchTracking||e.touches.length!==1)return;
+      var touch=e.touches[0];
+      touchTracking=true;touchDragging=false;touchId=touch.identifier;
+      touchStartX=touch.clientX;touchStartY=touch.clientY;cacheRect();
+      e.stopPropagation();
+    },{passive:true});
+    compare.addEventListener('touchmove',function(e){
+      if(!touchTracking)return;
+      var touch=findTouch(e.touches,touchId);if(!touch)return;
+      if(!touchDragging){
+        var dx=touch.clientX-touchStartX,dy=touch.clientY-touchStartY;
+        if(Math.max(Math.abs(dx),Math.abs(dy))<5)return;
+        if(Math.abs(dy)>Math.abs(dx)+2){finishTouch(touch,true);return;}
+        beginTouchDrag();
+      }
+      if(e.cancelable)e.preventDefault();e.stopPropagation();schedule(touch.clientX);
+    },{passive:false});
+    compare.addEventListener('touchend',function(e){
+      var touch=findTouch(e.changedTouches,touchId);if(!touch)return;
+      finishTouch(touch,false);
+    },{passive:true});
+    compare.addEventListener('touchcancel',function(){finishTouch(null,true);},{passive:true});
     compare.addEventListener('dragstart',function(e){e.preventDefault();});
     compare.addEventListener('keydown',function(e){
       if(e.target!==compare)return;var next=current;
@@ -3137,6 +3193,6 @@ function activateServiceRow(index){
 })();
 </script>
 <script src="assets/experience-loader.js?v=20260715-5"></script>
-<script src="assets/experience.js?v=20260715-24"></script>
+<script src="assets/experience.js?v=20260716-11"></script>
 </body>
 </html>

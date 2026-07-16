@@ -245,7 +245,10 @@
     if(rift)setStyles(rift,{opacity:'1',transform:'none'});
     if(riftWell)setStyles(riftWell,{transform:'none'});
     if(riftStream)setStyles(riftStream,{opacity:'1',transform:'translate3d(0,0,0) rotate(-.65deg)'});
-    targets.forEach(function(target){if(target&&target!==header&&target!==scene&&target!==rift&&target!==riftWell&&target!==riftStream)setStyles(target,{opacity:'1',transform:'translate3d(0,0,0)'});});
+    targets.forEach(function(target){
+      if(!target||target===header||target===scene||target===rift||target===riftWell||target===riftStream)return;
+      setStyles(target,{opacity:'1',transform:target===document.querySelector('.hero-scroll')?'translate3d(-50%,0,0)':'translate3d(0,0,0)'});
+    });
   }
 
   function runSiteReveal(){
@@ -281,7 +284,14 @@
     setStyles(riftStream,{opacity:'1',transform:'translate3d(0,0,0) rotate(-.65deg)'});
     motion(signature,[{opacity:0,transform:'translate3d(0,24px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:760,delay:1240,easing:enterEase});
     motion(heroScroll,[{opacity:0,transform:'translate3d(-50%,12px,0)'},{opacity:1,transform:'translate3d(-50%,0,0)'}],{duration:560,delay:1510,easing:enterEase});
-    later(2200,function(){window.dispatchEvent(new CustomEvent('iceintro:reveal-complete'));});
+    /* WebKit can occasionally leave a fill-mode animation at its first frame
+       after the tab has been backgrounded during the intro. Commit the final
+       composition after the reveal window so a fresh Safari load can never
+       end with the rift visible but the header or headline still hidden. */
+    later(2200,function(){
+      showSiteInstant();
+      window.dispatchEvent(new CustomEvent('iceintro:reveal-complete'));
+    });
   }
 
   function finishIntro(){

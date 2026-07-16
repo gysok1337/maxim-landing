@@ -219,6 +219,7 @@ function holdExperienceScrollAt(top){
       tab.style.setProperty('--stage-shift',((index-active)*118)+'%');
       tab.classList.toggle('is-active',index===active);
       tab.setAttribute('aria-hidden',index===active?'false':'true');
+      tab.tabIndex=index===active?0:-1;
     });
   }
 
@@ -1162,6 +1163,10 @@ function holdExperienceScrollAt(top){
     if(clampFrame)return;
     clampFrame=requestAnimationFrame(function(){
       clampFrame=0;
+      if(Math.abs(window.scrollY-anchorY)<=1){
+        lastScrollY=window.scrollY;
+        return;
+      }
       transitionUntil=performance.now()+120;
       experienceScrollTo(anchorY,false);
       lastScrollY=anchorY;
@@ -1172,14 +1177,15 @@ function holdExperienceScrollAt(top){
     entrySettleTimer=0;
     if(!active||!entrySettling)return;
     var bounds=sectionBounds();
-    /* The sticky frame looks identical anywhere inside the runway. Anchor it
-       to one deterministic document position after momentum settles so a
-       down/up/down re-entry cannot leave the whole composition a few pixels
-       lower in Safari. */
-    anchorY=Math.round(bounds.top);
+    /* On touch screens the native runway may already have moved a little by
+       the time momentum settles. Keep that valid position: snapping it back
+       to the section start is visible as a jerk even though the sticky frame
+       itself has not changed. Desktop keeps the deterministic Safari anchor. */
+    anchorY=Math.round(coarse?clamp(window.scrollY,bounds.top,bounds.end):bounds.top);
     entrySettling=false;
     stopPageScroller();
     clampScene();
+    if(coarse)return;
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
         if(!active||entrySettling)return;
@@ -1195,6 +1201,12 @@ function holdExperienceScrollAt(top){
   function activateScene(){
     if(window.__experiencePassed||active||performance.now()<navigationBypassUntil)return;
     var bounds=refreshSectionBounds();
+    /* Measure the mobile composition before it becomes interactive. A delayed
+       remeasure used to expose fallback positions for one frame on re-entry. */
+    if(coarse){
+      if(typeof window.__remeasureExperienceProcess==='function')window.__remeasureExperienceProcess();
+      if(typeof window.__remeasureExperienceLaunch==='function')window.__remeasureExperienceLaunch();
+    }
     overall=Math.max(overall,visualOverall());
     active=true;
     entrySettling=true;
@@ -1225,8 +1237,11 @@ function holdExperienceScrollAt(top){
     document.documentElement.classList.remove('experience-virtual-active');
     startPageScroller();
     var distance=clamp(150+Math.abs(amount)*2.2,180,window.innerHeight*.72);
-    transitionUntil=performance.now()+220;
-    var nextY=Math.max(0,sectionTop()-distance);
+    transitionUntil=performance.now()+(coarse?120:220);
+    /* Release touch input at the upper edge of the section. The following
+       native gesture can then continue through the page without a large
+       programmatic jump out of the sticky scene. */
+    var nextY=Math.max(0,sectionTop()-(coarse?1:distance));
     experienceScrollTo(nextY,false);
     lastScrollY=nextY;
   }
@@ -1570,6 +1585,7 @@ function holdExperienceScrollAt(top){
       tab.style.setProperty('--stage-shift',((index-activeIndex)*118)+'%');
       tab.classList.toggle('is-active',index===activeIndex);
       tab.setAttribute('aria-hidden',index===activeIndex?'false':'true');
+      tab.tabIndex=index===activeIndex?0:-1;
     });
   }
 
@@ -1629,6 +1645,7 @@ function holdExperienceScrollAt(top){
     var maxDeviceHeight=Math.max(96,visualRect.height-deviceHeightReserve);
     var maxDeviceWidth=Math.max(96,visualRect.width-deviceSideReserve);
     var browserChromeHeight=mobile?42:54;
+    var phoneAspect=844/390;
     var desktopWidth=mobile
       ?Math.min(sourceRect.width,viewportWidth-28,maxDeviceWidth,(maxDeviceHeight-browserChromeHeight)*1.6)
       :(compact?Math.min(sourceRect.width,visualRect.width-28):Math.min(sourceRect.width,viewportWidth*.50,860));
@@ -1638,8 +1655,9 @@ function holdExperienceScrollAt(top){
       ?Math.min(viewportWidth*(shortMobile?.60:.72),500,maxDeviceWidth,(maxDeviceHeight-10)*(1024/702)+10)
       :(compact?Math.min(viewportWidth*.68,500,visualRect.width-14):Math.min(viewportWidth*.36,540));
     if(compact&&!mobile)tabletWidth=Math.min(tabletWidth,desktopWidth*.92);
+    var mobilePhoneRatio=shortMobile&&viewportWidth<=350?.42:.44;
     var phoneWidth=mobile
-      ?Math.min(viewportWidth*.46,186,maxDeviceWidth,maxDeviceHeight/2.32)
+      ?Math.min(viewportWidth*mobilePhoneRatio,202,maxDeviceWidth,maxDeviceHeight/phoneAspect)
       :(compact?Math.min(viewportWidth*.34,220):Math.min(viewportWidth*.185,250));
     var tabletHeight=(tabletWidth-10)/(1024/702)+10;
     var tabletHeightLimit=maxDeviceHeight;
@@ -1647,26 +1665,42 @@ function holdExperienceScrollAt(top){
       tabletHeight=tabletHeightLimit;
       tabletWidth=(tabletHeight-10)*(1024/702)+10;
     }
-    var phoneHeight=phoneWidth*2.32;
+    var phoneHeight=phoneWidth*phoneAspect;
     if(phoneHeight>maxDeviceHeight){
       phoneHeight=maxDeviceHeight;
-      phoneWidth=phoneHeight/2.32;
+      phoneWidth=phoneHeight/phoneAspect;
     }
     if(!mobile){
       phoneHeight=Math.min(phoneHeight,tabletHeight*1.38,maxDeviceHeight);
-      phoneWidth=phoneHeight/2.32;
+      phoneWidth=phoneHeight/phoneAspect;
       if(compact){
-        var compactPhoneMin=Math.min(180,desktopWidth*.45,maxDeviceHeight/2.32);
+        /* A portrait tablet can inherit a narrow source screenshot from the
+           previous process scene. Do not let that source width shrink the
+           phone into a thumbnail: size it from the available stage instead. */
+        var compactPhoneMin=Math.min(190,maxDeviceWidth,maxDeviceHeight/phoneAspect);
         if(phoneWidth<compactPhoneMin){
           phoneWidth=compactPhoneMin;
-          phoneHeight=phoneWidth*2.32;
+          phoneHeight=phoneWidth*phoneAspect;
         }
       }
     }
     var sourceX=sourceRect.left-visualRect.left+sourceRect.width/2;
     var sourceY=sourceRect.top-visualRect.top+sourceRect.height/2;
-    var stageX=compact?visualRect.width/2:sourceX;
-    var stageY=compact?visualRect.height/2:sourceY;
+    var stageX=compact?(mobile?visualRect.width*(shortMobile?.54:.50):visualRect.width*.70):sourceX;
+    /* Mobile viewports can leave only part of the visual stage on screen once
+       the copy above it is laid out. Derive the center from that visible part:
+       the phone stays proportional without losing either browser bar. */
+    var stageY=compact?visualRect.height*.50:sourceY;
+    if(mobile){
+      var visibleStageBottom=window.innerHeight-visualRect.top-34;
+      var minPhoneCenter=phoneHeight/2+8;
+      var maxPhoneCenter=visibleStageBottom-phoneHeight/2;
+      /* When the visual box itself is shorter than the phone, let the shell
+         extend above that box instead of clipping its lower edge and label. */
+      stageY=maxPhoneCenter<minPhoneCenter
+        ?maxPhoneCenter
+        :clamp(stageY,minPhoneCenter,maxPhoneCenter);
+    }
     deviceMetrics={
       desktop:{x:sourceX,y:sourceY,width:sourceRect.width,height:sourceRect.height},
       desktopTarget:{x:stageX,y:stageY,width:desktopWidth,height:desktopHeight},
@@ -1853,6 +1887,10 @@ function holdExperienceScrollAt(top){
       var deviceInsetTop=mix(phoneInsetTop,0,browserIn);
       var deviceInsetBottom=mix(phoneInsetBottom,0,browserIn);
       var phoneUi=smooth(segment(phoneMorph,.45,.82))*(1-smooth(segment(browserIn,.05,.30)));
+      /* The phone shell scales with the viewport, so its system chrome must
+         scale from the same 390 px design width. Fixed 40 px bars made the
+         website look squeezed inside smaller phones. */
+      var phoneUiScale=clamp(deviceMetrics.phone.width/390,.34,.68);
       adaptiveFrame.style.setProperty('--device-radius',deviceRadius.toFixed(2)+'px');
       adaptiveFrame.style.setProperty('--screen-radius',Math.max(4,deviceRadius-7).toFixed(2)+'px');
       adaptiveFrame.style.setProperty('--device-inset-x',deviceInsetX.toFixed(2)+'px');
@@ -1860,8 +1898,12 @@ function holdExperienceScrollAt(top){
       adaptiveFrame.style.setProperty('--device-inset-bottom',deviceInsetBottom.toFixed(2)+'px');
       adaptiveFrame.style.setProperty('--chrome-h',mix(40.2,0,desktopSettle).toFixed(2)+'px');
       adaptiveFrame.style.setProperty('--desktop-shot-scale',mix(1.013,1,desktopSettle).toFixed(4));
-      adaptiveFrame.style.setProperty('--phone-top-h',(40*phoneUi).toFixed(2)+'px');
-      adaptiveFrame.style.setProperty('--phone-bottom-h',(42*phoneUi).toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--phone-top-h',(54*phoneUiScale*phoneUi).toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--phone-bottom-h',(66*phoneUiScale*phoneUi).toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--phone-island-top',(15*phoneUiScale).toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--phone-island-h',(36*phoneUiScale).toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--phone-status-font',Math.max(7,17*phoneUiScale).toFixed(2)+'px');
+      adaptiveFrame.style.setProperty('--phone-url-font',Math.max(6.4,15*phoneUiScale).toFixed(2)+'px');
       adaptiveDevice.style.setProperty('--phone-ui-alpha',phoneUi.toFixed(3));
       adaptiveFrame.style.background=phoneMorph>.55?'#050505':'linear-gradient(145deg,#282827 0%,#0a0a0a 18%,#111 82%,#2b2b2a 100%)';
       browser.style.borderRadius=deviceRadius.toFixed(2)+'px';
@@ -1920,19 +1962,25 @@ function holdExperienceScrollAt(top){
     setTransform(secureCaption,'translate3d('+mix(6,secureCaptionExpired?-4:0,captionAlpha).toFixed(1)+'px,0,0)');
 
     setOpacity(serverConsole,serverPanel);
-    setTransform(serverConsole,'translate3d(0,'+(12*(1-serverPanel)).toFixed(1)+'px,18px) scale('+mix(.96,1,serverPanel).toFixed(3)+')');
+    setTransform(serverConsole,mobile
+      ?'translate3d(0,0,18px) scale(1)'
+      :'translate3d(0,'+(12*(1-serverPanel)).toFixed(1)+'px,18px) scale('+mix(.96,1,serverPanel).toFixed(3)+')');
     serverChecks.forEach(function(check,index){
       var checkIn=smooth(segment(motion,.805+index*.008,.825+index*.008))*serverPanel;
       setOpacity(check,checkIn);
-      setTransform(check,'translate3d('+(9*(1-checkIn)).toFixed(1)+'px,0,0)');
+      setTransform(check,mobile?'translate3d(0,0,0)':'translate3d('+(9*(1-checkIn)).toFixed(1)+'px,0,0)');
     });
 
     setOpacity(leadForm,leadIn*(1-finalIn));
-    setTransform(leadForm,'translate3d('+(26*(1-leadIn)).toFixed(1)+'px,'+(22*(1-leadIn)).toFixed(1)+'px,20px) scale('+mix(.92,1,leadIn).toFixed(3)+')');
+    setTransform(leadForm,mobile
+      ?'translate3d(0,0,20px) scale(1)'
+      :'translate3d('+(26*(1-leadIn)).toFixed(1)+'px,'+(22*(1-leadIn)).toFixed(1)+'px,20px) scale('+mix(.92,1,leadIn).toFixed(3)+')');
     leadSend.textContent=deliveryDone>.7?'Отправлено ✓':'Отправить';
     leadSend.style.background=deliveryDone>.7?'#d9d7d0':'var(--accent)';
     pageShade.style.opacity=(secureZoom*.07+serverPanel*.04+leadIn*.08+finalIn*.22).toFixed(3);
-    if(motion>.84&&!targetMeasured)measureInteractionTargets();
+    /* Measure only after the form has reached its final transform. Measuring
+       the hidden offset state made the cursor aim beside the mobile button. */
+    if(motion>.90&&!targetMeasured)measureInteractionTargets();
 
     var cursorStartX=targetMeasured?launchOrigin.x:(mobile?width*.58:width*.69);
     var cursorStartY=targetMeasured?launchOrigin.y:(mobile?height*.61:height*.55);
@@ -1970,8 +2018,8 @@ function holdExperienceScrollAt(top){
     var telegramIn=smooth(segment(motion,.964,.984))*(1-finalIn);
     setOpacity(mailTarget,mailIn);
     setOpacity(telegramTarget,telegramIn);
-    setTransform(mailTarget,'translateX('+(24*(1-mailIn)).toFixed(1)+'px)');
-    setTransform(telegramTarget,'translateX('+(24*(1-telegramIn)).toFixed(1)+'px)');
+    setTransform(mailTarget,mobile?'translate3d(0,0,0)':'translateX('+(24*(1-mailIn)).toFixed(1)+'px)');
+    setTransform(telegramTarget,mobile?'translate3d(0,0,0)':'translateX('+(24*(1-telegramIn)).toFixed(1)+'px)');
     mailTarget.style.borderColor=deliveryDone>.35?'rgba(var(--accent-rgb),.42)':'';
     telegramTarget.style.borderColor=deliveryDone>.55?'rgba(var(--accent-rgb),.42)':'';
 
@@ -2192,7 +2240,10 @@ function holdExperienceScrollAt(top){
       var follow=1-Math.pow(difference<0?.00002:.00035,delta);
       var change=difference*follow;
       if(difference>0){
-        var maxRate=current<.38?.22:(current<.55?.20:(current<.78?.18:(current<.985?.105:.14)));
+        /* Give the responsive-device sequence and the HTTPS close-up enough
+           screen time even after a strong wheel/touch gesture. Later launch
+           steps keep their existing rhythm. */
+        var maxRate=current<.38?.14:(current<.55?.115:(current<.78?.18:(current<.985?.105:.14)));
         change=Math.min(change,maxRate*Math.max(delta,1/120));
       }
       current+=change;
