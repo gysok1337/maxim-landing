@@ -128,11 +128,14 @@ header{
 header.solid{background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom-color:var(--line)}
 header.hide{transform:translateY(-100%)}
 html.safari-scrolling header.solid{
-  background:color-mix(in srgb,var(--bg) 94%,transparent);
-  backdrop-filter:none;-webkit-backdrop-filter:none;
+  background:rgba(14,14,13,.88);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   transition:transform .32s cubic-bezier(.22,1,.36,1),border-color .3s ease;
 }
-html.safari-engine header.solid{background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:none;-webkit-backdrop-filter:none}
+html.safari-engine header.solid{
+  background:rgba(14,14,13,.88);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
 .nav{display:flex;align-items:center;justify-content:space-between;height:76px;gap:14px}
 .logo{font-weight:700;font-size:19px;letter-spacing:-.02em;display:inline-flex;align-items:center;gap:10px}
 .logo-mark{
@@ -634,7 +637,7 @@ html.dark .contact{background:var(--card);border-top:1px solid var(--line)}
 .contact p{color:rgba(243,241,236,.66);font-size:clamp(16px,1.8vw,19px);max-width:36em;margin:0 auto 40px}
 .contact .mono{color:rgba(243,241,236,.5)}
 .contact .btn{font-size:16px;padding:17px 34px}
-.contact-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.12);padding:26px 0 34px;font-family:var(--mono);font-size:12px;color:rgba(243,241,236,.52)}
+.contact-foot{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.12);padding:26px var(--pad) 34px;font-family:var(--mono);font-size:12px;color:rgba(243,241,236,.52)}
 .foot-brand{display:inline-flex;align-items:center;gap:10px}
 .foot-brand .logo-mark{width:28px;height:28px;border-radius:7px;box-shadow:0 0 0 1px rgba(255,255,255,.14)}
 .contact-foot a{transition:color .2s}
@@ -1009,6 +1012,11 @@ html.fx .about-txt h2.frev{
 .hero-word-rift-clear{transform:translate3d(0,-.34em,0)}
 .hero-word-small{font-size:.74em;font-weight:600;letter-spacing:-.015em}
 .hero-word-quiet{font-size:.78em;font-weight:600;letter-spacing:-.018em}
+.hero-modern-line{padding-left:.32em!important;margin-left:-.32em!important}
+.hero-word-modern{font-size:.64em;transform:translate3d(-.22em,.075em,0)}
+.hero-business-sites{font-size:.7em;transform:translate3d(0,-.025em,0)}
+.hero-business-for{font-size:.5em;font-weight:600;letter-spacing:-.012em;margin-left:.22em;transform:translate3d(0,.1em,0)}
+.hero-business-end{font-size:.7em;margin-left:.18em;transform:translate3d(0,.17em,0)}
 
 .code-rift{
   position:absolute;right:clamp(-166px,-7vw,-92px);top:4.5%;z-index:1;
@@ -1079,8 +1087,11 @@ html.fx .code-rift{opacity:0}
   background:linear-gradient(118deg,rgba(255,255,255,.025),transparent 28% 70%,rgba(255,255,255,.018)),#050607;
 }
 html.safari-engine .code-rift-plane{
-  transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden;contain:paint;
+  transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden;contain:strict;
+  background:#050607 url("assets/rift-code-texture.svg?v=20260716-1") 0 0/100% auto repeat-y;
 }
+html.safari-engine .code-rift-plane::before{display:none}
+html.safari-engine .code-rift-stream{display:none}
 .code-rift-plane::before{
   content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
   background-image:
@@ -1139,6 +1150,12 @@ html.safari-engine .code-rift-plane{
   .hero-word-low{transform:translate3d(0,.035em,0)}
   .hero-word-rift-clear{transform:translate3d(0,-.035em,0)}
   .hero-word-small{font-size:.79em}.hero-word-quiet{font-size:.82em}
+  .hero-modern-line{padding-left:0!important;margin-left:0!important}
+  .hero-word-modern{font-size:.72em;transform:translate3d(0,.035em,0)}
+  .hero-business-sites{font-size:.72em;transform:translate3d(0,-.02em,0)}
+  .hero-business-for{font-size:.52em;margin-left:.22em;transform:translate3d(0,.14em,0)}
+  .hero-business-end{font-size:.72em;margin-left:.18em;transform:translate3d(0,.22em,0)}
+  .contact-foot{gap:12px 18px;padding:24px var(--pad) calc(30px + env(safe-area-inset-bottom,0px))}
   .hero-signature{display:none}
   .code-rift{
     position:relative;right:auto;top:auto;width:calc(100% + 36px);height:clamp(224px,36dvh,300px);
@@ -1235,9 +1252,9 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
   <div class="wrap">
     <div class="hero-status frev"><span class="dot"></span><span class="mono">Свободен для заказа</span></div>
     <h1>
-      <span class="line"><span class="line-in"><span class="hero-word hero-word-up">Сайты,</span> <span class="hero-word hero-word-rift-clear hero-word-quiet">которые</span></span></span>
-      <span class="line"><span class="line-in"><span class="hero-word hero-word-low serif">работают</span></span></span>
-      <span class="line"><span class="line-in"><span class="hero-word hero-word-up hero-word-small">на</span> <span class="hero-word hero-word-low hero-word-small">ваш</span> <span class="hero-word hero-word-up">бизнес</span></span></span>
+      <span class="line"><span class="line-in"><span class="hero-word hero-word-up">Делаю</span></span></span>
+      <span class="line hero-modern-line"><span class="line-in"><span class="hero-word hero-word-low hero-word-modern serif">современные</span></span></span>
+      <span class="line"><span class="line-in"><span class="hero-word hero-business-sites">сайты</span><span class="hero-word hero-business-for">для</span><span class="hero-word hero-business-end">бизнеса</span></span></span>
     </h1>
     <div class="code-rift" aria-hidden="true">
       <svg class="code-rift-defs" aria-hidden="true">
@@ -1459,7 +1476,7 @@ function activateServiceRow(index){
               <p>Сайт должен одинаково уверенно работать <strong>на компьютере, планшете и телефоне.</strong></p>
             </article>
             <article class="copy-step launch-copy-step" data-launch-copy="1" aria-hidden="true">
-              <h2>Готовлю <em>сервер</em></h2>
+              <h2>Финальные <em>настройки</em></h2>
               <p>Перед публикацией подключаю домен, настраиваю сервер и включаю <strong>защищённое соединение.</strong></p>
             </article>
             <article class="copy-step launch-copy-step" data-launch-copy="2" aria-hidden="true">
@@ -2240,9 +2257,14 @@ function activateServiceRow(index){
   if(safariEngine)document.documentElement.classList.add('safari-engine');
   function markSafariScrolling(){
     if(!safariEngine)return;
+    var wasScrolling=document.documentElement.classList.contains('safari-scrolling');
     document.documentElement.classList.add('safari-scrolling');
+    if(!wasScrolling)dispatchEvent(new CustomEvent('portfolio:safari-scroll-start'));
     clearTimeout(safariScrollIdle);
-    safariScrollIdle=setTimeout(function(){document.documentElement.classList.remove('safari-scrolling');},150);
+    safariScrollIdle=setTimeout(function(){
+      document.documentElement.classList.remove('safari-scrolling');
+      dispatchEvent(new CustomEvent('portfolio:safari-scroll-idle'));
+    },150);
   }
   var hasFX=!!(window.gsap&&window.ScrollTrigger)&&!reduce;
   if(hasFX){
@@ -2270,6 +2292,10 @@ function activateServiceRow(index){
   (function(){
     var blocks=document.querySelectorAll('.code-rift-code code');
     if(!blocks.length)return;
+    /* Safari gets the same coloured code as one cached SVG texture. Keeping
+       hundreds of live text spans inside a fixed clipped layer makes WebKit
+       repaint the whole rift while scrolling. */
+    if(safariEngine)return;
     var tokenPattern=/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|(`(?:\\.|[^`\\])*`|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*")|((?:\b\d+(?:\.\d+)?|\B\.\d+)\b)|\b([A-Za-z_$][\w$]*)(?=\s*\()|\b([A-Za-z_$][\w$]*)(?=\s*:)|\b(const|let|var|function|return|if|else|for|while|new|true|false|null|this)\b/g;
     function escapeCode(value){
       return value.replace(/[&<>]/g,function(char){
@@ -2372,8 +2398,9 @@ function activateServiceRow(index){
     function draw(t,once){
       if(!once&&!gridVisible)return;
       if(!once&&safariEngine&&document.documentElement.classList.contains('safari-scrolling')){
-        lastGridFrame=t;
-        if(animateGrid&&gridVisible)raf=requestAnimationFrame(draw);
+        lastGridFrame=0;
+        raf=0;
+        canvas.dataset.running='0';
         return;
       }
       if(!once&&t-lastGridFrame<gridInterval){
@@ -2446,6 +2473,20 @@ function activateServiceRow(index){
     addEventListener('scroll',updateGridVisibility,{passive:true});
     addEventListener('pageshow',measureGridRange,{passive:true});
     document.addEventListener('visibilitychange',updateGridVisibility,{passive:true});
+    if(safariEngine){
+      addEventListener('portfolio:safari-scroll-start',function(){
+        cancelAnimationFrame(raf);
+        raf=0;
+        lastGridFrame=0;
+        canvas.dataset.running='0';
+      });
+      addEventListener('portfolio:safari-scroll-idle',function(){
+        if(!gridVisible||!animateGrid||document.hidden||raf)return;
+        canvas.dataset.running='1';
+        lastGridFrame=0;
+        raf=requestAnimationFrame(draw);
+      });
+    }
     addEventListener('experience:passed',function(){setGridVisible(false);},{once:true});
     if(fine){
       addEventListener('pointermove',function(e){
@@ -2517,8 +2558,15 @@ function activateServiceRow(index){
     clearTimeout(idleT); // скролл остановился - показать шапку
     idleT=setTimeout(function(){header.classList.remove('hide');},420);
   }
+  function syncHeaderState(){
+    var y=window.scrollY||document.documentElement.scrollTop||0;
+    header.classList.toggle('solid',y>30);
+    lastY=y;
+  }
+  syncHeaderState();
+  addEventListener('pageshow',function(){requestAnimationFrame(syncHeaderState);},{passive:true});
   measureExperienceHeaderRange();
-  addEventListener('load',measureExperienceHeaderRange,{once:true});
+  addEventListener('load',function(){measureExperienceHeaderRange();syncHeaderState();},{once:true});
   addEventListener('resize',function(){
     if(window.__portfolioHeightOnlyResize)return;
     clearTimeout(experienceHeaderResize);
@@ -3173,6 +3221,12 @@ function activateServiceRow(index){
     (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){build();measure();measureTapeRange();});
     function loop(t){
       if(!tapeVisible){last=0;tapeRaf=0;return;}
+      if(safariEngine&&document.documentElement.classList.contains('safari-scrolling')){
+        last=0;
+        tapeRaf=0;
+        track.dataset.running='0';
+        return;
+      }
       if(!last)last=t;
       var dt=Math.min(64,t-last);last=t;
       x-=SPEED*dt/1000;
@@ -3184,6 +3238,20 @@ function activateServiceRow(index){
     addEventListener('scroll',updateTapeVisibility,{passive:true});
     addEventListener('pageshow',measureTapeRange,{passive:true});
     document.addEventListener('visibilitychange',updateTapeVisibility,{passive:true});
+    if(safariEngine){
+      addEventListener('portfolio:safari-scroll-start',function(){
+        cancelAnimationFrame(tapeRaf);
+        tapeRaf=0;
+        last=0;
+        track.dataset.running='0';
+      });
+      addEventListener('portfolio:safari-scroll-idle',function(){
+        if(!tapeVisible||document.hidden||tapeRaf)return;
+        track.dataset.running='1';
+        last=0;
+        tapeRaf=requestAnimationFrame(loop);
+      });
+    }
     addEventListener('experience:passed',function(){setTapeVisible(false);},{once:true});
     addEventListener('beforeunload',function(){cancelAnimationFrame(tapeRaf);tapeRaf=0;});
   })();

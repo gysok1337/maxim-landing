@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640">
+  <rect width="960" height="640" fill="#050607"/>
+  <g font-family="JetBrains Mono, ui-monospace, monospace" font-size="17" opacity=".76">
+    <g fill="#777e84" font-style="italic">
+      <text x="24" y="34">// first screen reveal</text>
+      <text x="500" y="34">// case transition</text>
+    </g>
+    <text x="24" y="66" fill="#bcc0c3"><tspan fill="#b75565">var</tspan> progress=<tspan fill="#b39469">0</tspan>, target=<tspan fill="#b39469">1</tspan>;</text>
+    <text x="24" y="94" fill="#bcc0c3"><tspan fill="#b75565">function</tspan> <tspan fill="#7c97ab">clamp01</tspan>(value){</text>
+    <text x="44" y="122" fill="#bcc0c3"><tspan fill="#b75565">return</tspan> Math.max(<tspan fill="#b39469">0</tspan>,Math.min(<tspan fill="#b39469">1</tspan>,value));</text>
+    <text x="24" y="150" fill="#bcc0c3">}</text>
+    <text x="24" y="178" fill="#bcc0c3"><tspan fill="#b75565">const</tspan> rows=<tspan fill="#7c97ab">gsap.utils.toArray</tspan>(<tspan fill="#8fa47f">'.svc-row'</tspan>);</text>
+    <text x="24" y="206" fill="#bcc0c3">rows.forEach(<tspan fill="#b75565">function</tspan>(row,index){</text>
+    <text x="44" y="234" fill="#bcc0c3">row.style.<tspan fill="#6f9992">opacity</tspan>=<tspan fill="#8fa47f">'1'</tspan>;</text>
+    <text x="44" y="262" fill="#bcc0c3">row.dataset.<tspan fill="#6f9992">step</tspan>=index;</text>
+    <text x="24" y="290" fill="#bcc0c3">});</text>
+    <text x="24" y="318" fill="#bcc0c3"><tspan fill="#b75565">function</tspan> <tspan fill="#7c97ab">moveTape</tspan>(time){</text>
+    <text x="44" y="346" fill="#bcc0c3"><tspan fill="#b75565">var</tspan> dt=Math.min(<tspan fill="#b39469">64</tspan>,time-last);</text>
+    <text x="44" y="374" fill="#bcc0c3">x-=speed*dt/<tspan fill="#b39469">1000</tspan>;</text>
+    <text x="44" y="402" fill="#bcc0c3">track.style.<tspan fill="#6f9992">transform</tspan>=<tspan fill="#8fa47f">`translate3d(${x}px,0,0)`</tspan>;</text>
+    <text x="44" y="430" fill="#bcc0c3"><tspan fill="#7c97ab">requestAnimationFrame</tspan>(moveTape);</text>
+    <text x="24" y="458" fill="#bcc0c3">}</text>
+    <text x="24" y="486" fill="#777e84" font-style="italic">// responsive layout and motion</text>
+    <text x="24" y="514" fill="#bcc0c3"><tspan fill="#b75565">if</tspan>(viewport&lt;=<tspan fill="#b39469">760</tspan>) compact=<tspan fill="#b75565">true</tspan>;</text>
+    <text x="24" y="542" fill="#bcc0c3">scene.<tspan fill="#6f9992">ready</tspan>=assets.every(Boolean);</text>
+    <text x="24" y="570" fill="#bcc0c3"><tspan fill="#7c97ab">render</tspan>(progress,scene);</text>
+    <text x="24" y="598" fill="#bcc0c3"><tspan fill="#b75565">return</tspan> scene;</text>
+
+    <text x="500" y="66" fill="#bcc0c3"><tspan fill="#b75565">function</tspan> <tspan fill="#7c97ab">renderLeader</tspan>(value){</text>
+    <text x="520" y="94" fill="#bcc0c3"><tspan fill="#b75565">var</tspan> reveal=<tspan fill="#7c97ab">clamp01</tspan>(value);</text>
+    <text x="520" y="122" fill="#bcc0c3"><tspan fill="#b75565">var</tspan> shots=[<tspan fill="#b39469">1</tspan>,<tspan fill="#b39469">2</tspan>,<tspan fill="#b39469">3</tspan>,<tspan fill="#b39469">4</tspan>];</text>
+    <text x="520" y="150" fill="#bcc0c3">shots.forEach((shot,index)=&gt;{</text>
+    <text x="540" y="178" fill="#bcc0c3">shot.style.<tspan fill="#6f9992">clipPath</tspan>=mask(index);</text>
+    <text x="540" y="206" fill="#bcc0c3">shot.style.<tspan fill="#6f9992">opacity</tspan>=reveal;</text>
+    <text x="520" y="234" fill="#bcc0c3">});</text>
+    <text x="520" y="262" fill="#bcc0c3"><tspan fill="#b75565">return</tspan> <tspan fill="#7c97ab">requestAnimationFrame</tspan>(draw);</text>
+    <text x="500" y="290" fill="#bcc0c3">}</text>
+    <text x="500" y="318" fill="#777e84" font-style="italic">// interaction state</text>
+    <text x="500" y="346" fill="#bcc0c3"><tspan fill="#b75565">const</tspan> state={</text>
+    <text x="520" y="374" fill="#bcc0c3"><tspan fill="#6f9992">screen</tspan>:<tspan fill="#8fa47f">'desktop'</tspan>,</text>
+    <text x="520" y="402" fill="#bcc0c3"><tspan fill="#6f9992">secure</tspan>:<tspan fill="#b75565">true</tspan>,</text>
+    <text x="520" y="430" fill="#bcc0c3"><tspan fill="#6f9992">forms</tspan>:<tspan fill="#8fa47f">'tested'</tspan>,</text>
+    <text x="520" y="458" fill="#bcc0c3"><tspan fill="#6f9992">status</tspan>:<tspan fill="#8fa47f">'ready'</tspan></text>
+    <text x="500" y="486" fill="#bcc0c3">};</text>
+    <text x="500" y="514" fill="#bcc0c3"><tspan fill="#b75565">if</tspan>(state.secure){</text>
+    <text x="520" y="542" fill="#bcc0c3">publish(<tspan fill="#8fa47f">'https://maksim-site.ru'</tspan>);</text>
+    <text x="500" y="570" fill="#bcc0c3">}</text>
+    <text x="500" y="598" fill="#777e84" font-style="italic">// design / code / launch</text>
+  </g>
+</svg>
