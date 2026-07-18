@@ -36,11 +36,12 @@
   <text x="168" y="115" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#f6f5f2">Максим</text>
   <text x="168" y="147" font-family="'Courier New', monospace" font-size="16" letter-spacing="3" fill="#8f8c85">WEB DEV / САЙТЫ ПОД КЛЮЧ</text>
 
-  <text x="82" y="306" font-family="Arial, Helvetica, sans-serif" font-size="84" font-weight="800" letter-spacing="-4" fill="#f6f5f2">Сайты, которые</text>
-  <text x="82" y="400" font-family="Georgia, 'Times New Roman', serif" font-size="92" font-style="italic" font-weight="500" letter-spacing="-3" fill="#f6f5f2">работают</text>
+  <text x="82" y="286" font-family="Arial, Helvetica, sans-serif" font-size="84" font-weight="800" letter-spacing="-4" fill="#f6f5f2">Делаю</text>
+  <text x="82" y="378" font-family="Georgia, 'Times New Roman', serif" font-size="88" font-style="italic" font-weight="500" letter-spacing="-3" fill="#f6f5f2">современные</text>
+  <text x="84" y="445" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700" letter-spacing="-1" fill="#f6f5f2">сайты для бизнеса</text>
 
-  <text x="84" y="474" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#d9d6cf">Лендинги, редизайн, магазины и автоматизация</text>
-  <text x="84" y="516" font-family="'Courier New', monospace" font-size="18" letter-spacing="2" fill="#8f8c85">maksim-site.ru · t.me/maksim_site</text>
+  <text x="84" y="496" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="#d9d6cf">Лендинги, редизайн, магазины и автоматизация</text>
+  <text x="84" y="538" font-family="'Courier New', monospace" font-size="18" letter-spacing="2" fill="#8f8c85">maksim-site.ru · t.me/maksim_site</text>
 
   <text x="892" y="447" text-anchor="middle"
         font-family="Georgia, 'Times New Roman', serif" font-size="250"

@@ -1649,7 +1649,7 @@ function holdExperienceScrollAt(top){
       1-smooth(segment(motion,.515,.55)),
       phase(motion,.515,.55,.87,.895),
       phase(motion,.87,.895,.985,.995),
-      smooth(segment(motion,.985,.995))
+      phase(motion,.985,.995,.992,.999)
     ];
     var active=0;
     values.forEach(function(value,index){
