@@ -43,6 +43,14 @@
 <script>(function(){
   var root=document.documentElement;
   root.classList.add('dark');
+  /* iOS in-app browsers (including Telegram) animate their own toolbars by
+     changing the visual viewport height. Freeze the first mobile layout
+     height before CSS is painted so the hero does not reflow underneath it. */
+  if(innerWidth<=760){
+    var mobileViewportHeight=window.visualViewport?window.visualViewport.height:innerHeight;
+    root.style.setProperty('--portfolio-mobile-vh',Math.round(mobileViewportHeight)+'px');
+    root.style.setProperty('--portfolio-mobile-rift-h',Math.round(mobileViewportHeight*.36)+'px');
+  }
   try{localStorage.removeItem('theme')}catch(_){}
   try{if(sessionStorage.getItem('experienceReplay')==='1')history.scrollRestoration='manual'}catch(_){}
   var seen=false;
@@ -999,7 +1007,7 @@ html.fx .about-txt h2.frev{
 }
 
 /* ---------- hero V4: разлом поверхности вместо мини-сайтов ---------- */
-.hero{min-height:100dvh}
+.hero{min-height:100svh}
 .hero>.wrap{width:100%;max-width:none;isolation:isolate}
 .hero-status,.hero h1{position:relative;z-index:3}
 .hero .iso-canvas{
@@ -1031,7 +1039,7 @@ html.fx .about-txt h2.frev{
 
 .code-rift{
   position:absolute;right:clamp(-166px,-7vw,-92px);top:4.5%;z-index:1;
-  width:min(51vw,760px);height:clamp(470px,69dvh,640px);pointer-events:none;
+  width:min(51vw,760px);height:clamp(470px,69svh,640px);pointer-events:none;
   opacity:1;
 }
 html.fx .code-rift{opacity:0}
@@ -1149,13 +1157,13 @@ html.safari-engine .code-rift-stream{display:none}
 .tape-item:nth-child(3n+2){transform:translate3d(0,4px,0)}
 
 @media (max-width:920px){
-  .code-rift{right:-20vw;top:4%;width:66vw;height:clamp(410px,63dvh,555px)}
+  .code-rift{right:-20vw;top:4%;width:66vw;height:clamp(410px,63svh,555px)}
   .hero-word-up{transform:translate3d(0,-.065em,0)}
   .hero-word-low{transform:translate3d(0,.055em,0)}
   .hero-word-rift-clear{transform:translate3d(0,-.13em,0)}
 }
 @media (max-width:760px){
-  .hero{min-height:100dvh;padding-bottom:64px}
+  .hero{min-height:var(--portfolio-mobile-vh,100svh);padding-bottom:64px}
   .hero h1 .line{padding:.09em 0 .13em;margin:-.09em 0 -.09em}
   .hero-word-up{transform:translate3d(0,-.035em,0)}
   .hero-word-low{transform:translate3d(0,.035em,0)}
@@ -1169,7 +1177,7 @@ html.safari-engine .code-rift-stream{display:none}
   .contact-foot{gap:12px 18px;padding:24px var(--pad) calc(30px + env(safe-area-inset-bottom,0px))}
   .hero-signature{display:none}
   .code-rift{
-    position:relative;right:auto;top:auto;width:calc(100% + 36px);height:clamp(224px,36dvh,300px);
+    position:relative;right:auto;top:auto;width:calc(100% + 36px);height:clamp(224px,var(--portfolio-mobile-rift-h,36svh),300px);
     margin:18px -18px 6px;z-index:1;
   }
   .code-rift-plane{position:fixed}
@@ -2260,10 +2268,24 @@ function activateServiceRow(index){
   var safariScrollIdle=0;
   var stableViewportWidth=innerWidth;
   window.__portfolioHeightOnlyResize=false;
+  function updateStableMobileViewport(){
+    var root=document.documentElement;
+    if(innerWidth>760){
+      root.style.removeProperty('--portfolio-mobile-vh');
+      root.style.removeProperty('--portfolio-mobile-rift-h');
+      return;
+    }
+    var height=window.visualViewport?window.visualViewport.height:innerHeight;
+    root.style.setProperty('--portfolio-mobile-vh',Math.round(height)+'px');
+    root.style.setProperty('--portfolio-mobile-rift-h',Math.round(height*.36)+'px');
+  }
   addEventListener('resize',function(){
     var nextWidth=innerWidth;
     window.__portfolioHeightOnlyResize=nextWidth<=760&&Math.abs(nextWidth-stableViewportWidth)<3;
-    if(!window.__portfolioHeightOnlyResize)stableViewportWidth=nextWidth;
+    if(!window.__portfolioHeightOnlyResize){
+      stableViewportWidth=nextWidth;
+      updateStableMobileViewport();
+    }
   },{passive:true,capture:true});
   if(safariEngine)document.documentElement.classList.add('safari-engine');
   function markSafariScrolling(){
@@ -2657,10 +2679,13 @@ function activateServiceRow(index){
     var rect=heroRiftWell.getBoundingClientRect();
     var documentTop=rect.top+window.scrollY;
     var mobile=innerWidth<=760;
+    var stableMobileHeight=mobile
+      ? parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--portfolio-mobile-vh'))||innerHeight
+      : innerHeight;
     heroRiftPlane.style.setProperty('--rift-plane-left',(rect.left-rect.width*.08)+'px');
-    heroRiftPlane.style.setProperty('--rift-plane-top',(mobile ? -innerHeight*.46 : documentTop-rect.height*.58)+'px');
+    heroRiftPlane.style.setProperty('--rift-plane-top',(mobile ? -stableMobileHeight*.46 : documentTop-rect.height*.58)+'px');
     heroRiftPlane.style.setProperty('--rift-plane-width',(mobile?Math.max(innerWidth*1.12,rect.width*1.18):rect.width*1.2)+'px');
-    heroRiftPlane.style.setProperty('--rift-plane-height',(mobile?innerHeight*2.1:rect.height*3.25)+'px');
+    heroRiftPlane.style.setProperty('--rift-plane-height',(mobile?stableMobileHeight*2.1:rect.height*3.25)+'px');
   }
   function scheduleRiftLock(force){
     var nextWidth=innerWidth;
@@ -2673,7 +2698,9 @@ function activateServiceRow(index){
   measureRiftPaint();
   addEventListener('scroll',updateRiftPaint,{passive:true});
   addEventListener('resize',function(){scheduleRiftLock(false);},{passive:true});
-  addEventListener('resize',measureRiftPaint,{passive:true});
+  addEventListener('resize',function(){
+    if(!window.__portfolioHeightOnlyResize)measureRiftPaint();
+  },{passive:true});
   addEventListener('load',function(){scheduleRiftLock(true);measureRiftPaint();},{once:true});
   addEventListener('iceintro:reveal-layout',lockRiftPlane,{once:true});
   addEventListener('iceintro:reveal-complete',function(){scheduleRiftLock(true);measureRiftPaint();},{once:true});
