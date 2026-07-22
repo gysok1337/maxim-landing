@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>Максим | Современные сайты для бизнеса</title>
-<meta name="description" content="Делаю современные сайты для бизнеса. Лендинги, магазины, редизайн, боты и автоматизация. Сам собираю проект и запускаю сайт.">
+<meta name="description" content="Делаю современные сайты для бизнеса. Лендинги, магазины, редизайн, боты и интеграции. Сам собираю проект и запускаю сайт.">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="https://maksim-site.ru/">
 
@@ -518,6 +518,21 @@ html.dark .ba-handle{background:#F3F1EC}
 .service-cta{display:inline-flex;align-items:center;gap:9px;font-weight:650;font-size:13.5px;white-space:nowrap;transition:color .24s ease,transform .35s cubic-bezier(.22,1,.36,1)}
 .service-cta::after{content:"↗";font-size:15px;color:var(--accent)}
 .service-cta:hover{color:var(--accent);transform:translate3d(3px,0,0)}
+.service-integrations{
+  width:min(100%,960px);margin:24px 0 0 auto;padding:19px 0;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.service-integrations-copy{display:flex;align-items:center;gap:16px;min-width:0}
+.service-integrations-copy .mono{flex:0 0 auto;color:var(--accent);font-size:8.5px}
+.service-integrations-copy p{color:var(--ink-2);font-size:14px;line-height:1.45}
+.service-integrations-list{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.service-integrations-list span{
+  display:inline-flex;align-items:center;gap:7px;min-height:30px;padding:0 10px;
+  border:1px solid var(--line);border-radius:999px;color:var(--muted);
+  font-family:var(--mono);font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;
+}
+.service-integrations-list span::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:.72}
 .svc-note{margin:26px 0 0 auto;color:var(--muted);font-size:14px;max-width:min(62%,720px)}
 .svc-note b{color:color-mix(in srgb,var(--ink) 72%,var(--accent));font-weight:600}
 
@@ -692,12 +707,15 @@ html.fx .about-txt h2.frev{
   .service-tab-no{font-size:11px;text-align:center}
   .service-tab-name,.service-tab-arrow{display:none}
   .service-stage{min-height:610px}
+  .service-integrations{width:100%;margin-top:20px}
   .svc-note{max-width:100%;margin-left:0}
 }
 @media (min-width:921px){
   .approach .sec-head{width:62%}
   .approach .ap-row{width:62%;grid-template-columns:74px 1fr;gap:18px 26px}
   .approach .ap-row p{grid-column:2}
+  #serviceDetail4 .service-visual{min-height:240px}
+  #serviceDetail4 .service-diagram{min-height:228px}
 }
 @media (max-width:760px){
   header,header.solid{
@@ -711,8 +729,12 @@ html.fx .about-txt h2.frev{
     background:transparent;border-bottom-color:transparent;
     backdrop-filter:none;-webkit-backdrop-filter:none;
   }
-  .service-stage{min-height:545px;border-radius:18px}
-  .service-detail{padding:19px 16px 18px}
+  .service-stage{min-height:0;border-radius:18px}
+  .service-detail{
+    position:relative;inset:auto;display:none;min-height:0;padding:19px 16px 18px;
+    opacity:1;visibility:visible;transform:none;pointer-events:none;
+  }
+  .service-detail.is-active{display:flex;transform:none;pointer-events:auto}
   .service-detail-top{margin-bottom:19px}
   .service-code{font-size:8px}
   .service-ready{font-size:7.5px}
@@ -720,11 +742,16 @@ html.fx .about-txt h2.frev{
   .service-detail-copy p{font-size:13.5px;line-height:1.48;margin-top:11px}
   .service-visual{min-height:180px;margin-top:14px;padding-top:8px}
   .service-diagram{min-height:178px}
-  .service-detail-foot{align-items:flex-start;flex-direction:column;gap:11px;margin-top:15px;padding-top:14px;transform:translateY(-6px)}
+  .service-detail-foot{align-items:flex-start;flex-direction:column;gap:11px;margin-top:15px;padding-top:14px;transform:none}
   .service-tags{gap:5px}
   .service-tags span{font-size:7.5px}
   .service-tags span+span::before{margin-right:5px}
   .service-cta{font-size:13px}
+  .service-integrations{align-items:flex-start;flex-direction:column;gap:14px;padding:16px 0}
+  .service-integrations-copy{align-items:flex-start;flex-direction:column;gap:7px}
+  .service-integrations-copy p{font-size:13px}
+  .service-integrations-list{justify-content:flex-start;gap:6px}
+  .service-integrations-list span{min-height:28px;padding:0 9px;font-size:7px}
   .svc-note{font-size:13px;line-height:1.55}
   header.hide{transform:none}
   .nav{height:72px;pointer-events:none}
@@ -1429,13 +1456,13 @@ function activateServiceRow(index){
 <div class="tape" aria-hidden="true">
   <div class="tape-track" id="tapeTrack">
     <div class="tape-set">
-      <span class="tape-item">Лендинги</span>
-      <span class="tape-item alt">магазины</span>
-      <span class="tape-item">Каталоги</span>
-      <span class="tape-item alt">редизайн</span>
-      <span class="tape-item">Воронки заявок</span>
+      <span class="tape-item">Сайты для бизнеса</span>
+      <span class="tape-item alt">лендинги</span>
+      <span class="tape-item">Магазины</span>
+      <span class="tape-item alt">каталоги</span>
+      <span class="tape-item">Редизайн</span>
       <span class="tape-item alt">боты</span>
-      <span class="tape-item">Автоматизация</span>
+      <span class="tape-item">Интеграции</span>
       <span class="tape-item alt">CRM</span>
       <span class="tape-item">ИИ-помощники</span>
       <span class="tape-item alt">SEO-база</span>
@@ -1502,9 +1529,13 @@ function activateServiceRow(index){
               <h2>Проверяю <em>заявки</em></h2>
               <p>Отправляю тестовую форму: обращение должно прийти <strong>на почту и в Telegram.</strong></p>
             </article>
-            <article class="copy-step launch-copy-step" data-launch-copy="3" aria-hidden="true">
-              <h2>Всё <em>проверено</em></h2>
-              <p>Домен подключён, формы проверены, защищённая версия <strong>готова принимать клиентов.</strong></p>
+            <article class="copy-step launch-copy-step launch-ready-copy" data-launch-copy="3" aria-hidden="true">
+              <h2>Сайт готов <em>к запуску</em></h2>
+              <p>Структура, дизайн, адаптив и заявки <strong>проверены.</strong></p>
+              <button class="experience-replay" id="experienceReplay" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 5.66M20 5v6h-6"/></svg>
+                Показать заново
+              </button>
             </article>
           </div>
           <div class="stage-foot mono" aria-hidden="true">
@@ -1741,7 +1772,6 @@ function activateServiceRow(index){
           <div class="launch-click" id="launchClick"></div>
 
           <div class="launch-ready" id="launchReady">
-            <div class="ready-kicker mono"><i></i>Весь процесс готов</div>
             <div class="ready-flow" aria-label="Четыре этапа работы">
               <div class="ready-step">
                 <span class="ready-step-no mono">01</span>
@@ -1768,10 +1798,6 @@ function activateServiceRow(index){
                 <small>Домен, HTTPS<br>и проверка заявок</small>
               </div>
             </div>
-            <button class="experience-replay" id="experienceReplay" type="button">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.34 5.66M20 5v6h-6"/></svg>
-              Показать заново
-            </button>
           </div>
         </div>
       </div>
@@ -1888,14 +1914,14 @@ function activateServiceRow(index){
 
     <div class="services-shell frev" id="servicesShell">
       <div class="service-tabs" role="tablist" aria-label="Услуги" aria-orientation="vertical">
-        <button class="service-tab is-active" id="serviceTab1" type="button" role="tab" aria-selected="true" aria-controls="serviceDetail1" aria-label="Лендинг" tabindex="0">
+        <button class="service-tab is-active" id="serviceTab1" type="button" role="tab" aria-selected="true" aria-controls="serviceDetail1" aria-label="Сайт для бизнеса" tabindex="0">
           <span class="service-tab-no">/ 01</span>
-          <span class="service-tab-name">Лендинг</span>
+          <span class="service-tab-name">Сайт <em>для бизнеса</em></span>
           <span class="service-tab-arrow" aria-hidden="true">+</span>
         </button>
-        <button class="service-tab" id="serviceTab2" type="button" role="tab" aria-selected="false" aria-controls="serviceDetail2" aria-label="Редизайн старого сайта" tabindex="-1">
+        <button class="service-tab" id="serviceTab2" type="button" role="tab" aria-selected="false" aria-controls="serviceDetail2" aria-label="Лендинг" tabindex="-1">
           <span class="service-tab-no">/ 02</span>
-          <span class="service-tab-name">Редизайн <em>старого сайта</em></span>
+          <span class="service-tab-name">Лендинг</span>
           <span class="service-tab-arrow" aria-hidden="true">+</span>
         </button>
         <button class="service-tab" id="serviceTab3" type="button" role="tab" aria-selected="false" aria-controls="serviceDetail3" aria-label="Интернет-магазин и каталог" tabindex="-1">
@@ -1903,21 +1929,67 @@ function activateServiceRow(index){
           <span class="service-tab-name">Магазин <em>и каталог</em></span>
           <span class="service-tab-arrow" aria-hidden="true">+</span>
         </button>
-        <button class="service-tab" id="serviceTab4" type="button" role="tab" aria-selected="false" aria-controls="serviceDetail4" aria-label="Воронка и автоматизация" tabindex="-1">
+        <button class="service-tab" id="serviceTab4" type="button" role="tab" aria-selected="false" aria-controls="serviceDetail4" aria-label="Редизайн старого сайта" tabindex="-1">
           <span class="service-tab-no">/ 04</span>
-          <span class="service-tab-name">Воронка <em>и автоматизация</em></span>
+          <span class="service-tab-name">Редизайн <em>старого сайта</em></span>
           <span class="service-tab-arrow" aria-hidden="true">+</span>
         </button>
-        <button class="service-tab" id="serviceTab5" type="button" role="tab" aria-selected="false" aria-controls="serviceDetail5" aria-label="Боты и ИИ-помощники" tabindex="-1">
+        <button class="service-tab" id="serviceTab5" type="button" role="tab" aria-selected="false" aria-controls="serviceDetail5" aria-label="Боты и интеграции" tabindex="-1">
           <span class="service-tab-no">/ 05</span>
-          <span class="service-tab-name">Боты и <em>ИИ-помощники</em></span>
+          <span class="service-tab-name">Боты <em>и интеграции</em></span>
           <span class="service-tab-arrow" aria-hidden="true">+</span>
         </button>
       </div>
 
       <div class="service-stage" id="serviceStage">
         <article class="service-detail is-active" id="serviceDetail1" role="tabpanel" aria-labelledby="serviceTab1" aria-hidden="false">
-          <div class="service-detail-top"><span class="service-code">PROJECT / LANDING / 01</span><span class="service-ready">assembly ready</span></div>
+          <div class="service-detail-top"><span class="service-code">PROJECT / BUSINESS SITE / 01</span><span class="service-ready">assembly ready</span></div>
+          <div class="service-detail-copy">
+            <h3>Полноценный сайт <em>о вашей компании</em></h3>
+            <p>Несколько страниц, услуги, проекты, информация о компании и контакты. Собираю всё в одной понятной структуре.</p>
+          </div>
+          <div class="service-visual">
+            <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема многостраничного сайта для бизнеса" focusable="false">
+              <g class="diagram-piece d1">
+                <rect class="diagram-frame" x="28" y="56" width="220" height="188" rx="16"/>
+                <path class="diagram-line" d="M28 88H248"/>
+                <circle class="diagram-muted" cx="47" cy="72" r="3"/><circle class="diagram-muted" cx="59" cy="72" r="3"/><circle class="diagram-accent" cx="71" cy="72" r="3"/>
+                <text class="diagram-label" x="91" y="76">ГЛАВНАЯ</text>
+                <rect class="diagram-ink" x="49" y="108" width="123" height="12" rx="5"/>
+                <rect class="diagram-ink" x="49" y="129" width="94" height="12" rx="5"/>
+                <rect class="diagram-muted" x="49" y="154" width="148" height="7" rx="3"/>
+                <rect class="diagram-muted" x="49" y="169" width="112" height="7" rx="3"/>
+                <rect class="diagram-accent" x="49" y="197" width="79" height="24" rx="12"/>
+                <rect class="diagram-surface" x="174" y="107" width="50" height="69" rx="9"/>
+                <circle class="diagram-accent" cx="199" cy="132" r="11"/>
+              </g>
+              <g class="diagram-piece d2">
+                <circle class="diagram-frame" cx="309" cy="150" r="31"/>
+                <circle class="diagram-accent" cx="309" cy="150" r="8"/>
+                <circle class="diagram-muted" cx="309" cy="128" r="3"/><circle class="diagram-muted" cx="331" cy="150" r="3"/><circle class="diagram-muted" cx="309" cy="172" r="3"/><circle class="diagram-muted" cx="287" cy="150" r="3"/>
+              </g>
+              <g class="diagram-piece d3">
+                <rect class="diagram-frame" x="383" y="25" width="218" height="52" rx="11"/>
+                <text class="diagram-label" x="400" y="48">УСЛУГИ</text><rect class="diagram-muted" x="400" y="58" width="102" height="6" rx="3"/>
+                <rect class="diagram-frame" x="383" y="91" width="218" height="52" rx="11"/>
+                <text class="diagram-label" x="400" y="114">ПРОЕКТЫ</text><rect class="diagram-muted" x="400" y="124" width="126" height="6" rx="3"/>
+                <rect class="diagram-frame" x="383" y="157" width="218" height="52" rx="11"/>
+                <text class="diagram-label" x="400" y="180">О КОМПАНИИ</text><rect class="diagram-muted" x="400" y="190" width="113" height="6" rx="3"/>
+                <rect class="diagram-frame" x="383" y="223" width="218" height="52" rx="11"/>
+                <text class="diagram-label" x="400" y="246">КОНТАКТЫ</text><rect class="diagram-accent" x="400" y="256" width="66" height="6" rx="3"/>
+              </g>
+              <path class="diagram-line diagram-line-accent diagram-path" d="M248 150H278M340 150C362 150 355 51 383 51M340 150C361 150 359 117 383 117M340 150C361 150 359 183 383 183M340 150C362 150 355 249 383 249"/>
+              <g class="diagram-piece d4"><circle class="diagram-accent" cx="383" cy="51" r="4"/><circle class="diagram-accent" cx="383" cy="117" r="4"/><circle class="diagram-accent" cx="383" cy="183" r="4"/><circle class="diagram-accent" cx="383" cy="249" r="4"/></g>
+            </svg>
+          </div>
+          <div class="service-detail-foot">
+            <div class="service-tags"><span>несколько страниц</span><span>проекты</span><span>контакты</span></div>
+            <a class="service-cta" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить сайт</a>
+          </div>
+        </article>
+
+        <article class="service-detail" id="serviceDetail2" role="tabpanel" aria-labelledby="serviceTab2" aria-hidden="true" inert>
+          <div class="service-detail-top"><span class="service-code">PROJECT / LANDING / 02</span><span class="service-ready">assembly ready</span></div>
           <div class="service-detail-copy">
             <h3>Лендинг, который <em>ведёт к заявке</em></h3>
             <p>Делаю так, чтобы человек сразу понял, что вы предлагаете, и мог быстро оставить заявку.</p>
@@ -1954,54 +2026,7 @@ function activateServiceRow(index){
           </div>
           <div class="service-detail-foot">
             <div class="service-tags"><span>1 страница</span><span>адаптив</span><span>аналитика</span></div>
-            <a class="service-cta" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить задачу</a>
-          </div>
-        </article>
-
-        <article class="service-detail" id="serviceDetail2" role="tabpanel" aria-labelledby="serviceTab2" aria-hidden="true" inert>
-          <div class="service-detail-top"><span class="service-code">PROJECT / REDESIGN / 02</span><span class="service-ready">assembly ready</span></div>
-          <div class="service-detail-copy">
-            <h3>Старый сайт становится <em>новым инструментом</em></h3>
-            <p>Переношу полезный контент, меняю структуру и дизайн. В итоге сайт быстрее работает и лучше выглядит.</p>
-          </div>
-          <div class="service-visual">
-            <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема редизайна старого сайта в новый" focusable="false">
-              <g class="diagram-piece d1">
-                <text class="diagram-label" x="44" y="43">ДО</text>
-                <rect class="diagram-frame" x="34" y="54" width="238" height="210" rx="14"/>
-                <path class="diagram-line" d="M34 84H272"/>
-                <circle class="diagram-muted" cx="52" cy="69" r="3"/><circle class="diagram-muted" cx="64" cy="69" r="3"/>
-                <rect class="diagram-muted" x="51" y="100" width="188" height="15" rx="2"/>
-                <rect class="diagram-muted" x="72" y="127" width="151" height="8" rx="2"/>
-                <rect class="diagram-muted" x="48" y="149" width="74" height="72" rx="3"/>
-                <rect class="diagram-muted" x="132" y="159" width="112" height="8" rx="2"/>
-                <rect class="diagram-muted" x="145" y="178" width="91" height="8" rx="2"/>
-                <rect class="diagram-muted" x="126" y="203" width="124" height="31" rx="3"/>
-                <path class="diagram-line diagram-dash" d="M55 244l39-17 31 16 40-10 34 14"/>
-              </g>
-              <path class="diagram-line diagram-line-accent diagram-path" d="M292 154H349m-15-14 15 14-15 14"/>
-              <g class="diagram-piece d2">
-                <text class="diagram-label" x="376" y="24">ПОСЛЕ</text>
-                <rect class="diagram-frame" x="365" y="35" width="241" height="239" rx="16"/>
-                <path class="diagram-line" d="M365 67H606"/>
-                <circle class="diagram-muted" cx="384" cy="51" r="3"/><circle class="diagram-muted" cx="396" cy="51" r="3"/><circle class="diagram-accent" cx="408" cy="51" r="3"/>
-                <rect class="diagram-ink" x="388" y="88" width="128" height="12" rx="5"/>
-                <rect class="diagram-ink" x="388" y="108" width="101" height="12" rx="5"/>
-                <rect class="diagram-muted" x="388" y="132" width="111" height="7" rx="3"/>
-                <rect class="diagram-accent" x="388" y="151" width="72" height="23" rx="11"/>
-                <rect class="diagram-surface" x="518" y="86" width="65" height="88" rx="10"/>
-                <circle class="diagram-accent" cx="550" cy="117" r="17"/>
-                <rect class="diagram-frame" x="388" y="195" width="91" height="54" rx="8"/>
-                <rect class="diagram-frame" x="491" y="195" width="92" height="54" rx="8"/>
-                <rect class="diagram-muted" x="402" y="211" width="56" height="6" rx="3"/><rect class="diagram-ink" x="402" y="226" width="65" height="7" rx="3"/>
-                <rect class="diagram-muted" x="505" y="211" width="56" height="6" rx="3"/><rect class="diagram-ink" x="505" y="226" width="65" height="7" rx="3"/>
-              </g>
-              <g class="diagram-piece d3"><circle class="diagram-accent" cx="349" cy="154" r="5"/></g>
-            </svg>
-          </div>
-          <div class="service-detail-foot">
-            <div class="service-tags"><span>аудит</span><span>перенос</span><span>ускорение</span></div>
-            <a class="service-cta" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить редизайн</a>
+            <a class="service-cta" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить лендинг</a>
           </div>
         </article>
 
@@ -2052,52 +2077,60 @@ function activateServiceRow(index){
         </article>
 
         <article class="service-detail" id="serviceDetail4" role="tabpanel" aria-labelledby="serviceTab4" aria-hidden="true" inert>
-          <div class="service-detail-top"><span class="service-code">PROJECT / AUTOMATION / 04</span><span class="service-ready">assembly ready</span></div>
+          <div class="service-detail-top"><span class="service-code">PROJECT / REDESIGN / 04</span><span class="service-ready">assembly ready</span></div>
           <div class="service-detail-copy">
-            <h3>Заявка сама попадает <em>куда нужно</em></h3>
-            <p>Связываю сайт с Telegram, почтой или CRM. Вы сразу видите новую заявку, а клиент получает подтверждение.</p>
+            <h3>Старый сайт становится <em>новым инструментом</em></h3>
+            <p>Переношу полезный контент, меняю структуру и дизайн. В итоге сайт быстрее работает и лучше выглядит.</p>
           </div>
           <div class="service-visual">
-            <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема автоматической передачи заявки в Telegram, почту и CRM" focusable="false">
+            <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема редизайна старого сайта в новый" focusable="false">
               <g class="diagram-piece d1">
-                <rect class="diagram-frame" x="32" y="58" width="202" height="190" rx="16"/>
-                <text class="diagram-label" x="52" y="84">ЗАЯВКА С САЙТА</text>
-                <rect class="diagram-surface" x="52" y="101" width="162" height="30" rx="7"/>
-                <rect class="diagram-surface" x="52" y="142" width="162" height="30" rx="7"/>
-                <rect class="diagram-surface" x="52" y="183" width="162" height="30" rx="7"/>
-                <rect class="diagram-accent" x="52" y="222" width="94" height="16" rx="8"/>
+                <text class="diagram-label" x="44" y="43">ДО</text>
+                <rect class="diagram-frame" x="34" y="54" width="238" height="210" rx="14"/>
+                <path class="diagram-line" d="M34 84H272"/>
+                <circle class="diagram-muted" cx="52" cy="69" r="3"/><circle class="diagram-muted" cx="64" cy="69" r="3"/>
+                <rect class="diagram-muted" x="51" y="100" width="188" height="15" rx="2"/>
+                <rect class="diagram-muted" x="72" y="127" width="151" height="8" rx="2"/>
+                <rect class="diagram-muted" x="48" y="149" width="74" height="72" rx="3"/>
+                <rect class="diagram-muted" x="132" y="159" width="112" height="8" rx="2"/>
+                <rect class="diagram-muted" x="145" y="178" width="91" height="8" rx="2"/>
+                <rect class="diagram-muted" x="126" y="203" width="124" height="31" rx="3"/>
+                <path class="diagram-line diagram-dash" d="M55 244l39-17 31 16 40-10 34 14"/>
               </g>
-              <path class="diagram-line diagram-line-accent diagram-path" d="M234 229C278 229 274 151 324 151C374 151 368 62 431 62M324 151C384 151 389 150 455 150M324 151C376 151 374 238 429 238"/>
+              <path class="diagram-line diagram-line-accent diagram-path" d="M292 154H349m-15-14 15 14-15 14"/>
               <g class="diagram-piece d2">
-                <circle class="diagram-frame" cx="324" cy="151" r="36"/>
-                <circle class="diagram-accent" cx="324" cy="151" r="12"/>
-                <circle class="diagram-muted" cx="324" cy="124" r="3"/><circle class="diagram-muted" cx="348" cy="151" r="3"/><circle class="diagram-muted" cx="324" cy="178" r="3"/><circle class="diagram-muted" cx="300" cy="151" r="3"/>
+                <text class="diagram-label" x="376" y="24">ПОСЛЕ</text>
+                <rect class="diagram-frame" x="365" y="35" width="241" height="239" rx="16"/>
+                <path class="diagram-line" d="M365 67H606"/>
+                <circle class="diagram-muted" cx="384" cy="51" r="3"/><circle class="diagram-muted" cx="396" cy="51" r="3"/><circle class="diagram-accent" cx="408" cy="51" r="3"/>
+                <rect class="diagram-ink" x="388" y="88" width="128" height="12" rx="5"/>
+                <rect class="diagram-ink" x="388" y="108" width="101" height="12" rx="5"/>
+                <rect class="diagram-muted" x="388" y="132" width="111" height="7" rx="3"/>
+                <rect class="diagram-accent" x="388" y="151" width="72" height="23" rx="11"/>
+                <rect class="diagram-surface" x="518" y="86" width="65" height="88" rx="10"/>
+                <circle class="diagram-accent" cx="550" cy="117" r="17"/>
+                <rect class="diagram-frame" x="388" y="195" width="91" height="54" rx="8"/>
+                <rect class="diagram-frame" x="491" y="195" width="92" height="54" rx="8"/>
+                <rect class="diagram-muted" x="402" y="211" width="56" height="6" rx="3"/><rect class="diagram-ink" x="402" y="226" width="65" height="7" rx="3"/>
+                <rect class="diagram-muted" x="505" y="211" width="56" height="6" rx="3"/><rect class="diagram-ink" x="505" y="226" width="65" height="7" rx="3"/>
               </g>
-              <g class="diagram-piece d3">
-                <rect class="diagram-frame" x="430" y="34" width="174" height="58" rx="12"/>
-                <circle class="diagram-accent" cx="458" cy="63" r="13"/><text class="diagram-label" x="482" y="67">TELEGRAM</text>
-                <rect class="diagram-frame" x="454" y="121" width="150" height="58" rx="12"/>
-                <circle class="diagram-muted" cx="481" cy="150" r="13"/><text class="diagram-label" x="505" y="154">ПОЧТА</text>
-                <rect class="diagram-frame" x="428" y="209" width="176" height="58" rx="12"/>
-                <circle class="diagram-accent" cx="456" cy="238" r="13"/><text class="diagram-label" x="480" y="242">CRM</text>
-              </g>
-              <g class="diagram-piece d4"><circle class="diagram-accent" cx="431" cy="62" r="5"/><circle class="diagram-accent" cx="455" cy="150" r="5"/><circle class="diagram-accent" cx="429" cy="238" r="5"/></g>
+              <g class="diagram-piece d3"><circle class="diagram-accent" cx="349" cy="154" r="5"/></g>
             </svg>
           </div>
           <div class="service-detail-foot">
-            <div class="service-tags"><span>Telegram</span><span>CRM</span><span>интеграции</span></div>
-            <a class="service-cta" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить автоматизацию</a>
+            <div class="service-tags"><span>аудит</span><span>перенос</span><span>ускорение</span></div>
+            <a class="service-cta" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить редизайн</a>
           </div>
         </article>
 
         <article class="service-detail" id="serviceDetail5" role="tabpanel" aria-labelledby="serviceTab5" aria-hidden="true" inert>
-          <div class="service-detail-top"><span class="service-code">PROJECT / AI ASSISTANT / 05</span><span class="service-ready">assembly ready</span></div>
+          <div class="service-detail-top"><span class="service-code">PROJECT / BOTS + INTEGRATIONS / 05</span><span class="service-ready">assembly ready</span></div>
           <div class="service-detail-copy">
-            <h3>Помощник отвечает, <em>пока вы заняты</em></h3>
-            <p>Настраиваю Telegram-бота или ИИ-консультанта. Он отвечает на частые вопросы, принимает заявку и передаёт её вам.</p>
+            <h3>Бот отвечает, <em>а заявки не теряются</em></h3>
+            <p>Настраиваю Telegram-бота или ИИ-помощника и связываю его с сайтом, почтой или CRM. Он отвечает на частые вопросы и передаёт заявку вам.</p>
           </div>
           <div class="service-visual">
-            <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема ИИ-помощника, который использует базу знаний и отвечает в чате" focusable="false">
+            <svg class="service-diagram" viewBox="0 0 640 300" role="img" aria-label="Схема бота, который отвечает в чате и передаёт заявку в нужный сервис" focusable="false">
               <g class="diagram-piece d1">
                 <rect class="diagram-frame" x="24" y="42" width="156" height="58" rx="11"/>
                 <rect class="diagram-muted" x="42" y="58" width="78" height="7" rx="3"/><rect class="diagram-ink" x="42" y="76" width="112" height="8" rx="4"/>
@@ -2131,10 +2164,20 @@ function activateServiceRow(index){
             </svg>
           </div>
           <div class="service-detail-foot">
-            <div class="service-tags"><span>Telegram</span><span>ИИ</span><span>24 / 7</span></div>
-            <a class="service-cta" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить помощника</a>
+            <div class="service-tags"><span>Telegram</span><span>ИИ</span><span>CRM</span></div>
+            <a class="service-cta" href="https://t.me/maksim_site" target="_blank" rel="noopener">Обсудить бота</a>
           </div>
         </article>
+      </div>
+    </div>
+
+    <div class="service-integrations frev" aria-label="Дополнительные интеграции">
+      <div class="service-integrations-copy">
+        <span class="mono">Дополнительно</span>
+        <p>Если нужно, подключу Telegram, CRM, оплату и уведомления.</p>
+      </div>
+      <div class="service-integrations-list" aria-hidden="true">
+        <span>Telegram</span><span>CRM</span><span>Оплата</span><span>Уведомления</span>
       </div>
     </div>
 

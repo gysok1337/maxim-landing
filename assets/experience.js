@@ -1648,8 +1648,8 @@ function holdExperienceScrollAt(top){
     var values=[
       1-smooth(segment(motion,.515,.55)),
       phase(motion,.515,.55,.87,.895),
-      phase(motion,.87,.895,.985,.995),
-      phase(motion,.985,.995,.992,.999)
+      phase(motion,.87,.895,.972,.986),
+      smooth(segment(motion,.972,.986))
     ];
     var active=0;
     values.forEach(function(value,index){
@@ -1658,14 +1658,12 @@ function holdExperienceScrollAt(top){
       if(value>values[active])active=index;
       var step=copySteps[index];
       setOpacity(step,value);
-      var before=motion<[0,.515,.87,.985][index];
-      setTransform(step,'translate3d(0,'+((before?1:-1)*(1-value)*26).toFixed(1)+'px,0)');
-      step.style.filter='blur('+((1-value)*3).toFixed(2)+'px)';
+      var before=motion<[0,.515,.87,.972][index];
+      setTransform(step,'translate3d(0,'+((before?1:-1)*(1-value)*18).toFixed(1)+'px,0)');
       step.setAttribute('aria-hidden',value>.45?'false':'true');
     });
     setOpacity(resultCopy,1-copyEntry);
     setTransform(resultCopy,'translate3d(0,'+(-18*copyEntry).toFixed(1)+'px,0)');
-    resultCopy.style.filter='blur('+(2.5*copyEntry).toFixed(2)+'px)';
     resultCopy.setAttribute('aria-hidden',copyEntry>.55?'true':'false');
     if(sharedStageCount)sharedStageCount.textContent=copyEntry>.5?'04 / 04':'03 / 04';
     if(sharedStageTrack)sharedStageTrack.style.transform='scaleX('+mix(.968,1,progress).toFixed(4)+')';
@@ -1829,7 +1827,7 @@ function holdExperienceScrollAt(top){
     var routeMail=smooth(segment(motion,.958,.978));
     var routeTelegram=smooth(segment(motion,.964,.984));
     var deliveryDone=smooth(segment(motion,.978,.989));
-    var finalIn=smooth(segment(motion,.992,1));
+    var finalIn=smooth(segment(motion,.984,1));
     var tabletReveal=smooth(segment(motion,.292,.304));
     var phoneReveal=smooth(segment(motion,.425,.439));
     var activeShot=phoneReveal>=.5?2:(tabletReveal>=.5?1:0);
@@ -2072,7 +2070,7 @@ function holdExperienceScrollAt(top){
     telegramTarget.style.borderColor=deliveryDone>.55?'rgba(var(--accent-rgb),.42)':'';
 
     setOpacity(ready,finalIn);
-    setTransform(ready,'translate(-50%,-46%) scale('+mix(.96,1,finalIn).toFixed(3)+')');
+    ready.style.setProperty('--ready-scale',mix(.96,1,finalIn).toFixed(3));
     if(progress>.008)launchCueDismissed=true;
     setOpacity(launchScrollCue,launchCueDismissed?0:.8);
     setOpacity(camera,1);
