@@ -453,14 +453,11 @@ function holdExperienceScrollAt(top){
 
     setOpacity(copyOne,1-copySwap);
     setTransform(copyOne,'translate3d(0,'+(-26*copySwap)+'px,0)');
-    copyOne.style.filter='blur('+(2.5*copySwap).toFixed(2)+'px)';
     setOpacity(copyTwo,copySwap*(1-buildCopyOut));
     setTransform(copyTwo,'translate3d(0,'+(36*(1-copySwap)-26*buildCopyOut).toFixed(1)+'px,0)');
-    copyTwo.style.filter='blur('+(3*(1-copySwap)+2.5*buildCopyOut).toFixed(2)+'px)';
     copyTwo.setAttribute('aria-hidden',copySwap>.5&&buildCopyOut<.5?'false':'true');
     setOpacity(copyThree,buildCopy);
     setTransform(copyThree,'translate3d(0,'+(36*(1-buildCopy)).toFixed(1)+'px,0)');
-    copyThree.style.filter='blur('+(3*(1-buildCopy)).toFixed(2)+'px)';
     copyThree.setAttribute('aria-hidden',buildCopy>.5?'false':'true');
     var overallProgress=clamp(timeline/storyUnits,0,1);
     if(!window.__labLaunchActive){
@@ -1646,9 +1643,9 @@ function holdExperienceScrollAt(top){
     /* Let the 04 marker land before the launch copy replaces stage 03. */
     var copyEntry=smooth(segment(progress,.035,.065));
     var values=[
-      1-smooth(segment(motion,.515,.55)),
-      phase(motion,.515,.55,.87,.895),
-      phase(motion,.87,.895,.972,.986),
+      1-smooth(segment(motion,.508,.565)),
+      phase(motion,.508,.565,.87,.905),
+      phase(motion,.87,.905,.972,.986),
       smooth(segment(motion,.972,.986))
     ];
     var active=0;
@@ -1658,7 +1655,7 @@ function holdExperienceScrollAt(top){
       if(value>values[active])active=index;
       var step=copySteps[index];
       setOpacity(step,value);
-      var before=motion<[0,.515,.87,.972][index];
+      var before=motion<[0,.508,.87,.972][index];
       setTransform(step,'translate3d(0,'+((before?1:-1)*(1-value)*18).toFixed(1)+'px,0)');
       step.setAttribute('aria-hidden',value>.45?'false':'true');
     });

@@ -185,7 +185,7 @@ html.experience-virtual-active body{overscroll-behavior:none}
 .stage-tab:active{transform:scale(.97)}
 .stage-tab.is-active{color:var(--ink);border-color:var(--line-bright);background:rgba(20,20,19,.78)}
 .copy-stack{position:relative;min-height:330px}
-.copy-step{position:absolute;inset:0;will-change:transform,opacity,filter}
+.copy-step{position:absolute;inset:0;will-change:transform,opacity}
 .copy-step h1,.copy-step h2{
   max-width:9ch;
   font-size:clamp(52px,6.5vw,104px);
@@ -196,8 +196,8 @@ html.experience-virtual-active body{overscroll-behavior:none}
 .copy-step h1 em,.copy-step h2 em{font-family:var(--serif);font-weight:500;letter-spacing:0}
 .copy-step p{max-width:36ch;margin-top:28px;color:var(--muted);font-size:clamp(17px,1.45vw,21px);line-height:1.5}
 .copy-step p strong{color:var(--ink-2);font-weight:600}
-.copy-two{opacity:0;transform:translateY(36px);filter:blur(3px)}
-.copy-three{opacity:0;transform:translateY(36px);filter:blur(3px)}
+.copy-two{opacity:0;transform:translateY(36px)}
+.copy-three{opacity:0;transform:translateY(36px)}
 @media (min-width:701px){
   .copy-three{left:clamp(-18px,-1.25vw,-8px);right:clamp(8px,1.25vw,18px)}
   .copy-step.copy-three h2{font-size:clamp(50px,6vw,96px)}
