@@ -949,6 +949,7 @@ html.fx .about-txt h2.frev{
 }
 .case-slide:nth-child(2){--case-y:18px}
 .case-slide:nth-child(3){--case-y:7px}
+.case-slide:nth-child(4){--case-y:18px}
 .case-slide.is-active{opacity:1;transform:translate3d(0,var(--case-y),0)}
 .case-slide .work-visual,
 .case-slide.work-featured .work-visual,
@@ -981,7 +982,7 @@ html.fx .about-txt h2.frev{
 .case-carousel-position span{font-size:11px;letter-spacing:.12em;color:var(--muted)}
 .case-carousel-status{display:grid;grid-template-columns:minmax(120px,auto) minmax(120px,280px) auto;align-items:center;gap:clamp(16px,2.5vw,34px)}
 .case-carousel-active{font-weight:650;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.case-carousel-dots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.case-carousel-dots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .case-carousel-dot{position:relative;height:28px;border:0;background:transparent;cursor:pointer;padding:0}
 .case-carousel-dot::before{
   content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line-2);
@@ -1266,9 +1267,9 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
     </a>
     <nav class="nav-links">
       <a href="#about">Обо мне</a>
-      <a href="#approach">Подход</a>
       <a href="#works">Кейсы</a>
       <a href="#services">Услуги</a>
+      <a href="#approach">Как я работаю</a>
       <a href="#faq">Вопросы</a>
     </nav>
     <div class="nav-r">
@@ -1281,9 +1282,9 @@ html.dark .contact h2{filter:drop-shadow(0 0 24px rgba(243,241,236,.13))}
 <nav class="mmenu" id="mmenu">
   <div class="mono">Меню</div>
   <a href="#about">Обо мне</a>
-  <a href="#approach">Подход</a>
   <a href="#works">Кейсы</a>
   <a href="#services">Услуги</a>
+  <a href="#approach">Как я работаю</a>
   <a href="#faq">Вопросы</a>
   <a href="https://t.me/maksim_site" target="_blank" rel="noopener">Telegram ↗</a>
 </nav>
@@ -1817,16 +1818,31 @@ function activateServiceRow(index){
   <div class="wrap">
     <div class="sec-head">
       <h2 class="frev">Мои <span class="serif">кейсы</span></h2>
-      <span class="count frev">( 01 / 03 )</span>
+      <span class="count frev">( 01 / 04 )</span>
     </div>
 
     <div class="case-carousel" id="caseCarousel" role="region" aria-roledescription="карусель" aria-label="Кейсы Максима">
       <div class="case-carousel-viewport" id="caseCarouselViewport" tabindex="0">
         <div class="works-grid" id="caseCarouselTrack">
-      <article class="work work-featured case-slide is-active" id="caseSlide1" data-case-title="Лидер Вино" role="group" aria-roledescription="слайд" aria-label="1 из 3: Лидер Вино" aria-current="true">
+      <article class="work work-good-dog case-slide is-active" id="caseSlide1" data-case-title="Good Dog" role="group" aria-roledescription="слайд" aria-label="1 из 4: Good Dog" aria-current="true">
+        <div class="work-visual">
+          <img src="assets/screens/good-dog-hero.webp" alt="Первый экран сайта Good Dog" width="1280" height="800" loading="eager" fetchpriority="low" decoding="async">
+        </div>
+        <div class="work-meta">
+          <div>
+            <h3>Good Dog</h3>
+            <span class="facts">Хот-доги · Лендинг · В работе</span>
+          </div>
+          <div class="work-links">
+            <a href="https://good-dog.site" target="_blank" rel="noopener">Открыть сайт ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="work work-featured case-slide" id="caseSlide2" data-case-title="Лидер Вино" role="group" aria-roledescription="слайд" aria-label="2 из 4: Лидер Вино" aria-current="false">
         <div class="work-visual">
           <div class="leader-stage">
-            <img class="leader-static" src="assets/screens/lider-hero-lab.webp" alt="Первый экран сайта Лидер Вино" width="1280" height="800" loading="eager" fetchpriority="low" decoding="async">
+            <img class="leader-static" src="assets/screens/lider-hero-lab.webp" alt="Первый экран сайта Лидер Вино" width="1280" height="800" loading="lazy" decoding="async">
           </div>
         </div>
         <div class="work-meta">
@@ -1840,7 +1856,7 @@ function activateServiceRow(index){
         </div>
       </article>
 
-      <article class="work work-mbm case-slide" id="caseSlide2" data-case-title="MBM-Trans" role="group" aria-roledescription="слайд" aria-label="2 из 3: MBM-Trans" aria-current="false">
+      <article class="work work-mbm case-slide" id="caseSlide3" data-case-title="MBM-Trans" role="group" aria-roledescription="слайд" aria-label="3 из 4: MBM-Trans" aria-current="false">
         <div class="work-visual">
           <div class="case-compare" id="caseCompare" tabindex="0" role="slider" aria-label="Сравнение старого и нового сайта MBM-Trans" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="Старый сайт слева, новый справа; разделитель на 50 процентах">
             <img class="case-after" src="assets/screens/after.webp" alt="MBM-Trans - новый сайт" width="1280" height="860" loading="lazy">
@@ -1868,7 +1884,7 @@ function activateServiceRow(index){
         </div>
       </article>
 
-      <article class="work work-slot case-slide" id="caseSlide3" data-case-title="Ваш будущий проект" role="group" aria-roledescription="слайд" aria-label="3 из 3: ваш будущий проект" aria-current="false">
+      <article class="work work-slot case-slide" id="caseSlide4" data-case-title="Ваш будущий проект" role="group" aria-roledescription="слайд" aria-label="4 из 4: ваш будущий проект" aria-current="false">
         <div class="work-visual">
           <div class="slot-t">Здесь может быть <span class="serif">ваш сайт</span></div>
           <p>Расскажите про задачу. Бесплатно разберу ваш текущий сайт или идею и покажу макет того, что можно сделать.</p>
@@ -1880,14 +1896,15 @@ function activateServiceRow(index){
 
       <div class="case-carousel-nav" aria-label="Навигация по кейсам">
         <div class="case-carousel-position" aria-live="polite" aria-atomic="true">
-          <strong id="caseCarouselCurrent">01</strong><span>/ 03</span>
+          <strong id="caseCarouselCurrent">01</strong><span>/ 04</span>
         </div>
         <div class="case-carousel-status">
-          <span class="case-carousel-active" id="caseCarouselActive" aria-live="polite">Лидер Вино</span>
+          <span class="case-carousel-active" id="caseCarouselActive" aria-live="polite">Good Dog</span>
           <div class="case-carousel-dots">
-            <button class="case-carousel-dot" type="button" data-case-index="0" aria-label="Показать кейс Лидер Вино" aria-controls="caseSlide1" aria-current="true"></button>
-            <button class="case-carousel-dot" type="button" data-case-index="1" aria-label="Показать кейс MBM-Trans" aria-controls="caseSlide2" aria-current="false"></button>
-            <button class="case-carousel-dot" type="button" data-case-index="2" aria-label="Показать следующий проект" aria-controls="caseSlide3" aria-current="false"></button>
+            <button class="case-carousel-dot" type="button" data-case-index="0" aria-label="Показать кейс Good Dog" aria-controls="caseSlide1" aria-current="true"></button>
+            <button class="case-carousel-dot" type="button" data-case-index="1" aria-label="Показать кейс Лидер Вино" aria-controls="caseSlide2" aria-current="false"></button>
+            <button class="case-carousel-dot" type="button" data-case-index="2" aria-label="Показать кейс MBM-Trans" aria-controls="caseSlide3" aria-current="false"></button>
+            <button class="case-carousel-dot" type="button" data-case-index="3" aria-label="Показать следующий проект" aria-controls="caseSlide4" aria-current="false"></button>
           </div>
           <span class="case-carousel-hint">drag / swipe</span>
         </div>
@@ -2328,6 +2345,16 @@ function activateServiceRow(index){
 (function(){
   var TG='https://t.me/maksim_site';
   document.querySelectorAll('a[href*="t.me/"]').forEach(function(a){a.href=TG;});
+
+  /* Основной порядок: кейсы, услуги, затем длинный рассказ о процессе. */
+  var journeyZone=document.getElementById('journeyZone');
+  var worksSection=document.getElementById('works');
+  var servicesSection=document.getElementById('services');
+  var approachSection=document.getElementById('approach');
+  if(journeyZone&&worksSection&&servicesSection&&approachSection){
+    journeyZone.insertBefore(worksSection,approachSection);
+    journeyZone.insertBefore(servicesSection,approachSection);
+  }
 
   var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   var fine=matchMedia('(hover:hover) and (pointer:fine)').matches;
