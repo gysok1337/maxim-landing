@@ -836,54 +836,8 @@ html.fx .about-txt h2.frev{
   background:linear-gradient(180deg,rgba(0,0,0,.08),transparent 28%,transparent 66%,rgba(0,0,0,.54));
 }
 .work-mbm{grid-column:1/-1;width:min(100%,760px);margin-top:clamp(20px,4vh,44px)}
-.work-mbm .work-visual{aspect-ratio:1280/860}
-.case-compare{
-  --split:50%;--divider-opacity:1;--before-tag:1;--after-tag:1;
-  position:absolute;inset:0;overflow:hidden;cursor:ew-resize;isolation:isolate;
-  touch-action:pan-y pinch-zoom;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;-webkit-tap-highlight-color:transparent;
-}
-.case-compare::before{
-  content:"";position:absolute;inset:0;z-index:5;pointer-events:none;
-  background:
-    linear-gradient(180deg,rgba(0,0,0,.17),transparent 21%,transparent 72%,rgba(0,0,0,.34)),
-    linear-gradient(90deg,rgba(0,0,0,.09),transparent 16%,transparent 84%,rgba(0,0,0,.09));
-}
-.case-before,.case-after{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;
-  pointer-events:none;
-}
-.case-after{z-index:1;filter:saturate(.96) contrast(1.015)}
-.case-before-layer{
-  position:absolute;inset:0;z-index:2;overflow:hidden;
-  transform:translate3d(calc(var(--split) - 100%),0,0);
-  will-change:transform;
-}
-.case-before{
-  filter:saturate(.78) contrast(1.025) brightness(.94);
-  transform:translate3d(calc(100% - var(--split)),0,0);will-change:transform;
-}
-.case-before-layer::after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(90deg,rgb(var(--accent-rgb) / .07),transparent 22%);mix-blend-mode:screen;
-}
-.case-divider{
-  position:absolute;z-index:8;left:50%;top:0;bottom:0;width:1px;pointer-events:none;
-  background:rgba(255,255,255,.92);box-shadow:0 0 0 1px rgb(var(--accent-rgb) / .45),0 0 24px rgb(var(--accent-rgb) / .48);
-  opacity:var(--divider-opacity);transform:translate3d(var(--divider-offset,0px),0,0) translateX(-50%);will-change:transform,opacity;
-}
-.case-divider-knob{
-  position:absolute;left:50%;top:50%;width:46px;height:46px;border-radius:50%;transform:translate(-50%,-50%);
-  display:grid;place-items:center;background:#F3F1EC;color:#0E0E0D;border:1px solid rgba(14,14,13,.16);
-  box-shadow:0 10px 34px rgba(0,0,0,.30),0 0 30px rgb(var(--accent-rgb) / .24);
-}
-.case-divider-knob svg{width:21px;height:21px}
-.case-side-tag{
-  position:absolute;bottom:18px;z-index:7;padding:7px 13px;border-radius:999px;
-  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:opacity .16s linear;
-}
-.case-side-before{left:18px;background:rgba(10,10,10,.76);color:#F3F1EC;opacity:var(--before-tag)}
-.case-side-after{right:18px;background:#F3F1EC;color:#0E0E0D;opacity:var(--after-tag)}
+.work-mbm .work-visual{aspect-ratio:16/10;background:#071628}
+.mbm-static{display:block;width:100%;height:100%;object-fit:cover;object-position:center;pointer-events:none}
 .work-featured .work-meta{position:relative;left:auto;right:auto;bottom:auto;padding:22px 4px 0}
 .work-featured .work-meta h3{font-size:clamp(28px,4vw,48px)}
 .work-featured .facts{display:inline-block;margin-top:3px}
@@ -916,14 +870,7 @@ html.fx .about-txt h2.frev{
   .hero h1{font-size:clamp(42px,13.6vw,68px);line-height:.96}
   .hero h1 .line:nth-child(2){transform:none}
   .work-featured .work-visual{border-radius:16px}
-  .case-before,.case-after{object-position:top center}
-  .case-divider-knob{width:42px;height:42px}
-  .case-side-tag{bottom:66px}
-  .case-side-before{left:12px}.case-side-after{right:12px}
   .work-soon,.work-slot{grid-column:1/-1}
-}
-@media (prefers-reduced-motion:reduce){
-  .case-compare{--split:50%;--divider-opacity:1;--before-tag:1;--after-tag:1}
 }
 
 /* ---------- cases: ручная наклонная лента ---------- */
@@ -936,7 +883,6 @@ html.fx .about-txt h2.frev{
 }
 .case-carousel-viewport::-webkit-scrollbar{display:none}
 .case-carousel-viewport.is-dragging{cursor:grabbing;scroll-snap-type:none;user-select:none;-webkit-user-select:none}
-.case-carousel-viewport.is-comparing{scroll-snap-type:none;touch-action:pan-y}
 .case-carousel .works-grid{
   display:flex;grid-template-columns:none;align-items:flex-start;gap:clamp(20px,2.3vw,32px);
   width:max-content;padding-right:clamp(36px,22vw,300px);
@@ -960,8 +906,7 @@ html.fx .about-txt h2.frev{
 .case-slide .work-visual::before,.case-slide .work-visual::after{display:none}
 .case-slide.work-featured .leader-stage{padding:0;background:transparent}
 .case-slide.work-featured .leader-static{object-fit:cover;object-position:center top}
-.case-slide.work-mbm .work-visual{background:transparent}
-.case-slide.work-mbm .case-before,.case-slide.work-mbm .case-after{object-fit:cover;object-position:center top;background:transparent}
+.case-slide.work-mbm .work-visual{background:#071628}
 .case-slide.work-featured,.case-slide.work-mbm,.case-slide.work-slot{
   grid-column:auto;width:var(--case-width);min-height:0;padding:0;
 }
@@ -1858,19 +1803,7 @@ function activateServiceRow(index){
 
       <article class="work work-mbm case-slide" id="caseSlide3" data-case-title="MBM-Trans" role="group" aria-roledescription="слайд" aria-label="3 из 4: MBM-Trans" aria-current="false">
         <div class="work-visual">
-          <div class="case-compare" id="caseCompare" tabindex="0" role="slider" aria-label="Сравнение старого и нового сайта MBM-Trans" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="Старый сайт слева, новый справа; разделитель на 50 процентах">
-            <img class="case-after" src="assets/screens/after.webp" alt="MBM-Trans - новый сайт" width="1280" height="860" loading="lazy">
-            <div class="case-before-layer" id="caseBeforeLayer">
-              <img class="case-before" src="assets/screens/before.webp" alt="MBM-Trans - старый сайт" width="1280" height="860" loading="lazy">
-            </div>
-            <div class="case-divider" id="caseDivider" aria-hidden="true">
-              <span class="case-divider-knob">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></svg>
-              </span>
-            </div>
-            <span class="case-side-tag case-side-before">Было</span>
-            <span class="case-side-tag case-side-after">Стало</span>
-          </div>
+          <img class="mbm-static" src="assets/screens/mbm-trans-v3-hero.webp" alt="Первый экран нового сайта MBM-Trans" width="1280" height="800" loading="lazy" decoding="async">
         </div>
         <div class="work-meta">
           <div>
@@ -1878,8 +1811,8 @@ function activateServiceRow(index){
             <span class="facts">Перевозки негабарита · Редизайн</span>
           </div>
           <div class="work-links">
-            <a href="https://mbm-trans.ru/old-site-backup-2026-06-14/" target="_blank" rel="noopener">Было ↗</a>
-            <a href="https://mbm-trans.ru" target="_blank" rel="noopener">Стало ↗</a>
+            <a href="https://mbm-trans.ru" target="_blank" rel="noopener">Открыть сайт ↗</a>
+            <a href="https://mbm-trans.ru/old-site-backup-2026-06-14/" target="_blank" rel="noopener">Старая версия ↗</a>
           </div>
         </div>
       </article>
@@ -2975,7 +2908,7 @@ function activateServiceRow(index){
       frame=requestAnimationFrame(function(){frame=0;update(nearest());});
     },{passive:true});
     viewport.addEventListener('pointerdown',function(e){
-      if(e.pointerType!=='mouse'||e.button!==0||e.target.closest('a,button,.case-compare'))return;
+      if(e.pointerType!=='mouse'||e.button!==0||e.target.closest('a,button'))return;
       dragging=true;moved=false;pointerId=e.pointerId;startX=e.clientX;startScroll=viewport.scrollLeft;
       viewport.classList.add('is-dragging');
       try{viewport.setPointerCapture(pointerId);}catch(_){}
@@ -3046,125 +2979,6 @@ function activateServiceRow(index){
         });
       },{threshold:.5}).observe(ba);
     }
-  })();
-
-  /* ---------- MBM: компактное ручное сравнение ---------- */
-  (function(){
-    var compare=document.getElementById('caseCompare');
-    if(!compare)return;
-    var viewport=compare.closest('.case-carousel-viewport');
-    var current=50,tracking=false,dragging=false,pointerId=null,rectLeft=0,rectWidth=0,frame=0,pending=null,startX=0,startY=0;
-    var touchTracking=false,touchDragging=false,touchId=null,touchStartX=0,touchStartY=0;
-    function clampPct(value){return Math.max(0,Math.min(100,value));}
-    function paint(value){
-      var pct=clampPct(value);current=pct;
-      compare.style.setProperty('--split',pct.toFixed(2)+'%');
-      compare.style.setProperty('--divider-offset',((pct-50)/100*rectWidth).toFixed(2)+'px');
-      compare.style.setProperty('--divider-opacity',pct>1&&pct<99?'1':'0');
-      compare.style.setProperty('--before-tag',Math.max(0,Math.min(1,(pct-2)/14)).toFixed(3));
-      compare.style.setProperty('--after-tag',Math.max(0,Math.min(1,(98-pct)/14)).toFixed(3));
-    }
-    function announce(){
-      var pct=current,rounded=Math.round(pct);
-      compare.setAttribute('aria-valuenow',rounded);
-      compare.setAttribute('aria-valuetext',pct>=99?'Показан старый сайт':(pct<=1?'Показан новый сайт':'Старый сайт слева, новый справа; разделитель на '+rounded+' процентах'));
-    }
-    function commit(value){paint(value);announce();}
-    function cacheRect(){var rect=compare.getBoundingClientRect();rectLeft=rect.left;rectWidth=rect.width;paint(current);}
-    function valueFromClient(clientX){return rectWidth?clampPct((clientX-rectLeft)/rectWidth*100):current;}
-    function flush(){
-      frame=0;if(pending===null)return;
-      paint(pending);pending=null;
-    }
-    function schedule(clientX){
-      pending=valueFromClient(clientX);
-      if(!frame)frame=requestAnimationFrame(flush);
-    }
-    function beginDrag(e){
-      dragging=true;compare.classList.add('is-dragging');
-      if(viewport)viewport.classList.add('is-comparing');
-      try{compare.setPointerCapture(pointerId);}catch(_){}
-      compare.focus({preventScroll:true});
-      if(e.cancelable)e.preventDefault();
-    }
-    compare.addEventListener('pointerdown',function(e){
-      /* Mobile Safari can cancel a horizontal PointerEvent sequence while the
-         carousel still owns the surrounding scroll area. Touch input has a
-         dedicated non-passive path below; pointer input stays for mouse/pen. */
-      if(e.pointerType==='touch')return;
-      if(e.button!==undefined&&e.button!==0)return;if(e.target.closest('button,a'))return;
-      tracking=true;dragging=false;pointerId=e.pointerId;startX=e.clientX;startY=e.clientY;cacheRect();
-      e.stopPropagation();
-      if(e.pointerType==='mouse'){beginDrag(e);paint(valueFromClient(e.clientX));}
-    });
-    compare.addEventListener('pointermove',function(e){
-      if(!tracking||e.pointerId!==pointerId)return;
-      if(!dragging){
-        var dx=e.clientX-startX,dy=e.clientY-startY;
-        if(Math.max(Math.abs(dx),Math.abs(dy))<6)return;
-        if(Math.abs(dy)>Math.abs(dx)+2){tracking=false;pointerId=null;return;}
-        beginDrag(e);
-      }
-      e.stopPropagation();if(e.cancelable)e.preventDefault();schedule(e.clientX);
-    });
-    function release(e){
-      if(!tracking||e.pointerId!==pointerId)return;
-      if(!dragging)paint(valueFromClient(e.clientX));
-      if(frame){cancelAnimationFrame(frame);frame=0;}if(pending!==null){paint(pending);pending=null;}
-      tracking=false;dragging=false;compare.classList.remove('is-dragging');if(viewport)viewport.classList.remove('is-comparing');announce();
-      try{compare.releasePointerCapture(pointerId);}catch(_){}pointerId=null;
-    }
-    compare.addEventListener('pointerup',release);compare.addEventListener('pointercancel',release);
-    function findTouch(list,id){
-      for(var i=0;i<list.length;i++)if(list[i].identifier===id)return list[i];
-      return null;
-    }
-    function beginTouchDrag(){
-      touchDragging=true;compare.classList.add('is-dragging');
-      if(viewport)viewport.classList.add('is-comparing');
-    }
-    function finishTouch(touch,cancelled){
-      if(!touchTracking)return;
-      if(!cancelled&&!touchDragging&&touch)paint(valueFromClient(touch.clientX));
-      if(frame){cancelAnimationFrame(frame);frame=0;}
-      if(pending!==null){paint(pending);pending=null;}
-      touchTracking=false;touchDragging=false;touchId=null;
-      compare.classList.remove('is-dragging');if(viewport)viewport.classList.remove('is-comparing');
-      announce();
-    }
-    compare.addEventListener('touchstart',function(e){
-      if(touchTracking||e.touches.length!==1)return;
-      var touch=e.touches[0];
-      touchTracking=true;touchDragging=false;touchId=touch.identifier;
-      touchStartX=touch.clientX;touchStartY=touch.clientY;cacheRect();
-      e.stopPropagation();
-    },{passive:true});
-    compare.addEventListener('touchmove',function(e){
-      if(!touchTracking)return;
-      var touch=findTouch(e.touches,touchId);if(!touch)return;
-      if(!touchDragging){
-        var dx=touch.clientX-touchStartX,dy=touch.clientY-touchStartY;
-        if(Math.max(Math.abs(dx),Math.abs(dy))<5)return;
-        if(Math.abs(dy)>Math.abs(dx)+2){finishTouch(touch,true);return;}
-        beginTouchDrag();
-      }
-      if(e.cancelable)e.preventDefault();e.stopPropagation();schedule(touch.clientX);
-    },{passive:false});
-    compare.addEventListener('touchend',function(e){
-      var touch=findTouch(e.changedTouches,touchId);if(!touch)return;
-      finishTouch(touch,false);
-    },{passive:true});
-    compare.addEventListener('touchcancel',function(){finishTouch(null,true);},{passive:true});
-    compare.addEventListener('dragstart',function(e){e.preventDefault();});
-    compare.addEventListener('keydown',function(e){
-      if(e.target!==compare)return;var next=current;
-      if(e.key==='ArrowLeft'||e.key==='ArrowDown')next-=4;
-      else if(e.key==='ArrowRight'||e.key==='ArrowUp')next+=4;
-      else if(e.key==='Home')next=0;else if(e.key==='End')next=100;else return;
-      e.preventDefault();commit(next);
-    });
-    cacheRect();commit(current);
-    addEventListener('resize',function(){if(!window.__portfolioHeightOnlyResize)cacheRect();},{passive:true});
   })();
 
   /* ---------- FAQ: ответ появляется под выбранным сообщением ---------- */
