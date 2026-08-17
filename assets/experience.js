@@ -792,10 +792,9 @@ function holdExperienceScrollAt(top){
     window.__experienceLabSchedule(frame);
   }
 
+  /* The scene advances on its own clock now, so no scroll hint is needed. */
   function cueCanShow(){
-    if(!scrollCue||visual>=buildEnd-.01)return false;
-    var rect=section.getBoundingClientRect();
-    return rect.top<window.innerHeight&&rect.bottom>0;
+    return false;
   }
 
   function hideScrollCue(){
@@ -1092,58 +1091,28 @@ function holdExperienceScrollAt(top){
   }
 })();
 
-/* The scene gets a short native runway. It absorbs the momentum of the gesture
-   that reaches the section, then the same wheel/touch input advances a bounded
-   internal progress. This avoids stopping the page before the scene is visible. */
+/* The scene plays on its own clock. The page scroll is never held: the user
+   scrolls freely while the animation runs beside it, and playback pauses once
+   the section drifts far off screen in either direction. */
 (function(){
   'use strict';
 
   if(!window.__experienceVirtualMode)return;
   var section=document.getElementById('labExperience');
   if(!section)return;
-  var sticky=document.getElementById('labSticky');
 
   var reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-  var coarse=window.matchMedia('(pointer:coarse)').matches;
-  var active=false;
   var overall=0;
-  var touchY=0;
-  var upwardIntent=0;
-  var inputCredit=0;
-  var inputFrame=0;
-  var lastScrollY=window.scrollY;
-  var transitionUntil=0;
-  var entrySettling=false;
-  var entrySettleTimer=0;
-  var anchorY=window.scrollY;
-  var clampFrame=0;
-  var navigationBypassUntil=0;
-  var cachedBounds={top:0,end:0,height:0,stickyHeight:0};
-  var autoDelayTimer=0;
-  var autoFrame=0;
-  var autoRunning=false;
-  var autoDelay=coarse?2000:2300;
+  var playing=false;
+  var playFrame=0;
+  var nearMargin=160;
 
   function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
   function splitPoint(){return reduced?.60:(window.innerWidth<=700?.469:.447);}
-  function refreshSectionBounds(){
+  function sceneNearViewport(){
+    if(window.__experienceLabActive===false)return false;
     var rect=section.getBoundingClientRect();
-    var top=rect.top+window.scrollY;
-    var stickyHeight=sticky?sticky.offsetHeight:window.innerHeight;
-    var height=section.offsetHeight;
-    cachedBounds={top:top,end:top+Math.max(0,height-stickyHeight),height:height,stickyHeight:stickyHeight};
-    return cachedBounds;
-  }
-  function sectionTop(){return cachedBounds.top;}
-  function sectionBounds(){return cachedBounds;}
-  function sectionRect(){return {top:cachedBounds.top-window.scrollY,bottom:cachedBounds.top+cachedBounds.height-window.scrollY};}
-  function stopPageScroller(){
-    var lenis=window.__portfolioLenis;
-    if(lenis&&typeof lenis.stop==='function')lenis.stop();
-  }
-  function startPageScroller(){
-    var lenis=window.__portfolioLenis;
-    if(lenis&&typeof lenis.start==='function')lenis.start();
+    return rect.top<window.innerHeight+nearMargin&&rect.bottom>-nearMargin;
   }
   function visualOverall(){
     var split=splitPoint();
@@ -1169,312 +1138,63 @@ function holdExperienceScrollAt(top){
     var lead=launch<.78?.018:(launch<.985?.007:.012);
     return split+(1-split)*clamp(launch+lead,0,1);
   }
-  function stopAutoProgress(scheduleAgain){
-    clearTimeout(autoDelayTimer);
-    autoDelayTimer=0;
-    if(autoFrame)cancelAnimationFrame(autoFrame);
-    autoFrame=0;
-    autoRunning=false;
-    document.documentElement.classList.remove('experience-auto-active');
-    if(scheduleAgain&&active&&!entrySettling&&!reduced&&!document.hidden&&!window.__experiencePassed){
-      autoDelayTimer=setTimeout(startAutoProgress,autoDelay);
+  function playTick(){
+    playFrame=0;
+    if(window.__experiencePassed||document.hidden||!sceneNearViewport())return stopPlayback();
+    if(reduced)applyOverall(1);
+    else{
+      var allowed=allowedOverall();
+      if(allowed>overall+.00005)applyOverall(allowed);
     }
+    playFrame=requestAnimationFrame(playTick);
   }
-  function autoProgress(now){
-    if(!active||entrySettling||reduced||document.hidden||window.__experiencePassed){
-      stopAutoProgress(false);
-      return;
-    }
-    var allowed=allowedOverall();
-    if(allowed>overall+.00005)applyOverall(allowed);
-    autoFrame=requestAnimationFrame(autoProgress);
-  }
-  function startAutoProgress(){
-    autoDelayTimer=0;
-    if(!active||entrySettling||reduced||document.hidden||window.__experiencePassed)return;
-    autoRunning=true;
-    document.documentElement.classList.add('experience-auto-active');
-    autoFrame=requestAnimationFrame(autoProgress);
-  }
-  function registerInteraction(){
-    if(active)stopAutoProgress(true);
-  }
-  function clampScene(){
-    if(clampFrame)return;
-    clampFrame=requestAnimationFrame(function(){
-      clampFrame=0;
-      if(Math.abs(window.scrollY-anchorY)<=1){
-        lastScrollY=window.scrollY;
-        return;
-      }
-      transitionUntil=performance.now()+120;
-      experienceScrollTo(anchorY,false);
-      lastScrollY=anchorY;
-    });
-  }
-  function settleEntry(){
-    clearTimeout(entrySettleTimer);
-    entrySettleTimer=0;
-    if(!active||!entrySettling)return;
-    var bounds=sectionBounds();
-    /* On touch screens the native runway may already have moved a little by
-       the time momentum settles. Keep that valid position: snapping it back
-       to the section start is visible as a jerk even though the sticky frame
-       itself has not changed. Desktop keeps the deterministic Safari anchor. */
-    anchorY=Math.round(coarse?clamp(window.scrollY,bounds.top,bounds.end):bounds.top);
-    entrySettling=false;
-    stopPageScroller();
-    clampScene();
-    stopAutoProgress(true);
-  }
-  function scheduleEntrySettle(delay){
-    clearTimeout(entrySettleTimer);
-    entrySettleTimer=setTimeout(settleEntry,delay||170);
-  }
-  function activateScene(){
-    if(window.__experiencePassed||active||performance.now()<navigationBypassUntil)return;
-    var bounds=cachedBounds.height?cachedBounds:refreshSectionBounds();
-    /* Layout is measured on load/font-ready and on real width changes. Doing
-       the same synchronous DOM pass here caused a visible hitch on iOS. */
-    if(window.__experienceProcessMeasureWidth!==window.innerWidth&&typeof window.__remeasureExperienceProcess==='function'){
-      window.__remeasureExperienceProcess();
-    }
+  function startPlayback(){
+    if(playing||window.__experiencePassed)return;
+    playing=true;
     overall=Math.max(overall,visualOverall());
-    active=true;
-    entrySettling=true;
-    stopAutoProgress(false);
-    anchorY=clamp(window.scrollY,bounds.top,bounds.end);
-    upwardIntent=0;
     window.__experienceLabSuspended=false;
-    document.documentElement.classList.add('experience-virtual-active');
-    scheduleEntrySettle(coarse?220:170);
+    document.documentElement.classList.add('experience-auto-active');
     if(typeof window.__resumeExperienceProcess==='function')window.__resumeExperienceProcess();
     if(typeof window.__resumeExperienceLaunch==='function')window.__resumeExperienceLaunch();
-    applyOverall(overall);
+    playFrame=requestAnimationFrame(playTick);
   }
-  function freezeScene(){
-    stopAutoProgress(false);
-    inputCredit=0;
-    overall=visualOverall();
+  function stopPlayback(){
+    if(playFrame)cancelAnimationFrame(playFrame);
+    playFrame=0;
+    if(!playing)return;
+    playing=false;
+    document.documentElement.classList.remove('experience-auto-active');
     if(typeof window.__labFreezeProcess==='function')window.__labFreezeProcess();
     if(typeof window.__labFreezeLaunch==='function')window.__labFreezeLaunch();
-    window.__experienceLabSuspended=true;
   }
-  function leaveUp(amount){
-    if(!active)return;
-    clearTimeout(entrySettleTimer);
-    entrySettleTimer=0;
-    entrySettling=false;
-    freezeScene();
-    active=false;
-    upwardIntent=0;
-    document.documentElement.classList.remove('experience-virtual-active');
-    startPageScroller();
-    var distance=clamp(150+Math.abs(amount)*2.2,180,window.innerHeight*.72);
-    transitionUntil=performance.now()+(coarse?120:220);
-    /* Release touch input at the upper edge of the section. The following
-       native gesture can then continue through the page without a large
-       programmatic jump out of the sticky scene. */
-    var nextY=Math.max(0,sectionTop()-(coarse?1:distance));
-    experienceScrollTo(nextY,false);
-    lastScrollY=nextY;
+  function updatePlayback(){
+    if(window.__experiencePassed){stopPlayback();return;}
+    if(document.hidden||!sceneNearViewport())stopPlayback();
+    else startPlayback();
   }
-  function advance(amount){
-    if(window.__experiencePassed)return;
-    var pixels=clamp(Math.abs(amount),5,coarse?64:84);
-    inputCredit=clamp(inputCredit+pixels/(coarse?820:1080),0,
-      window.__labProcessReady===true?.085:.12);
-    if(!inputFrame)inputFrame=requestAnimationFrame(pumpInput);
-  }
-  function pumpInput(){
-    inputFrame=0;
-    if(!active||window.__experiencePassed||inputCredit<=.00005){inputCredit=0;return;}
-    var allowed=allowedOverall();
-    var step=Math.min(inputCredit,Math.max(0,allowed-overall));
-    if(step>.00005){
-      applyOverall(overall+step);
-      inputCredit=Math.max(0,inputCredit-step);
-    }
-    if(inputCredit>.00005)inputFrame=requestAnimationFrame(pumpInput);
-  }
-  function normalizedWheel(event){
-    var amount=event.deltaY;
-    if(event.deltaMode===1)amount*=16;
-    else if(event.deltaMode===2)amount*=window.innerHeight;
-    return amount;
-  }
-  function canEnter(rect){return rect.top<=1&&rect.bottom>Math.min(window.innerHeight,cachedBounds.height)*.72;}
-
-  function onWheel(event){
-    if(window.__experiencePassed)return;
-    var amount=normalizedWheel(event);
-    if(Math.abs(amount)<.1)return;
-    var rect=sectionRect();
-    if(active){
-      registerInteraction();
-      if(amount<0){
-        event.preventDefault();
-        upwardIntent+=Math.min(48,-amount);
-        if(upwardIntent>=18)leaveUp(amount);
-      }else if(entrySettling){
-        upwardIntent=0;
-        var bounds=sectionBounds();
-        var remaining=bounds.end-window.scrollY;
-        if(remaining<=Math.max(18,Math.min(72,amount*.42))){
-          event.preventDefault();
-          settleEntry();
-          advance(amount);
-        }else scheduleEntrySettle(190);
-      }else{
-        event.preventDefault();
-        upwardIntent=0;
-        advance(amount);
-      }
-      return;
-    }
-    if(amount<=0)return;
-    if(canEnter(rect))activateScene();
-  }
-
-  function onTouchStart(event){
-    if(event.touches&&event.touches[0])touchY=event.touches[0].clientY;
-    upwardIntent=0;
-    registerInteraction();
-  }
-  function onTouchMove(event){
-    if(!event.touches||!event.touches[0])return;
-    var nextY=event.touches[0].clientY;
-    var amount=touchY-nextY;
-    touchY=nextY;
-    if(Math.abs(amount)<.2)return;
-    var rect=sectionRect();
-    if(active){
-      registerInteraction();
-      if(amount<0){
-        event.preventDefault();
-        upwardIntent+=Math.min(36,-amount);
-        if(upwardIntent>=14)leaveUp(amount*3);
-      }else if(entrySettling){
-        upwardIntent=0;
-        var bounds=sectionBounds();
-        if(bounds.end-window.scrollY<=18){
-          event.preventDefault();
-          settleEntry();
-          advance(amount*2.2);
-        }else scheduleEntrySettle(220);
-      }else{
-        event.preventDefault();
-        upwardIntent=0;
-        advance(amount*2.2);
-      }
-      return;
-    }
-    if(amount>0&&canEnter(rect))activateScene();
-  }
-
-  function onTouchEnd(){
-    if(active&&entrySettling)scheduleEntrySettle(190);
-    else if(active)stopAutoProgress(true);
-  }
-
-  window.__experienceReleaseForNavigation=function(){
-    stopAutoProgress(false);
-    clearTimeout(entrySettleTimer);
-    entrySettleTimer=0;
-    entrySettling=false;
-    if(active)freezeScene();
-    active=false;
-    upwardIntent=0;
-    navigationBypassUntil=performance.now()+1800;
-    transitionUntil=navigationBypassUntil;
-    document.documentElement.classList.remove('experience-virtual-active');
-    startPageScroller();
-  };
-
-  function onKeyDown(event){
-    if(!active||window.__experiencePassed)return;
-    registerInteraction();
-    var forward=event.key==='ArrowDown'||event.key==='PageDown'||event.key===' ';
-    var backward=event.key==='ArrowUp'||event.key==='PageUp';
-    if(forward){event.preventDefault();upwardIntent=0;advance(event.key==='ArrowDown'?70:180);}
-    else if(backward){event.preventDefault();leaveUp(event.key==='ArrowUp'?90:220);}
-  }
-
-  function onScroll(){
-    var now=performance.now();
-    var scrollY=window.scrollY;
-    var scrollDelta=scrollY-lastScrollY;
-    var movingDown=scrollDelta>.5;
-    lastScrollY=scrollY;
-    if(now<transitionUntil)return;
-    var rect=sectionRect();
-    if(active){
-      if(entrySettling){
-        var bounds=sectionBounds();
-        if(scrollDelta>1.5){
-          advance(scrollDelta);
-          anchorY=clamp(scrollY,bounds.top,bounds.end);
-          if(scrollY>=bounds.end-1)settleEntry();
-          else scheduleEntrySettle(coarse?220:170);
-        }else if(scrollDelta<-1.5&&scrollY<bounds.top-2)leaveUp(scrollDelta);
-        return;
-      }
-      /* A few browsers can still apply a fragment of momentum after a cancelled
-         event. Consume it without switching between sticky and fixed layouts. */
-      if(scrollDelta>1.5){advance(scrollDelta);clampScene();return;}
-      if(scrollDelta<-1.5){leaveUp(scrollDelta);return;}
-      if(Math.abs(scrollY-anchorY)>2)clampScene();
-      return;
-    }
-    if(!window.__experiencePassed&&movingDown&&canEnter(rect)){
-      activateScene();
-      if(active){
-        var entered=Math.min(scrollDelta,Math.max(0,window.scrollY-sectionTop()));
-        if(entered>1.5)advance(entered);
-      }
-    }
-  }
-
   window.__experienceVirtualSeek=function(value){
     if(window.__experiencePassed)return;
-    if(!active)activateScene();
     applyOverall(value);
+    updatePlayback();
   };
-  window.__experienceVirtualState=function(){return {active:active,settling:entrySettling,overall:overall,visual:visualOverall(),auto:autoRunning};};
-
-  window.addEventListener('wheel',onWheel,{passive:false,capture:true});
-  window.addEventListener('touchstart',onTouchStart,{passive:true,capture:true});
-  window.addEventListener('touchmove',onTouchMove,{passive:false,capture:true});
-  window.addEventListener('touchend',onTouchEnd,{passive:true,capture:true});
-  window.addEventListener('touchcancel',onTouchEnd,{passive:true,capture:true});
-  window.addEventListener('keydown',onKeyDown,{capture:true});
-  window.addEventListener('pointerdown',registerInteraction,{passive:true,capture:true});
-  window.addEventListener('scroll',onScroll,{passive:true});
-  window.addEventListener('experience:passed',function(){
-    stopAutoProgress(false);
-    active=false;
-    entrySettling=false;
-    clearTimeout(entrySettleTimer);
-    entrySettleTimer=0;
-    overall=1;
-    inputCredit=0;
-    window.__experienceLabSuspended=false;
-    document.documentElement.classList.remove('experience-virtual-active');
-    startPageScroller();
-  });
-  refreshSectionBounds();
-  window.addEventListener('load',refreshSectionBounds,{once:true});
+  window.__experienceVirtualState=function(){return {active:playing,settling:false,overall:overall,visual:visualOverall(),auto:playing};};
+  /* Navigation is never blocked by the scene now; the hook stays for compatibility. */
+  window.__experienceReleaseForNavigation=function(){};
+  window.addEventListener('scroll',updatePlayback,{passive:true});
+  window.addEventListener('load',updatePlayback,{once:true});
   window.addEventListener('resize',function(){
     if(window.__portfolioHeightOnlyResize)return;
-    refreshSectionBounds();
+    updatePlayback();
   },{passive:true});
-  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(refreshSectionBounds);
   document.addEventListener('visibilitychange',function(){
-    if(document.hidden){stopAutoProgress(false);return;}
-    if(!active)return;
-    if(entrySettling)settleEntry();
-    else{clampScene();stopAutoProgress(true);}
+    if(document.hidden)stopPlayback();
+    else updatePlayback();
   });
+  window.addEventListener('experience:passed',function(){
+    stopPlayback();
+    overall=1;
+  });
+  updatePlayback();
 })();
 
 (function(){
