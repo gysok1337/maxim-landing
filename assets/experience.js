@@ -1091,9 +1091,12 @@ function holdExperienceScrollAt(top){
   }
 })();
 
-/* The scene plays on its own clock. The page scroll is never held: the user
-   scrolls freely while the animation runs beside it, and playback pauses once
-   the section drifts far off screen in either direction. */
+/* The scene plays on its own clock, and the page holds still while it does.
+   The hold is a courtesy, not a trap: a fresh push in either direction lets go
+   at once, and it never re-arms until the reader leaves the section entirely.
+   The gesture that carried the reader into the section is deliberately not
+   counted as a wish to leave, otherwise its own momentum tail would release
+   the hold on the same frame it engaged. */
 (function(){
   'use strict';
 
@@ -1107,7 +1110,25 @@ function holdExperienceScrollAt(top){
   var playFrame=0;
   var nearMargin=160;
 
+  var held=false;
+  var escaped=false;
+  var anchorY=0;
+  var lastY=window.scrollY;
+  var intent=0;
+  var armed=false;
+  var quietTimer=0;
+  var armTimer=0;
+  var lastInputAt=0;
+  var clampFrame=0;
+  var releaseAt=380;
+  var quietMs=220;
+  var armFallbackMs=1800;
+  var idleGap=400;
+  var stallSince=0;
+
   function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
+  function mix(a,b,t){return a+(b-a)*t;}
+  function ramp(value,start,end){return clamp((value-start)/(end-start),0,1);}
   function splitPoint(){return reduced?.60:(window.innerWidth<=700?.469:.447);}
   function sceneNearViewport(){
     if(window.__experienceLabActive===false)return false;
@@ -1135,27 +1156,52 @@ function holdExperienceScrollAt(top){
       return split*clamp(process+.028,0,1);
     }
     var launch=typeof window.__labLaunchProgress==='function'?window.__labLaunchProgress():0;
-    var lead=launch<.78?.018:(launch<.985?.007:.012);
+    /* Stepping the lead mid-flight showed up as a visible hitch, because the
+       carrot jumped closer in one frame. The same values now cross over. */
+    var lead=mix(.018,.007,ramp(launch,.70,.84));
+    if(launch>.93)lead=mix(.007,.012,ramp(launch,.93,.99));
     return split+(1-split)*clamp(launch+lead,0,1);
+  }
+  /* Freezing parks each module's own target on its current value, while the
+     driver still holds the slightly-ahead figure it handed out last. Resuming
+     therefore leaves the carrot exactly on the nose: nothing is asked of the
+     modules, so the scene stands still forever. Re-issuing the stored figure
+     gives them something to walk toward again. Re-issuing is harmless when the
+     scene is merely waiting on one of its own beats. */
+  function revive(){
+    window.__experienceLabSuspended=false;
+    if(typeof window.__resumeExperienceProcess==='function')window.__resumeExperienceProcess();
+    if(typeof window.__resumeExperienceLaunch==='function')window.__resumeExperienceLaunch();
+    applyOverall(overall);
   }
   function playTick(){
     playFrame=0;
     if(window.__experiencePassed||document.hidden||!sceneNearViewport())return stopPlayback();
+    var before=overall;
     if(reduced)applyOverall(1);
     else{
       var allowed=allowedOverall();
       if(allowed>overall+.00005)applyOverall(allowed);
     }
+    var now=performance.now();
+    if(overall>before+.000001||!stallSince)stallSince=now;
+    else if(now-stallSince>600&&!sceneFinished()){
+      /* Nothing moved for a while. Any of the freeze paths may have parked a
+         module; nudging them costs nothing and un-parks a genuine stall. */
+      stallSince=now;
+      revive();
+    }
+    /* The scene has told its story: hand the page straight back. */
+    if(held&&overall>=.9999)releaseHold(false,'complete');
     playFrame=requestAnimationFrame(playTick);
   }
   function startPlayback(){
     if(playing||window.__experiencePassed)return;
     playing=true;
     overall=Math.max(overall,visualOverall());
-    window.__experienceLabSuspended=false;
     document.documentElement.classList.add('experience-auto-active');
-    if(typeof window.__resumeExperienceProcess==='function')window.__resumeExperienceProcess();
-    if(typeof window.__resumeExperienceLaunch==='function')window.__resumeExperienceLaunch();
+    stallSince=0;
+    revive();
     playFrame=requestAnimationFrame(playTick);
   }
   function stopPlayback(){
@@ -1172,18 +1218,146 @@ function holdExperienceScrollAt(top){
     if(document.hidden||!sceneNearViewport())stopPlayback();
     else startPlayback();
   }
+  function measureAnchor(){
+    anchorY=Math.round(section.getBoundingClientRect().top+window.scrollY);
+  }
+  function sceneFinished(){
+    return !!window.__experiencePassed||overall>=.9999;
+  }
+  function armIntent(){
+    clearTimeout(quietTimer);
+    clearTimeout(armTimer);
+    quietTimer=0;
+    armTimer=0;
+    armed=true;
+    intent=0;
+    lastInputAt=performance.now();
+  }
+  function armGesture(){
+    /* A flick keeps firing events long after the finger leaves the trackpad,
+       and that tail is not a wish to leave: it is the same gesture arriving.
+       So input only starts counting once it has gone quiet for a moment. A
+       reader who never pauses still gets out, via the fallback timer. */
+    armed=false;
+    intent=0;
+    clearTimeout(quietTimer);
+    clearTimeout(armTimer);
+    quietTimer=setTimeout(armIntent,quietMs);
+    armTimer=setTimeout(armIntent,armFallbackMs);
+  }
+  function noteQuiet(){
+    if(armed)return;
+    clearTimeout(quietTimer);
+    quietTimer=setTimeout(armIntent,quietMs);
+  }
+  function engageHold(){
+    if(held||reduced||escaped||sceneFinished())return;
+    held=true;
+    document.documentElement.classList.add('experience-hold');
+    var lenis=window.__portfolioLenis;
+    if(lenis&&typeof lenis.stop==='function')lenis.stop();
+    experienceScrollTo(anchorY,false);
+    lastY=anchorY;
+    armGesture();
+    startPlayback();
+  }
+  function releaseHold(markEscaped,why){
+    if(window.__holdDebug)window.__holdDebug.push({why:why||'?',esc:!!markEscaped,y:Math.round(window.scrollY),t:Math.round(performance.now())});
+    if(clampFrame){cancelAnimationFrame(clampFrame);clampFrame=0;}
+    clearTimeout(quietTimer);
+    clearTimeout(armTimer);
+    quietTimer=0;
+    armTimer=0;
+    armed=false;
+    intent=0;
+    if(!held)return;
+    held=false;
+    if(markEscaped)escaped=true;
+    document.documentElement.classList.remove('experience-hold');
+    var lenis=window.__portfolioLenis;
+    if(lenis&&typeof lenis.start==='function')lenis.start();
+    lastY=window.scrollY;
+  }
+  function keepAnchored(){
+    if(!held||clampFrame)return;
+    clampFrame=requestAnimationFrame(function(){
+      clampFrame=0;
+      if(!held)return;
+      if(Math.abs(window.scrollY-anchorY)<=1){lastY=window.scrollY;return;}
+      experienceScrollTo(anchorY,false);
+      lastY=anchorY;
+    });
+  }
+  function pushIntent(amount){
+    if(!held)return;
+    if(!armed){noteQuiet();return;}
+    var now=performance.now();
+    /* Scrolling that keeps coming builds up; a stray notch fades away. */
+    if(now-lastInputAt>idleGap)intent=0;
+    lastInputAt=now;
+    intent+=Math.abs(amount);
+    if(intent>=releaseAt)releaseHold(true,'intent');
+  }
+  function onScroll(){
+    var y=window.scrollY;
+    var previous=lastY;
+    lastY=y;
+    if(held){keepAnchored();updatePlayback();return;}
+    if(escaped){
+      var away=section.getBoundingClientRect();
+      if(away.bottom<-nearMargin||away.top>window.innerHeight+nearMargin)escaped=false;
+    }
+    /* Engage only when the reader crosses the pin line on the way down. Coming
+       back up from below must stay free, or leaving the section would snap. */
+    if(!reduced&&!escaped&&!sceneFinished()&&previous<=anchorY+4&&y>anchorY&&window.__experienceLabActive!==false){
+      /* If a single frame already carried the reader well past the section,
+         pulling them back would read as a glitch. Let that one go. */
+      if(y-anchorY<window.innerHeight*1.2&&performance.now()>=(window.__experienceInternalScrollUntil||0))engageHold();
+    }
+    updatePlayback();
+  }
+  function onWheel(event){
+    if(!held)return;
+    if(event.deltaY<0){releaseHold(true,'wheel-up');return;}
+    if(event.cancelable)event.preventDefault();
+    pushIntent(event.deltaY);
+  }
+  var touchY=0;
+  function onTouchStart(event){
+    touchY=event.touches[0].clientY;
+    if(held&&!armed)armIntent();
+  }
+  function onTouchMove(event){
+    if(!held)return;
+    var y=event.touches[0].clientY;
+    var delta=touchY-y;
+    touchY=y;
+    if(delta<0){releaseHold(true,'touch-up');return;}
+    if(event.cancelable)event.preventDefault();
+    pushIntent(delta*2.2);
+  }
+  function onKey(event){
+    if(!held)return;
+    var key=event.key;
+    if(key===' '||key==='Spacebar'||key==='PageDown'||key==='PageUp'||key==='ArrowDown'||key==='ArrowUp'||key==='Home'||key==='End')releaseHold(true,'key');
+  }
   window.__experienceVirtualSeek=function(value){
     if(window.__experiencePassed)return;
     applyOverall(value);
     updatePlayback();
   };
-  window.__experienceVirtualState=function(){return {active:playing,settling:false,overall:overall,visual:visualOverall(),auto:playing};};
-  /* Navigation is never blocked by the scene now; the hook stays for compatibility. */
-  window.__experienceReleaseForNavigation=function(){};
-  window.addEventListener('scroll',updatePlayback,{passive:true});
-  window.addEventListener('load',updatePlayback,{once:true});
+  window.__experienceVirtualState=function(){return {active:playing,settling:false,overall:overall,visual:visualOverall(),auto:playing,held:held,escaped:escaped,intent:intent};};
+  /* Menu jumps must never fight the hold. */
+  window.__experienceReleaseForNavigation=function(){releaseHold(true,'nav');};
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('wheel',onWheel,{passive:false});
+  window.addEventListener('touchstart',onTouchStart,{passive:true});
+  window.addEventListener('touchmove',onTouchMove,{passive:false});
+  window.addEventListener('keydown',onKey);
+  window.addEventListener('load',function(){measureAnchor();updatePlayback();},{once:true});
   window.addEventListener('resize',function(){
     if(window.__portfolioHeightOnlyResize)return;
+    measureAnchor();
     updatePlayback();
   },{passive:true});
   document.addEventListener('visibilitychange',function(){
@@ -1191,9 +1365,12 @@ function holdExperienceScrollAt(top){
     else updatePlayback();
   });
   window.addEventListener('experience:passed',function(){
+    releaseHold(false,'passed');
     stopPlayback();
     overall=1;
   });
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(measureAnchor);
+  measureAnchor();
   updatePlayback();
 })();
 
@@ -2006,7 +2183,13 @@ function holdExperienceScrollAt(top){
         /* Give the responsive-device sequence and the HTTPS close-up enough
            screen time even after a strong wheel/touch gesture. Later launch
            steps keep their existing rhythm. */
-        var maxRate=current<.38?.14:(current<.55?.115:(current<.78?.18:(current<.985?.105:.14)));
+        /* These speed limits used to switch in hard steps, which read as a
+           stutter now that the scene runs on its own clock instead of being
+           dragged by the wheel. Same pacing, crossed over instead of stepped. */
+        var maxRate=mix(.14,.115,segment(current,.33,.43));
+        if(current>.50)maxRate=mix(.115,.18,segment(current,.50,.60));
+        if(current>.73)maxRate=mix(.18,.105,segment(current,.73,.83));
+        if(current>.96)maxRate=mix(.105,.14,segment(current,.96,1));
         change=Math.min(change,maxRate*Math.max(delta,1/120));
       }
       current+=change;

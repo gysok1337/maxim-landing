@@ -105,6 +105,8 @@ html.safari-engine .lab-scroll.is-passed .lab-sticky::before{display:none}
 .lab-scroll.is-passed *::after{will-change:auto!important}
 html.experience-virtual-active,
 html.experience-virtual-active body{overscroll-behavior:none}
+html.experience-hold,
+html.experience-hold body{overscroll-behavior:none}
 .lab-sticky{
   position:sticky;
   top:0;
