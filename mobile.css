@@ -1,10 +1,10 @@
 /* Loaded only for narrow screens / touch devices. Desktop CSS stays intact. */
 .scroll-scene{height:260svh}
-.stage{height:100svh;touch-action:pan-x pan-y pinch-zoom}
+.stage{height:var(--mobile-small-screen,100svh);touch-action:pan-x pan-y pinch-zoom}
 .projects-next{display:none}
 .project-picker button{touch-action:manipulation}
-h1{top:calc(52svh - 42vw);font-size:28vw;letter-spacing:-.035em}
-.photo{width:132vw;top:calc(52svh - 37.147vw)}
+h1{top:calc(var(--mobile-small-screen,100svh)*.52 - 42vw);font-size:28vw;letter-spacing:-.035em}
+.photo{width:132vw;top:calc(var(--mobile-small-screen,100svh)*.52 - 37.147vw)}
 .cursor-host,.cursor-shadow,.cursor-fallback{display:none!important}
 html.cursor-replaced,html.cursor-replaced *{cursor:auto!important}
 @media(orientation:landscape){

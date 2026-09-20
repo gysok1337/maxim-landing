@@ -1,5 +1,5 @@
 // Mobile-only framing of the existing 720p sequence. Desktop player is unchanged.
-import {motionSettings,tuningEnabled} from './mobile-motion-tuning.js?v=1';
+import {motionSettings,tuningEnabled} from './mobile-motion-tuning.js?v=2';
 const section = document.querySelector('.scroll-scene');
 const stage = document.querySelector('.stage');
 const canvas = document.querySelector('.flight-canvas');

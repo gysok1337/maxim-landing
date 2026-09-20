@@ -1,6 +1,6 @@
 // Continue the approved flight with still-image project windows and native scrolling.
 import {renderPaperStory,paperReady} from './paper-story.js?v=7';
-import {motionSettings,tuningEnabled} from './mobile-motion-tuning.js?v=1';
+import {motionSettings,tuningEnabled} from './mobile-motion-tuning.js?v=2';
 const section=document.querySelector('.scroll-scene');
 const stage=document.querySelector('.stage');
 const deck=document.querySelector('.project-deck');
@@ -31,7 +31,8 @@ let layoutSpeed=motionSettings.speed;
 let initialRect,targetRect,frame=0,selected='sks',lastInteractive=false;
 let caseValue=0,caseTarget=0,caseFrom=0,caseStarted=0;
 let windowMotion=null;
-const handoverDuration=420;
+const handoverDuration=mobile?360:420;
+const mobileHandover=.035+(.80-.035)*88/120;
 const handoverEase=t=>t*t*t*(t*(t*6-15)+10);
 function windowTransform(q){
  const x=mix(initialRect.x,targetRect.x,q),y=mix(initialRect.y,targetRect.y,q);
@@ -53,7 +54,8 @@ function prepareCaseImages(){
  const version=++preparation;
  caseImagesReady=false;
  // Decode the stills before they fade in, rather than stalling the transition on first paint.
- Promise.all([...deck.querySelectorAll('img')].map(image=>image.decode().catch(()=>{}))).then(()=>{
+ deck.querySelectorAll('img').forEach(image=>image.decode().catch(()=>{}));
+ Promise.all([origin,deck.querySelector('.project-image.is-active')].map(image=>image.decode().catch(()=>{}))).then(()=>{
   if(version!==preparation)return;
   caseImagesReady=true;update();
  });
@@ -73,8 +75,14 @@ function armCaseStop(armed){
  stopArmed=armed;
  if(!armed)wheelStopped=false;
  document.documentElement.classList.toggle('case-stop-armed',armed);
+ syncTouchSnap();
  stage.dataset.entryHeld=String(armed&&onCaseStop());
  syncWheelListener();
+}
+function syncTouchSnap(){
+ // Native scrolling stays free through the flight. Enable the single snap stop
+ // before momentum reaches works, then release it on the next contact.
+ document.documentElement.classList.toggle('case-snap-near',mobile&&stopArmed&&scrollY>=entryEdge()-height*.38);
 }
 function syncWheelListener(){
  // Safari latches cancellation at the first wheel in a gesture. Changing from
@@ -86,9 +94,8 @@ function syncWheelListener(){
  window.addEventListener('wheel',handleWheel,{passive:!blocking});
 }
 function syncViewportGap(){
- const viewport=window.visualViewport;
- const visibleHeight=viewport&&viewport.scale===1?viewport.height:innerHeight;
- rest.style.paddingTop=(mobile?Math.max(0,visibleHeight-height):0)+'px';
+ const gap=mobile?getComputedStyle(document.documentElement).getPropertyValue('--mobile-chrome-gap').trim()||'0px':'0px';
+ if(rest.style.paddingTop!==gap)rest.style.paddingTop=gap;
  serviceTop=service.getBoundingClientRect().top+scrollY;
 }
 function sizeEntryTrack(){
@@ -99,7 +106,7 @@ function sizeEntryTrack(){
 }
 function finishCaseStop(){
  clearTimeout(stopTimer);
- if(stopArmed&&!wheelStopped&&onCaseStop())armCaseStop(false);
+ if(!mobile&&stopArmed&&!wheelStopped&&onCaseStop())armCaseStop(false);
 }
 function trackScroll(){
  // Rearm only once well above the snap area; do not pull a small upward gesture
@@ -110,7 +117,7 @@ function trackScroll(){
  if(stopArmed&&(wheelStopped||performance.now()-lastWheelEventAt<180)&&scrollY>entryEdge()){
   wheelStopped=true;window.scrollTo({top:entryEdge(),behavior:'instant'});
  }
- syncWheelListener();
+ syncWheelListener();syncTouchSnap();
  stage.dataset.entryHeld=String(stopArmed&&onCaseStop());
  if(!('onscrollend' in document)){
   clearTimeout(stopTimer);
@@ -218,7 +225,7 @@ function layout(){
  layoutSpeed=motionSettings.speed;
  introTravel=height*(reduced.matches?(mobile?.8:1):(mobile?(portrait?2.1:2.35)/layoutSpeed:2));
  // A whole CSS pixel is representable by both WebKit and Chromium scroll positions.
- start=Math.round(introTravel*(reduced.matches?.62:.74));
+ start=Math.round(introTravel*(reduced.matches?.62:mobile?mobileHandover:.74));
  section.dataset.introTravel=String(introTravel);
  section.dataset.caseScroll=String(start);
  sizeEntryTrack();
@@ -242,11 +249,15 @@ function layout(){
  if(origin.getAttribute('src')!==src)origin.src=src;
  if(stacked){
   const endW=Math.min(width-40,Math.max(230,(height-280)*1.6));
-  targetRect={x:(width-endW)/2,y:Math.max(98,Math.min(155,height*.2)),w:endW,h:endW/1.6};
+  const endH=endW/1.6;
+  const previewY=mobile?Math.max(98,Math.min((height-endH)/2,height-endH-111-picker.offsetHeight-24)):Math.max(98,Math.min(155,height*.2));
+  targetRect={x:(width-endW)/2,y:previewY,w:endW,h:endH};
+  heading.style.top=mobile?Math.max(24,previewY-118)+'px':'';
   heading.style.left='20px';
   picker.style.left='20px';picker.style.right='20px';picker.style.width='auto';
   picker.style.top=(targetRect.y+targetRect.h+111)+'px';
  }else{
+  heading.style.top='';
   const margin=Math.max(20,width*.05),gap=Math.max(20,width*.025);
   const titleSize=Math.min(76,Math.max(28,height*.085));
   const top=Math.max(12,height*.03)+titleSize+16;
@@ -314,7 +325,7 @@ function render(now){
  const flight=Number(stage.dataset.flightMode==='reduced'?stage.dataset.scrollProgress:stage.dataset.renderProgress||0);
  const blend=reduced.matches?Number(flight>=.5):Number(stage.dataset.sksBlend||0);
  // Once the still is sharp, finish this short handover even if scrolling stops.
- const canEnter=caseImagesReady&&origin.complete&&origin.naturalWidth>0&&blend>.99&&flight>(reduced.matches?.5:.69);
+ const canEnter=caseImagesReady&&origin.complete&&origin.naturalWidth>0&&blend>.99&&flight>(reduced.matches?.5:mobile?mobileHandover-.002:.69);
  let target=caseTarget;
  if(scroll>=start-.5&&canEnter)target=1;
  else if(scroll<start-Math.min(90,height*.1))target=0;

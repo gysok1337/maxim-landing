@@ -43,7 +43,9 @@
 .paper-ready .service-copy p{font-size:clamp(14px,1.12vw,18px);line-height:1.6;max-width:330px;margin:0;color:#f0efeadb;text-shadow:0 1px 14px #0004}
 .paper-ready .service-copy p br{display:none}
 @media(max-width:700px),(pointer:coarse) and (max-width:1024px){
- .journey-ready .paper-story.paper-ready{height:460svh}
+ .paper-story{--paper-screen:var(--mobile-large-screen,100lvh)}
+ .journey-ready .paper-story.paper-ready{height:calc(var(--mobile-small-screen,100svh)*4.6)}
+ .journey-ready .paper-ready .service-stage{min-height:var(--mobile-small-screen,100svh)}
  .journey-ready .paper-ready .service-topline,.paper-story:not(.paper-ready) .service-topline{top:max(24px,env(safe-area-inset-top));left:max(24px,env(safe-area-inset-left));right:max(24px,env(safe-area-inset-right))}
  .paper-ready .service-topline .service-title{font-size:13px}
  .paper-ready .service-copy p{font-size:14px;line-height:1.55;max-width:290px}

@@ -83,8 +83,8 @@ img,a{-webkit-user-drag:none}
 /* Resizing the offscreen entry reserve must not scroll-anchor the following section. */
 .journey-ready .scroll-scene,.journey-ready .portfolio-rest{overflow-anchor:none}
 .project-window .project-origin{object-fit:fill}
-html[data-layout="mobile"].case-stop-armed:not(.case-wheel-input){scroll-snap-type:y mandatory}
-.scroll-scene{position:relative;scroll-snap-align:start}
+html[data-layout="mobile"].case-stop-armed.case-snap-near:not(.case-wheel-input){scroll-snap-type:y mandatory}
+.scroll-scene{position:relative;scroll-snap-align:none}
 .case-scroll-stop{position:absolute;left:0;width:100%;pointer-events:none;scroll-snap-align:start;scroll-snap-stop:always}
 .service-topline .service-title{margin:0;color:#f4f4f2;font-size:clamp(20px,2.2vw,30px);letter-spacing:-.035em;font-weight:400}
 

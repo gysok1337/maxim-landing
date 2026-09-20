@@ -1,7 +1,7 @@
 // The review link is opt-in. Ordinary pages always use the approved defaults.
 const params=new URLSearchParams(location.search);
 export const tuningEnabled=document.documentElement.dataset.layout==='mobile'&&params.get('tune')==='1';
-export const motionDefaults=Object.freeze({speed:1,inertia:35});
+export const motionDefaults=Object.freeze({speed:1.1,inertia:35});
 export const motionSettings={...motionDefaults};
 const storageKey='maksim-mobile-motion-v1';
 const bounds={speed:[.75,1.75,.05],inertia:[0,100,5]};
