@@ -60,47 +60,17 @@ function prepareCaseImages(){
   caseImagesReady=true;update();
  });
 }
-// Native touch momentum runs into an offscreen continuation of the sticky track.
-// Works never leave the viewport and there is no CSS snap-back at gesture end.
-// The next contact removes the unused track before the browser starts panning.
-let touchReserve=0,touchOffset=0,touchDown=false;
 let stopArmed=false,stopTimer=0,lastWheelEventAt=-Infinity,wheelStopped=false;
 let wheelBlocking=mobile||safariWheel;
 let previousWheelDelta=0,wheelPeak=0,wheelFloor=Infinity,wheelFalls=0,wheelRises=0;
-const entryEdge=()=>section.offsetTop+start+touchOffset;
+const entryEdge=()=>section.offsetTop+start;
 const onCaseStop=()=>Math.abs(scrollY-entryEdge())<2;
 function armCaseStop(armed){
  stopArmed=armed;
  if(!armed)wheelStopped=false;
- if(mobile){
-  if(armed)touchReserve=Math.max(12000,height*16);
-  else releaseTouchTrack();
-  sizeEntryTrack();
- }
  document.documentElement.classList.toggle('case-stop-armed',armed);
  stage.dataset.entryHeld=String(armed&&onCaseStop());
  syncWheelListener();
-}
-function releaseTouchTrack(){
- if(!touchReserve)return;
- // If a new swipe interrupts inertia, retain only the distance already consumed.
- // No scrollTo during touchstart: that can consume the new gesture in Safari.
- touchOffset+=clamp(scrollY-entryEdge(),0,touchReserve);
- touchReserve=0;
- section.dataset.entryOffset=String(touchOffset);
-}
-function settleTouchTrack(){
- if(!mobile||touchDown)return;
- // Rebase only once native scrolling has ended. Both the held sticky scene and
- // the following content retain exactly the same viewport coordinates.
- const consumed=touchOffset+(stopArmed?Math.max(0,scrollY-entryEdge()):0);
- if(consumed<1)return;
- const y=Math.max(0,scrollY-consumed);
- if(touchOffset){
-  touchOffset=0;section.dataset.entryOffset='0';sizeEntryTrack();
- }
- window.scrollTo({top:y,behavior:'instant'});
- update();
 }
 function syncWheelListener(){
  // Safari latches cancellation at the first wheel in a gesture. Changing from
@@ -117,68 +87,106 @@ function syncViewportGap(){
  serviceTop=service.getBoundingClientRect().top+scrollY;
 }
 function sizeEntryTrack(){
- section.style.height=(start+height+touchOffset+touchReserve)+'px';
+ section.style.height=(start+height)+'px';
  serviceTop=service.getBoundingClientRect().top+scrollY;
 }
 function finishCaseStop(){
  clearTimeout(stopTimer);
- settleTouchTrack();
- if(!mobile&&stopArmed&&!wheelStopped&&onCaseStop())armCaseStop(false);
+ if(stopArmed&&!wheelStopped&&onCaseStop())armCaseStop(false);
 }
 function trackScroll(){
- // Rearm only well above works, leaving small reverse gestures unrestricted.
+ // Rearm the wheel stop only well above works, leaving small reverse gestures free.
  if(!stopArmed&&scrollY<entryEdge()-Math.max(90,height*.45))armCaseStop(true);
- if(touchReserve&&scrollY>entryEdge()+touchReserve-height*2){
-  touchReserve+=Math.max(12000,height*16);sizeEntryTrack();
- }
  // Wheel scrolling can be composited between events. Catch its first crossing
- // too. Touch momentum stays native and is absorbed by the sticky track.
+ // too. Mobile touch gestures use the bounded flight controller below.
  if(stopArmed&&(wheelStopped||performance.now()-lastWheelEventAt<180)&&scrollY>entryEdge()){
   wheelStopped=true;window.scrollTo({top:entryEdge(),behavior:'instant'});
  }
  syncWheelListener();
- stage.dataset.entryHeld=String(stopArmed&&(onCaseStop()||(touchReserve&&scrollY>=entryEdge())));
- if(!('onscrollend' in document)){
+ stage.dataset.entryHeld=String(stopArmed&&onCaseStop());
+ if(mobile||!('onscrollend' in document)){
   clearTimeout(stopTimer);
-  stopTimer=setTimeout(finishCaseStop,180);
+  if(onCaseStop())stopTimer=setTimeout(finishCaseStop,90);
  }
  update();
 }
 document.addEventListener('scrollend',finishCaseStop,{passive:true});
 // A new contact at the stop always starts ordinary native scrolling, even if
-// the preceding scrollend has not been delivered yet. No scroll writes here.
+// the preceding scrollend has not been delivered yet. No layout changes here.
 function freshContact(){
  lastWheelEventAt=-Infinity;
- if(stopArmed&&(wheelStopped||Math.abs(scrollY-entryEdge())<8||(touchReserve&&scrollY>=entryEdge())))armCaseStop(false);
+ if(stopArmed&&(wheelStopped||Math.abs(scrollY-entryEdge())<8))armCaseStop(false);
  document.documentElement.classList.remove('case-wheel-input');
 }
-const outsideTuner=event=>{
- if(event.target.closest?.('.motion-tuner'))return;
- if(event.type==='touchstart'||event.pointerType==='touch')touchDown=true;
- freshContact();
- if(event.type==='touchstart'&&mobile&&stopArmed&&!touchReserve)armCaseStop(true);
-};
+const outsideTuner=event=>{if(!event.target.closest?.('.motion-tuner'))freshContact();};
 window.addEventListener('pointerdown',outsideTuner,{passive:true,capture:true});
 window.addEventListener('touchstart',outsideTuner,{passive:true,capture:true});
-for(const type of ['touchend','touchcancel'])window.addEventListener(type,event=>{
- touchDown=event.touches.length>0;
- if(!touchDown&&!('onscrollend' in document)){
-  clearTimeout(stopTimer);stopTimer=setTimeout(finishCaseStop,180);
- }
-},{passive:true});
+if(mobile){
+ // Own only gestures that BEGIN inside the flight. Finger movement is 1:1;
+ // their short momentum tail ends exactly at works. A gesture beginning at
+ // works or below is entirely native, in either direction, from its first move.
+ // No global scroll lock, snap mode, track resize, or tap-to-release state.
+ let gesture=null,coastFrame=0;
+ const stopCoast=()=>{cancelAnimationFrame(coastFrame);coastFrame=0;};
+ const reachWorks=()=>{armCaseStop(false);update();};
+ window.addEventListener('touchstart',event=>{
+  stopCoast();gesture=null;
+  if(event.touches.length!==1||scrollY>=entryEdge()-2||event.target.closest?.('.motion-tuner'))return;
+  const touch=event.touches[0];
+  gesture={id:touch.identifier,x:touch.clientX,y:touch.clientY,lastY:touch.clientY,time:event.timeStamp,velocity:0,moved:false,arrived:false,edge:entryEdge()};
+ },{passive:true,capture:true});
+ stage.addEventListener('touchmove',event=>{
+  if(!gesture)return;
+  const touch=[...event.touches].find(t=>t.identifier===gesture.id);
+  if(!touch||event.touches.length!==1){gesture=null;return;}
+  const dx=touch.clientX-gesture.x,dy=touch.clientY-gesture.y;
+  if(!gesture.moved&&Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>6){gesture=null;return;}
+  if(!event.cancelable){gesture=null;return;}
+  event.preventDefault();
+  if(gesture.arrived)return;
+  const delta=gesture.lastY-touch.clientY,dt=Math.max(8,event.timeStamp-gesture.time);
+  const speed=clamp(delta/dt,-3.6,3.6);
+  gesture.velocity=gesture.moved?mix(gesture.velocity,speed,.55):speed;
+  gesture.moved=gesture.moved||Math.abs(dy)>3;
+  gesture.lastY=touch.clientY;gesture.time=event.timeStamp;
+  const y=clamp(scrollY+delta,0,gesture.edge);
+  window.scrollTo({top:y,behavior:'instant'});
+  if(y>=gesture.edge){gesture.arrived=true;gesture.velocity=0;reachWorks();}
+ },{passive:false});
+ window.addEventListener('touchend',event=>{
+  if(!gesture||event.touches.length)return;
+  const released=gesture;gesture=null;
+  if(!released.moved||released.arrived||event.timeStamp-released.time>100)return;
+  let velocity=released.velocity,last=performance.now(),position=scrollY;
+  const coast=now=>{
+   coastFrame=0;
+   const dt=Math.min(64,now-last);last=now;
+   const decay=Math.exp(-dt/260);
+   position=clamp(position+velocity*260*(1-decay),0,released.edge);
+   velocity*=decay;
+   window.scrollTo({top:position,behavior:'instant'});
+   if(position>=released.edge){reachWorks();return;}
+   if(position<=0||Math.abs(velocity)<.02)return;
+   coastFrame=requestAnimationFrame(coast);
+  };
+  if(Math.abs(velocity)>=.02)coastFrame=requestAnimationFrame(coast);
+ },{passive:true});
+ window.addEventListener('touchcancel',()=>{gesture=null;stopCoast();},{passive:true});
+ window.addEventListener('wheel',stopCoast,{passive:true});
+ window.addEventListener('keydown',stopCoast);
+ window.addEventListener('pagehide',stopCoast,{once:true});
+}
 window.addEventListener('keydown',event=>{
  if(event.target.closest?.('.motion-tuner'))return;
- if(['Home','End'].includes(event.key)){armCaseStop(false);return;}
  if(['ArrowUp','PageUp','Home','ArrowDown','PageDown','End',' '].includes(event.key))freshContact();
 });
 function handleWheel(event){
  if(document.documentElement.classList.contains('ice-intro-pending'))return;
  if(event.ctrlKey||Math.abs(event.deltaX)>Math.abs(event.deltaY)||!event.deltaY)return;
  const canBlock=wheelBlocking&&event.cancelable;
- // A connected mouse uses the same wheel handoff as desktop, without a reserve.
+ // Stop the entering wheel sequence without changing the browser's scroll mode.
  const firstWheel=mobile&&!document.documentElement.classList.contains('case-wheel-input');
  if(mobile)document.documentElement.classList.add('case-wheel-input');
- if(firstWheel){releaseTouchTrack();sizeEntryTrack();}
  const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?height:1);
  const separate=event.timeStamp-lastWheelEventAt>=180||previousWheelDelta<=0||event.deltaMode!==0;
  let renewed=false;
@@ -204,7 +212,7 @@ function handleWheel(event){
  if(safariWheel&&canBlock)event.preventDefault();
  const releaseWheel=()=>{
   armCaseStop(false);
-  // Apply this accepted impulse once; subsequent events scroll normally.
+ // Apply this accepted impulse once; subsequent events scroll normally.
   if(canBlock){event.preventDefault();window.scrollBy({top:delta,behavior:'instant'});}
  };
  if(wheelStopped){
@@ -349,7 +357,7 @@ picker.addEventListener('touchcancel',()=>{caseTap=null;},{passive:true});
 function update(){if(!frame)frame=requestAnimationFrame(render)}
 function render(now){
  frame=0;
- const scroll=scrollY-section.offsetTop-touchOffset;
+ const scroll=scrollY-section.offsetTop;
  const flight=Number(stage.dataset.flightMode==='reduced'?stage.dataset.scrollProgress:stage.dataset.renderProgress||0);
  const blend=reduced.matches?Number(flight>=.5):Number(stage.dataset.sksBlend||0);
  // Once the still is sharp, finish this short handover even if scrolling stops.

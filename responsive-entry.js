@@ -26,9 +26,9 @@ if(mobile.matches){
  window.addEventListener('resize',sizeViewport,{passive:true});
 }
 await import('./intro-ui.js?v=5');
-await import('./journey.js?v=29');
+await import('./journey.js?v=30');
 if (mobile.matches) {
-  await Promise.all([import('./mobile-scroll-player.js?v=7'), import('./mobile-interactions.js')]);
+  await Promise.all([import('./mobile-scroll-player.js?v=8'), import('./mobile-interactions.js')]);
   const {mountMotionTuner}=await import('./mobile-motion-tuning.js?v=2');
   mountMotionTuner();
 } else {
