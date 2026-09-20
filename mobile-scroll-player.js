@@ -120,7 +120,7 @@ function layout(){
 function update(){
   const travel=Number(section.dataset.introTravel)||section.offsetHeight-height;
   const end=(Number(section.dataset.caseScroll)||travel*.74)/Math.max(1,travel);
-  const nextRaw=clamp((scrollY-section.offsetTop)/Math.max(1,travel),0,end);
+  const nextRaw=clamp((scrollY-section.offsetTop-(Number(section.dataset.entryOffset)||0))/Math.max(1,travel),0,end);
   // Once the still has handed over, scrolling later sections needs no video work.
   if(nextRaw===raw)return;
   raw=nextRaw;

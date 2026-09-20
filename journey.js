@@ -60,29 +60,47 @@ function prepareCaseImages(){
   caseImagesReady=true;update();
  });
 }
-// A full-height snap area lets the browser stop touch momentum at the cases.
-// No touchmove cancellation or resizing the track during input.
-const caseStop=document.createElement('div');
-caseStop.className='case-scroll-stop';
-caseStop.setAttribute('aria-hidden','true');
-section.append(caseStop);
+// Native touch momentum runs into an offscreen continuation of the sticky track.
+// Works never leave the viewport and there is no CSS snap-back at gesture end.
+// The next contact removes the unused track before the browser starts panning.
+let touchReserve=0,touchOffset=0,touchDown=false;
 let stopArmed=false,stopTimer=0,lastWheelEventAt=-Infinity,wheelStopped=false;
 let wheelBlocking=mobile||safariWheel;
 let previousWheelDelta=0,wheelPeak=0,wheelFloor=Infinity,wheelFalls=0,wheelRises=0;
-const entryEdge=()=>section.offsetTop+start;
+const entryEdge=()=>section.offsetTop+start+touchOffset;
 const onCaseStop=()=>Math.abs(scrollY-entryEdge())<2;
 function armCaseStop(armed){
  stopArmed=armed;
  if(!armed)wheelStopped=false;
+ if(mobile){
+  if(armed)touchReserve=Math.max(12000,height*16);
+  else releaseTouchTrack();
+  sizeEntryTrack();
+ }
  document.documentElement.classList.toggle('case-stop-armed',armed);
- syncTouchSnap();
  stage.dataset.entryHeld=String(armed&&onCaseStop());
  syncWheelListener();
 }
-function syncTouchSnap(){
- // Native scrolling stays free through the flight. Enable the single snap stop
- // before momentum reaches works, then release it on the next contact.
- document.documentElement.classList.toggle('case-snap-near',mobile&&stopArmed&&scrollY>=entryEdge()-height*.38);
+function releaseTouchTrack(){
+ if(!touchReserve)return;
+ // If a new swipe interrupts inertia, retain only the distance already consumed.
+ // No scrollTo during touchstart: that can consume the new gesture in Safari.
+ touchOffset+=clamp(scrollY-entryEdge(),0,touchReserve);
+ touchReserve=0;
+ section.dataset.entryOffset=String(touchOffset);
+}
+function settleTouchTrack(){
+ if(!mobile||touchDown)return;
+ // Rebase only once native scrolling has ended. Both the held sticky scene and
+ // the following content retain exactly the same viewport coordinates.
+ const consumed=touchOffset+(stopArmed?Math.max(0,scrollY-entryEdge()):0);
+ if(consumed<1)return;
+ const y=Math.max(0,scrollY-consumed);
+ if(touchOffset){
+  touchOffset=0;section.dataset.entryOffset='0';sizeEntryTrack();
+ }
+ window.scrollTo({top:y,behavior:'instant'});
+ update();
 }
 function syncWheelListener(){
  // Safari latches cancellation at the first wheel in a gesture. Changing from
@@ -99,57 +117,68 @@ function syncViewportGap(){
  serviceTop=service.getBoundingClientRect().top+scrollY;
 }
 function sizeEntryTrack(){
- section.style.height=(start+height)+'px';
- caseStop.style.top=start+'px';
- caseStop.style.height=height+'px';
+ section.style.height=(start+height+touchOffset+touchReserve)+'px';
  serviceTop=service.getBoundingClientRect().top+scrollY;
 }
 function finishCaseStop(){
  clearTimeout(stopTimer);
+ settleTouchTrack();
  if(!mobile&&stopArmed&&!wheelStopped&&onCaseStop())armCaseStop(false);
 }
 function trackScroll(){
- // Rearm only once well above the snap area; do not pull a small upward gesture
- // back to the cases by enabling proximity snapping underneath it.
+ // Rearm only well above works, leaving small reverse gestures unrestricted.
  if(!stopArmed&&scrollY<entryEdge()-Math.max(90,height*.45))armCaseStop(true);
+ if(touchReserve&&scrollY>entryEdge()+touchReserve-height*2){
+  touchReserve+=Math.max(12000,height*16);sizeEntryTrack();
+ }
  // Wheel scrolling can be composited between events. Catch its first crossing
- // too, while touch momentum remains entirely under native scroll snapping.
+ // too. Touch momentum stays native and is absorbed by the sticky track.
  if(stopArmed&&(wheelStopped||performance.now()-lastWheelEventAt<180)&&scrollY>entryEdge()){
   wheelStopped=true;window.scrollTo({top:entryEdge(),behavior:'instant'});
  }
- syncWheelListener();syncTouchSnap();
- stage.dataset.entryHeld=String(stopArmed&&onCaseStop());
+ syncWheelListener();
+ stage.dataset.entryHeld=String(stopArmed&&(onCaseStop()||(touchReserve&&scrollY>=entryEdge())));
  if(!('onscrollend' in document)){
   clearTimeout(stopTimer);
-  if(onCaseStop())stopTimer=setTimeout(finishCaseStop,160);
+  stopTimer=setTimeout(finishCaseStop,180);
  }
  update();
 }
 document.addEventListener('scrollend',finishCaseStop,{passive:true});
 // A new contact at the stop always starts ordinary native scrolling, even if
-// the preceding scrollend has not been delivered yet. No layout changes here.
+// the preceding scrollend has not been delivered yet. No scroll writes here.
 function freshContact(){
  lastWheelEventAt=-Infinity;
- if(stopArmed&&(wheelStopped||Math.abs(scrollY-entryEdge())<8))armCaseStop(false);
+ if(stopArmed&&(wheelStopped||Math.abs(scrollY-entryEdge())<8||(touchReserve&&scrollY>=entryEdge())))armCaseStop(false);
  document.documentElement.classList.remove('case-wheel-input');
 }
-const outsideTuner=event=>{if(!event.target.closest?.('.motion-tuner'))freshContact();};
+const outsideTuner=event=>{
+ if(event.target.closest?.('.motion-tuner'))return;
+ if(event.type==='touchstart'||event.pointerType==='touch')touchDown=true;
+ freshContact();
+ if(event.type==='touchstart'&&mobile&&stopArmed&&!touchReserve)armCaseStop(true);
+};
 window.addEventListener('pointerdown',outsideTuner,{passive:true,capture:true});
 window.addEventListener('touchstart',outsideTuner,{passive:true,capture:true});
+for(const type of ['touchend','touchcancel'])window.addEventListener(type,event=>{
+ touchDown=event.touches.length>0;
+ if(!touchDown&&!('onscrollend' in document)){
+  clearTimeout(stopTimer);stopTimer=setTimeout(finishCaseStop,180);
+ }
+},{passive:true});
 window.addEventListener('keydown',event=>{
  if(event.target.closest?.('.motion-tuner'))return;
+ if(['Home','End'].includes(event.key)){armCaseStop(false);return;}
  if(['ArrowUp','PageUp','Home','ArrowDown','PageDown','End',' '].includes(event.key))freshContact();
 });
 function handleWheel(event){
  if(document.documentElement.classList.contains('ice-intro-pending'))return;
  if(event.ctrlKey||Math.abs(event.deltaX)>Math.abs(event.deltaY)||!event.deltaY)return;
  const canBlock=wheelBlocking&&event.cancelable;
- // Repeated trackpad wheel impulses must not each start a native snap-back.
- // Keep snapping for touch, and stop only the entering wheel sequence below.
- // Desktop never enters CSS snap mode. Switching it off on the first wheel
- // impulse makes Safari reconfigure an already-running native scroll animation.
+ // A connected mouse uses the same wheel handoff as desktop, without a reserve.
  const firstWheel=mobile&&!document.documentElement.classList.contains('case-wheel-input');
  if(mobile)document.documentElement.classList.add('case-wheel-input');
+ if(firstWheel){releaseTouchTrack();sizeEntryTrack();}
  const delta=event.deltaY*(event.deltaMode===1?16:event.deltaMode===2?height:1);
  const separate=event.timeStamp-lastWheelEventAt>=180||previousWheelDelta<=0||event.deltaMode!==0;
  let renewed=false;
@@ -175,7 +204,6 @@ function handleWheel(event){
  if(safariWheel&&canBlock)event.preventDefault();
  const releaseWheel=()=>{
   armCaseStop(false);
-  // Removing a snap target can consume the current native wheel animation.
   // Apply this accepted impulse once; subsequent events scroll normally.
   if(canBlock){event.preventDefault();window.scrollBy({top:delta,behavior:'instant'});}
  };
@@ -321,7 +349,7 @@ picker.addEventListener('touchcancel',()=>{caseTap=null;},{passive:true});
 function update(){if(!frame)frame=requestAnimationFrame(render)}
 function render(now){
  frame=0;
- const scroll=scrollY-section.offsetTop;
+ const scroll=scrollY-section.offsetTop-touchOffset;
  const flight=Number(stage.dataset.flightMode==='reduced'?stage.dataset.scrollProgress:stage.dataset.renderProgress||0);
  const blend=reduced.matches?Number(flight>=.5):Number(stage.dataset.sksBlend||0);
  // Once the still is sharp, finish this short handover even if scrolling stops.
