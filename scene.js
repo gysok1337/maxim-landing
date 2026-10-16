@@ -17,6 +17,9 @@ const mix=(a,b,t)=>a+(b-a)*t;
 const smooth=t=>t*t*(3-2*t);
 let width=innerWidth,height=innerHeight,progress=0;
 let renderer,scene,camera,arrow,environment;
+const cursorSize=384,cursorInset=96;
+host.style.width=host.style.height=cursorSize+'px';
+host.style.right=host.style.bottom='auto';
 let frame=0,previous=0,active=true,pressed=false,hasPointer=false,lastMove=0;
 let useCustomCursor=fine.matches,inside=true;
 let currentX=width*.70,currentY=height*.60,targetX=currentX,targetY=currentY;
@@ -38,9 +41,9 @@ function layout(){
   });
   if(!hasPointer){currentX=targetX=letterTarget.x;currentY=targetY=letterTarget.y;}
   if(renderer){
-    renderer.setSize(width,height,false);
+    renderer.setSize(cursorSize,cursorSize,false);
     renderer.setPixelRatio(Math.min(devicePixelRatio,fine.matches?1.6:1));
-    camera.left=-width/2;camera.right=width/2;camera.top=height/2;camera.bottom=-height/2;
+    camera.left=-cursorInset;camera.right=cursorSize-cursorInset;camera.top=cursorInset;camera.bottom=cursorInset-cursorSize;
     camera.updateProjectionMatrix();
   }
   updateScroll();
@@ -162,7 +165,7 @@ function renderFrame(now){
     const id=Math.floor(seconds/6.4);
     if(autoPress&&lastTapCycle!==id){emitGust(letterTarget.x,1,.7,'auto');lastTapCycle=id;}
   }
-  updateLetters(now,dt);
+  if(progress<.2)updateLetters(now,dt);
   // The tip stays at the real pointer; inertia belongs to the body, not the click position.
   const follow=hasPointer||reduced.matches?1:1-Math.exp(-18*dt);
   currentX=mix(currentX,targetX,follow);currentY=mix(currentY,targetY,follow);
@@ -185,7 +188,8 @@ function renderFrame(now){
   arrow.scale.setScalar(baseSize*scale);
   // World Z is the outer rotation, so the face does not tip up on one side.
   arrow.rotation.set(rotation.x,rotation.y,rotation.z,'ZXY');
-  arrow.position.set(currentX-width/2,height/2-currentY,(pressed||autoPress)?-6:0);
+  arrow.position.set(0,0,(pressed||autoPress)?-6:0);
+  host.style.transform=`translate3d(${currentX-cursorInset}px,${currentY-cursorInset}px,0)`;
   const opacity=inside?1:0;
   document.documentElement.classList.toggle('cursor-replaced',useCustomCursor&&inside&&active);
   host.style.opacity=String(opacity);
@@ -201,19 +205,21 @@ function renderFrame(now){
   renderer.render(scene,camera);
 }
 
-function loop(now){if(!active||document.hidden)return;renderFrame(now);if(!reduced.matches)frame=requestAnimationFrame(loop);}
+function loop(now){frame=0;if(!active||document.hidden||!inside)return;if(!window.__iceIntroActive)renderFrame(now);if(!reduced.matches)frame=requestAnimationFrame(loop);}
 function resume(){cancelAnimationFrame(frame);previous=0;if(renderer&&active)frame=requestAnimationFrame(loop);}
 window.addEventListener('pointermove',e=>{
   const now=performance.now(),dt=Math.max((now-lastMove)/1000,.012);
   if(hasPointer){pointerVX=mix(pointerVX,clamp((e.clientX-targetX)/dt,-2400,2400),.55);pointerVY=mix(pointerVY,clamp((e.clientY-targetY)/dt,-2400,2400),.55);}
   targetX=e.clientX;targetY=e.clientY;hasPointer=true;lastMove=now;
   inside=true;useCustomCursor=e.pointerType!=='touch';
+  if(!frame&&!reduced.matches)resume();
   if(reduced.matches&&renderer)renderFrame(now);
 },{passive:true});
-document.addEventListener('pointerleave',()=>{inside=false;hasPointer=false;pressed=false;pointerVX=pointerVY=0;document.documentElement.classList.remove('cursor-replaced');});
+document.addEventListener('pointerleave',()=>{inside=false;hasPointer=false;pressed=false;pointerVX=pointerVY=0;document.documentElement.classList.remove('cursor-replaced');host.style.opacity=shadow.style.opacity='0';});
 window.addEventListener('pointerdown',e=>{
   targetX=e.clientX;targetY=e.clientY;hasPointer=true;pressed=true;
   inside=true;useCustomCursor=e.pointerType!=='touch';
+  if(!frame&&!reduced.matches)resume();
   emitGust(e.clientX,pointerVX< -20?-1:1);
   if(reduced.matches&&renderer)renderFrame(performance.now());
 },{passive:true});

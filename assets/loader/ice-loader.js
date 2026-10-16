@@ -337,10 +337,13 @@
   }
 
   var fontReady=document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve();
-  Promise.race([fontReady,new Promise(function(resolve){setTimeout(resolve,720);})])
+  Promise.all([
+    Promise.race([fontReady,new Promise(function(resolve){setTimeout(resolve,720);})]),
+    Promise.race([window.__introMediaReady||Promise.resolve(),new Promise(function(resolve){setTimeout(resolve,12000);})])
+  ])
     .then(function(){later(90,function(){if(!started){started=true;playIntro();}});});
-  later(920,function(){if(!started){started=true;playIntro();}});
-  later(7000,finishIntro);
+  later(12100,function(){if(!started){started=true;playIntro();}});
+  later(15500,finishIntro);
   window.addEventListener('pagehide',finishIntro,{once:true});
   window.addEventListener('keydown',function(event){if(event.key==='Escape')finishIntro();});
   matchMedia('(prefers-reduced-motion:reduce)').addEventListener('change',function(event){if(event.matches)finishIntro();});

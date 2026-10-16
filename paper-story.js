@@ -26,7 +26,8 @@ const packs=new Map(), packRequests=new Map(), packFailures=new Map();
 let buffering=false, bufferTimer=0;
 let manifest=null, raf=0, desired=0, shown=-1, active=false, disposed=false;
 let progress=0, width=0, height=0, pixelRatio=0, currentChapter=-1, direction=1, previousDesired=0;
-let queue=[], inFlight=0, decodeLimit=3, generation=0, lastPaint=-1;
+let queue=[], inFlight=0, decodeLimit=3, generation=0, lastPaint=-1, updateFrame=0;
+let subjectMask=null;
 const base = new URL('./assets/paper-v1/',import.meta.url);
 const frameUrl = i => new URL(`${manifest.folder}/frame-${String(i).padStart(3,'0')}.webp`,base).href;
 const limit = () => innerWidth<=700 ? 14 : 20;
@@ -62,6 +63,9 @@ function bufferAhead(){
 async function compressedFrame(index){
  const pack=packAt(index);
  if(pack<0||Date.now()-(packFailures.get(pack)||0)<3000)return null;
+ if(active&&index===desired&&!packs.has(pack)){
+  fetchPack(pack).catch(()=>{});return null;
+ }
  const data=await fetchPack(pack),[offset,length]=manifest.packs[pack].frames[index-manifest.packs[pack].start];
  return data.slice(offset,offset+length,'image/webp');
 }
@@ -78,7 +82,7 @@ function pump(){
   const index=queue.shift();
   if(frames.has(index)||loading.has(index)||Date.now()-(failures.get(index)||0)<3000)continue;
   inFlight++;
-  const image=new Image();image.decoding='async';
+  const image=new Image();image.decoding='async';image.fetchPriority=index===desired?'high':'low';
   let objectUrl;
   const request=compressedFrame(index).catch(()=>null).then(async blob=>{
    // Safari's decoded Image path is the approved renderer for these scenes.
@@ -111,24 +115,17 @@ function drawPortrait(image,t){
  const landing=1-smooth((t-.16)/.10);
  const zoom=1.25-.17*spread+.15*landing;
  const cssWidth=width*zoom,cssHeight=cssWidth*9/16;
- const density=Math.min(pixelRatio,image.naturalWidth/cssWidth);
- const w=Math.round(cssWidth*density),h=Math.round(cssHeight*density);
- if(subjectCanvas.width!==w||subjectCanvas.height!==h){
-  subjectCanvas.width=w;subjectCanvas.height=h;
-  subjectContext.imageSmoothingEnabled=true;subjectContext.imageSmoothingQuality='high';
- }
- // Keep the foreground out of the low-resolution, full-height background canvas.
+ // Fix backing-store size per viewport; zoom only changes its CSS transform.
+ // Reallocating the canvas for every frame stalled portrait scrolling.
+ const w=subjectCanvas.width,h=subjectCanvas.height;
  subjectCanvas.style.width=cssWidth+'px';subjectCanvas.style.height=cssHeight+'px';
  const x=width*.5-cssWidth*(.5+.1*landing),y=height*.53-cssHeight/2;
  subjectCanvas.style.transform=`translate3d(${x}px,${y}px,0)`;
  subjectContext.clearRect(0,0,w,h);
  subjectContext.globalCompositeOperation='source-over';
  subjectContext.drawImage(image,0,0,w,h);
- const mask=subjectContext.createLinearGradient(0,0,0,h);
- mask.addColorStop(0,'transparent');mask.addColorStop(.13,'black');
- mask.addColorStop(.87,'black');mask.addColorStop(1,'transparent');
  subjectContext.globalCompositeOperation='destination-in';
- subjectContext.fillStyle=mask;subjectContext.fillRect(0,0,w,h);
+ subjectContext.fillStyle=subjectMask;subjectContext.fillRect(0,0,w,h);
  subjectContext.globalCompositeOperation='source-over';
  section.dataset.paperFit='portrait-scene';
  section.dataset.paperSourceWidth=String(1/zoom);
@@ -167,6 +164,12 @@ function layout(){
  // Cap only the ambient/landscape canvas; portrait subjects retain their source detail.
  const scale=Math.min(devicePixelRatio||1,1280/Math.max(1,width),720/Math.max(1,height));
  canvas.width=Math.max(1,Math.round(width*scale));canvas.height=Math.max(1,Math.round(height*scale));
+ const sw=Math.max(1,Math.round(Math.min(1280,width*1.4*pixelRatio)));
+ subjectCanvas.width=sw;subjectCanvas.height=Math.round(sw*9/16);
+ subjectContext.imageSmoothingEnabled=true;subjectContext.imageSmoothingQuality='high';
+ subjectMask=subjectContext.createLinearGradient(0,0,0,subjectCanvas.height);
+ subjectMask.addColorStop(0,'transparent');subjectMask.addColorStop(.13,'black');
+ subjectMask.addColorStop(.87,'black');subjectMask.addColorStop(1,'transparent');
  lastPaint=-1;invalidate();
 }
 function updateCopies(displayProgress){
@@ -188,7 +191,10 @@ function updateCopies(displayProgress){
   section.dataset.step=String(selected);
  }
 }
-export function renderPaperStory(top,travel){
+export function renderPaperStory(){
+ if(!updateFrame)updateFrame=requestAnimationFrame(()=>{updateFrame=0;updateStory()});
+}
+function updateStory(){
  if(!manifest||reduced.matches)return;
  const rect=section.getBoundingClientRect();
  active=rect.top<innerHeight*1.7&&rect.bottom>-innerHeight*.7;
@@ -219,7 +225,11 @@ async function mount(){
   layout();renderPaperStory();
   window.dispatchEvent(new Event('resize'));
   // Begin on the first screen as well, instead of waiting until paper is visible.
-  bufferTimer=setTimeout(()=>{buffering=true;bufferAhead()},900);
+  const startBuffer=()=>{buffering=true;bufferAhead()};
+  if(window.__flightBuffered)startBuffer();
+  else window.addEventListener('flight:buffered',startBuffer,{once:true});
+  // Fail open if the intro module cannot load. Entering this scene also buffers immediately.
+  bufferTimer=setTimeout(startBuffer,12000);
  }catch(error){section.dataset.paperError=error.message;}
 }
 const resizeObserver=new ResizeObserver(()=>{layout();renderPaperStory()});

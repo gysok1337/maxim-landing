@@ -1,5 +1,5 @@
 // Continue the approved flight with still-image project windows and native scrolling.
-import {renderPaperStory,paperReady} from './paper-story.js?v=7';
+import {renderPaperStory,paperReady} from './paper-story.js?v=8';
 import {motionSettings,tuningEnabled} from './mobile-motion-tuning.js?v=2';
 const section=document.querySelector('.scroll-scene');
 const stage=document.querySelector('.stage');
@@ -281,7 +281,7 @@ function layout(){
  // Match the contained landscape still in both players, including portrait phones.
  const startW=Math.min(width,height*16/9);
  initialRect={x:(width-startW)/2,y:(height-startW*9/16)/2,w:startW,h:startW*9/16};
- const src='./assets/intro/sks-end.png';
+ const src='./assets/intro/sks-end.webp';
  if(origin.getAttribute('src')!==src)origin.src=src;
  if(stacked){
   const endW=Math.min(width-40,Math.max(230,(height-280)*1.6));

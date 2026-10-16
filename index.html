@@ -29,6 +29,7 @@
   <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png?v=20260920-1">
   <script>
   (function(){
+    window.__introMediaReady=new Promise(function(resolve){window.__resolveIntroMedia=resolve;});
     var root=document.documentElement,seen=false;
     try{seen=sessionStorage.getItem('maksimIceIntroSeen')==='1';}catch(_){}
     var replay=new URLSearchParams(location.search).get('intro')==='replay';
@@ -39,18 +40,21 @@
         var loader=document.getElementById('loader');if(loader)loader.style.display='none';
         document.querySelectorAll('#intro,.portfolio-rest').forEach(function(el){el.inert=false;});
         window.__iceIntroActive=false;
-      },8000);
+      },16000);
     }
   })();
   </script>
   <link rel="stylesheet" href="./assets/loader/ice-loader.css?v=3">
-  <script src="./assets/loader/ice-loader.js?v=3" defer></script>
+  <script src="./assets/loader/ice-loader.js?v=4" defer></script>
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./intro-ui.css">
   <link rel="stylesheet" href="./journey.css?v=26">
   <link rel="stylesheet" href="./mobile.css?v=2" media="(max-width:700px), (pointer:coarse) and (max-width:1024px)">
   <link rel="stylesheet" href="./paper-story.css?v=6">
   <script type="importmap">{"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}</script>
+  <link rel="modulepreload" href="./journey.js?v=31">
+  <link rel="modulepreload" href="./paper-story.js?v=8">
+  <link rel="modulepreload" href="./flight-buffer.js?v=20261016">
 </head>
 <body>
 <div class="ice-loader" id="loader" aria-hidden="true">
@@ -73,16 +77,16 @@
     <section class="stage" aria-label="MAKSIM. Интерактивный первый экран">
       <div class="atmosphere" aria-hidden="true"></div>
       <svg class="clip-defs" width="0" height="0" aria-hidden="true"><defs><clipPath id="laptop-silhouette" clipPathUnits="objectBoundingBox"><path d="M .134,.357 L .639,.064 Q .656,.054 .668,.074 L .867,.468 Q .874,.481 .87,.499 L .322,.886 Q .311,.895 .302,.865 L .134,.39 Q .13,.372 .134,.357 Z"/></clipPath></defs></svg>
-      <div class="photo photo-background" aria-hidden="true"><img decoding="async" draggable="false" src="./assets/intro/macbook-clean.png" alt="" fetchpriority="high"></div>
+      <div class="photo photo-background" aria-hidden="true"><img decoding="async" draggable="false" src="./assets/intro/macbook-clean.webp" alt="" fetchpriority="high"></div>
       <h1 aria-label="MAKSIM"><span aria-hidden="true" class="letter">M</span><span aria-hidden="true" class="letter">A</span><span aria-hidden="true" class="letter">K</span><span aria-hidden="true" class="letter">S</span><span aria-hidden="true" class="letter" id="letter-i">I</span><span aria-hidden="true" class="letter">M</span></h1>
-      <div class="photo photo-foreground" aria-hidden="true"><img decoding="async" draggable="false" src="./assets/intro/macbook-clean.png" alt=""></div>
+      <div class="photo photo-foreground" aria-hidden="true"><img decoding="async" draggable="false" src="./assets/intro/macbook-clean.webp" alt=""></div>
       <canvas class="flight-canvas" aria-hidden="true"></canvas>
       <canvas class="laptop-canvas" aria-hidden="true"></canvas>
       <section class="project-deck" aria-labelledby="projects-title" inert>
         <div class="project-backdrop" aria-hidden="true"></div>
         <header class="project-heading"><h2 id="projects-title">Работы.</h2></header>
         <a class="project-window" href="https://skysinth.com/" target="_blank" rel="noopener noreferrer" aria-label="Открыть сайт СКС">
-          <img decoding="async" draggable="false" class="project-origin" src="./assets/intro/sks-end.png" alt="" aria-hidden="true">
+          <img decoding="async" draggable="false" class="project-origin" src="./assets/intro/sks-end.webp" alt="" aria-hidden="true">
           <img decoding="async" draggable="false" class="project-image is-active" data-project="sks" src="./assets/cases/sks-1440.png" alt="Первый экран сайта СКС — разработка электроники">
           <img decoding="async" draggable="false" class="project-image" data-project="lider" src="./assets/cases/lider-1440.png" alt="Первый экран сайта Лидер — оборудование для виноделия">
           <img decoding="async" draggable="false" class="project-image" data-project="gooddog" src="./assets/cases/good-dog.webp" alt="Первый экран сайта Good Dog">
@@ -133,6 +137,6 @@
     <footer class="site-footer"><a href="#intro" class="back-to-top">MAKSIM</a><span>Делаю сайты.</span><span>2026</span></footer>
   </div>
 
-  <script type="module" src="./responsive-entry.js?v=30"></script>
+  <script type="module" src="./responsive-entry.js?v=20261016"></script>
 </body>
 </html>

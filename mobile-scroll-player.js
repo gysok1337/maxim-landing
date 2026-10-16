@@ -1,3 +1,4 @@
+import {createFlightBuffer} from './flight-buffer.js?v=20261016';
 // Mobile-only framing of the existing 720p sequence. Desktop player is unchanged.
 import {motionSettings,tuningEnabled} from './mobile-motion-tuning.js?v=2';
 const section = document.querySelector('.scroll-scene');
@@ -21,6 +22,7 @@ const HANDOVER_PROGRESS=APPEAR_END+(FLIGHT_END-APPEAR_END)*HANDOVER_FRAME/LAST;
 // Keep the early cut from the approved sequence, then show the same landscape
 // still on every phone, contained without cropping or stretching.
 const blobs=new Map(), bitmaps=new Map(), requests=new Map(), decoding=new Map();
+const loadFrameBlob=createFlightBuffer();
 let width=0,height=0,dpr=1,raw=0,desired=0,shown=0,tick=0,disposed=false;
 let realReady=false,firstReady=false,preloadStarted=false;
 let progress=0,velocity=0,lastTime=0,blendValue=0,blendTarget=0;
@@ -33,23 +35,16 @@ real.alt='';real.setAttribute('aria-hidden','true');
 stage.append(real);
 real.onload=()=>{realReady=true;invalidate();};
 real.onerror=()=>{stage.dataset.sksError='true';};
-real.src='./assets/intro/sks-end.png';
+real.src='./assets/intro/sks-end.webp';
 stage.dataset.flightStatus='loading';
 
 function invalidate(){
   if(!tick&&!disposed)tick=requestAnimationFrame(render);
 }
-function frameUrl(index){
-  return './assets/flight-v1/frame-'+String(index).padStart(3,'0')+'.webp';
-}
 async function fetchFrame(index){
   if(blobs.has(index))return blobs.get(index);
   if(requests.has(index))return requests.get(index);
-  const request=fetch(frameUrl(index)).then(response=>{
-    if(!response.ok)throw new Error('Frame '+index+': '+response.status);
-    return response.arrayBuffer();
-  }).then(buffer=>{
-    const blob=new Blob([buffer],{type:'image/webp'});
+  const request=loadFrameBlob(index).then(blob=>{
     blobs.set(index,blob);
     stage.dataset.loadedFrames=String(blobs.size);
     return blob;
@@ -71,9 +66,10 @@ function trimCache(){
 async function decodeFrame(index){
   if(bitmaps.has(index))return bitmaps.get(index);
   if(decoding.has(index))return decoding.get(index);
+  if(decoding.size>=3)return null;
   const request=fetchFrame(index).then(async blob=>{
     let bitmap;
-    if('createImageBitmap' in window){
+    if('createImageBitmap' in window&&!(/AppleWebKit\//.test(navigator.userAgent)&&!/(?:Chrome|Chromium|Edg|OPR)\//.test(navigator.userAgent))){
       bitmap=await createImageBitmap(blob);
     }else{
       const image=new Image(),url=URL.createObjectURL(blob);
@@ -101,13 +97,17 @@ function warmNearby(index){
 async function preload(){
   if(preloadStarted||reduced.matches)return;
   preloadStarted=true;
-  let next=1;
-  await Promise.all(Array.from({length:4},async()=>{
-    while(next<=HANDOVER_FRAME&&!disposed){
-      const index=next++;
-      try{await fetchFrame(index);}catch(error){stage.dataset.flightError=error.message;}
+  let nextPack=0;
+  await Promise.all(Array.from({length:3},async()=>{
+    while(nextPack<=HANDOVER_FRAME&&!disposed){
+      const start=nextPack;nextPack+=24;
+      for(let index=start;index<Math.min(start+24,HANDOVER_FRAME+1)&&!disposed;index++){
+        try{await fetchFrame(index);}catch(error){stage.dataset.flightError=error.message;}
+      }
     }
   }));
+  window.__flightBuffered=true;
+  window.dispatchEvent(new Event('flight:buffered'));
 }
 function layout(){
   const nextWidth=stage.clientWidth,nextHeight=stage.clientHeight,nextDpr=Math.min(devicePixelRatio||1,2);
@@ -329,7 +329,13 @@ window.addEventListener('pageshow',event=>{
   if(event.persisted)location.reload();
 });
 layout();
-Promise.all([decodeFrame(0),decodeFrame(HANDOVER_FRAME)]).then(()=>{
+// Prepare the first visible frame before revealing the site. The rest buffers
+// while the existing loader animation plays; its compressed data stays reusable.
+if(reduced.matches){
+  window.__resolveIntroMedia?.();
+  real.decode().then(()=>{realReady=true;invalidate()}).catch(()=>{});
+}else Promise.all([decodeFrame(0),openingPhoto.decode().catch(()=>{}),real.decode().catch(()=>{})]).then(()=>{
+  window.__resolveIntroMedia?.();
   warmNearby(desired);
   preload();
   invalidate();
